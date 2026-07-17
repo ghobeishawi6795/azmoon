@@ -1,475 +1,2332 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سامانه آزمون مدرسه</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Tahoma, Arial, sans-serif; background: #f5f5f5; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin: 5px; }
-    .btn-primary { background: #2563EB; color: white; }
-    .btn-danger { background: #DC2626; color: white; }
-    .btn-success { background: #16A34A; color: white; }
-    input, select, textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin: 5px 0; width: 100%; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; }
-    th { background: #f8f9fa; font-weight: bold; }
-    .hidden { display: none; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    .stat { text-align: center; padding: 20px; }
-    .stat-number { font-size: 36px; font-weight: bold; color: #2563EB; }
-    .stat-label { color: #666; margin-top: 10px; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>سامانه جامع مدیریت مدرسه</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js">
+    </script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #f0f4f8;
+            padding: 16px;
+            direction: rtl;
+        }
+        #root {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 16px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 2px solid #e8edf2;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+        .header h1 {
+            font-size: 20px;
+            color: #1a2a3a;
+        }
+        .header .user {
+            font-size: 13px;
+            color: #6b7a8a;
+        }
+        .header .user b {
+            color: #2563eb;
+        }
+        .logo {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        h2 {
+            font-size: 17px;
+            color: #1a2a3a;
+            margin-bottom: 10px;
+        }
+        .flex {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media(max-width:600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #3a4a5a;
+            margin-bottom: 3px;
+        }
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1.5px solid #dce3ea;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            background: #fff;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #2563eb;
+        }
+        textarea {
+            min-height: 50px;
+            resize: vertical;
+        }
+        button {
+            padding: 9px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: #2563eb;
+            color: #fff;
+        }
+        button:active {
+            transform: scale(0.96);
+        }
+        button:disabled {
+            opacity: 0.5;
+        }
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 11px;
+        }
+        .btn-ghost {
+            background: #f0f4f8;
+            color: #3a4a5a;
+        }
+        .btn-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .btn-success {
+            background: #16a34a;
+            color: #fff;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #2563eb;
+            color: #2563eb;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .badge-blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        .badge-green {
+            background: #d1fae5;
+            color: #16a34a;
+        }
+        .badge-orange {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .badge-red {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .badge-gray {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f4f8;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        .list-item .title {
+            font-weight: 600;
+            color: #1a2a3a;
+            font-size: 14px;
+        }
+        .list-item .sub {
+            font-size: 11px;
+            color: #6b7a8a;
+        }
+        .stat-box {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-box .num {
+            font-size: 22px;
+            font-weight: 900;
+            color: #1a2a3a;
+        }
+        .stat-box .label {
+            font-size: 10px;
+            color: #6b7a8a;
+        }
+        .text-muted {
+            color: #6b7a8a;
+            font-size: 13px;
+        }
+        .empty {
+            text-align: center;
+            padding: 25px 0;
+            color: #9aa8b8;
+            font-size: 13px;
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 100;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 450px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .modal-header h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+        .modal-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: #9aa8b8;
+            background: none;
+            border: none;
+            padding: 0 6px;
+        }
+        .code-display {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 900;
+            color: #2563eb;
+            letter-spacing: 2px;
+            background: #f0f4f8;
+            padding: 2px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #e8edf2;
+            padding-bottom: 8px;
+        }
+        .tab-bar button {
+            background: transparent;
+            color: #6b7a8a;
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -9px;
+        }
+        .tab-bar button.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+            background: #eff6ff;
+        }
+        .mt-10 {
+            margin-top: 10px;
+        }
+        .mb-10 {
+            margin-bottom: 10px;
+        }
+        .border-top {
+            border-top: 1px solid #e8edf2;
+            padding-top: 14px;
+        }
+        .w-full {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-  <div id="app"></div>
+    <div id="root"></div>
 
-  <script>
-    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-    const generateCode = (existing) => {
-      let code;
-      do { code = String(Math.floor(100000 + Math.random() * 900000)); } while (existing.includes(code));
-      return code;
-    };
+    <script>
+        'use strict';
 
-    const db = {
-      get: (key) => JSON.parse(localStorage.getItem(key) || 'null'),
-      set: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
-      getAll: (prefix) => {
-        const items = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith(prefix)) {
-            items.push(JSON.parse(localStorage.getItem(key)));
-          }
+        // ============================================================
+        // ابزارهای کمکی
+        // ============================================================
+
+        const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+        function getJSON(k) {
+            try { const d = localStorage.getItem(k); return d ? JSON.parse(d) : null; } catch { return null; }
         }
-        return items;
-      },
-      delete: (key) => localStorage.removeItem(key)
-    };
 
-    let currentUser = db.get('currentUser');
-    let currentPage = 'login';
-    let activeExamId = null;
-    let activeClassId = null;
-
-    function render() {
-      const app = document.getElementById('app');
-      if (!currentUser) {
-        if (currentPage === 'register') {
-          app.innerHTML = renderRegister();
-        } else {
-          app.innerHTML = renderLogin();
+        function setJSON(k, v) {
+            try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; }
         }
-      } else if (currentUser.role === 'admin') {
-        app.innerHTML = renderAdminDashboard();
-      } else {
-        app.innerHTML = renderTeacherDashboard();
-      }
-    }
 
-    function renderLogin() {
-      return `
-        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);">
-          <div class="card" style="width: 100%; max-width: 400px;">
-            <h1 style="text-align: center; margin-bottom: 30px;">سامانه آزمون مدرسه</h1>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-              <button class="btn btn-primary" onclick="setRole('admin')" id="role-admin">مدیر</button>
-              <button class="btn" style="background: #F1F5F9;" onclick="setRole('teacher')" id="role-teacher">معلم</button>
-            </div>
-            <input type="text" id="username" placeholder="نام کاربری">
-            <input type="password" id="password" placeholder="رمز عبور" onkeypress="if(event.key==='Enter')login()">
-            <div id="error" style="color: red; margin: 10px 0;"></div>
-            <button class="btn btn-primary" style="width: 100%;" onclick="login()">ورود</button>
-            <p style="text-align: center; margin-top: 20px; color: #666;">
-              حساب ندارید؟ <a href="#" onclick="showRegister()" style="color: #2563EB;">ثبت‌نام</a>
-            </p>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderRegister() {
-      return `
-        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);">
-          <div class="card" style="width: 100%; max-width: 400px;">
-            <h1 style="text-align: center; margin-bottom: 30px;">ثبت‌نام</h1>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-              <button class="btn btn-primary" onclick="setRole('admin')" id="role-admin">مدیر مدرسه</button>
-              <button class="btn" style="background: #F1F5F9;" onclick="setRole('teacher')" id="role-teacher">معلم</button>
-            </div>
-            <input type="text" id="fullname" placeholder="نام و نام‌خانوادگی">
-            <input type="text" id="username" placeholder="نام کاربری">
-            <input type="password" id="password" placeholder="رمز عبور">
-            <div id="error" style="color: red; margin: 10px 0;"></div>
-            <button class="btn btn-primary" style="width: 100%;" onclick="register()">ثبت‌نام</button>
-            <p style="text-align: center; margin-top: 20px; color: #666;">
-              قبلاً ثبت‌نام کردید؟ <a href="#" onclick="showLogin()" style="color: #2563EB;">ورود</a>
-            </p>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderAdminDashboard() {
-      const teachers = db.getAll('user:teacher:');
-      const exams = db.getAll('exam:');
-      const students = db.getAll('roster:');
-
-      let content = '';
-      if (currentPage === 'teachers') {
-        content = `
-          <h2>معلمان ثبت‌نام شده</h2>
-          ${teachers.length === 0 ? '<p style="text-align: center; padding: 40px; color: #666;">هنوز معلمی ثبت‌نام نکرده است</p>' : `
-            <table>
-              <thead><tr><th>نام</th><th>نام کاربری</th><th>تاریخ ثبت‌نام</th></tr></thead>
-              <tbody>
-                ${teachers.map(t => `<tr><td>${t.fullname}</td><td>${t.username}</td><td>${new Date(t.created).toLocaleDateString('fa-IR')}</td></tr>`).join('')}
-              </tbody>
-            </table>
-          `}
-        `;
-      } else if (currentPage === 'exams') {
-        content = `
-          <h2>همه آزمون‌ها</h2>
-          ${exams.length === 0 ? '<p style="text-align: center; padding: 40px; color: #666;">هنوز آزمونی ساخته نشده است</p>' : `
-            <table>
-              <thead><tr><th>عنوان</th><th>معلم</th><th>تاریخ</th></tr></thead>
-              <tbody>
-                ${exams.map(e => {
-                  const teacher = teachers.find(t => t.username === e.teacher_id);
-                  return `<tr><td>${e.title}</td><td>${teacher?.fullname || '—'}</td><td>${new Date(e.created).toLocaleDateString('fa-IR')}</td></tr>`;
-                }).join('')}
-              </tbody>
-            </table>
-          `}
-        `;
-      } else {
-        content = `
-          <div class="grid">
-            <div class="card stat"><div class="stat-number">${teachers.length}</div><div class="stat-label">معلمان</div></div>
-            <div class="card stat"><div class="stat-number">${exams.length}</div><div class="stat-label">آزمون‌ها</div></div>
-            <div class="card stat"><div class="stat-number">${students.length}</div><div class="stat-label">دانش‌آموزان</div></div>
-          </div>
-        `;
-      }
-
-      return `
-        <div style="display: flex; min-height: 100vh;">
-          <div style="width: 220px; background: #0F172A; padding: 20px; color: white;">
-            <h2 style="margin-bottom: 30px;">پنل مدیر</h2>
-            <div onclick="showPage('dashboard')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'dashboard' ? '#2563EB' : 'transparent'};">داشبورد</div>
-            <div onclick="showPage('teachers')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'teachers' ? '#2563EB' : 'transparent'};">معلمان</div>
-            <div onclick="showPage('exams')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'exams' ? '#2563EB' : 'transparent'};">آزمون‌ها</div>
-            <div onclick="logout()" style="padding: 12px; border-radius: 8px; cursor: pointer; color: #F87171; margin-top: 20px;">خروج</div>
-          </div>
-          <div style="flex: 1; padding: 30px;">
-            <h1 style="margin-bottom: 30px;">داشبورد مدیر</h1>
-            ${content}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderTeacherDashboard() {
-      const myExams = db.getAll('exam:').filter(e => e.teacher_id === currentUser.username);
-      const myClasses = db.getAll('class:').filter(c => c.teacher_id === currentUser.username);
-      const myRoster = db.getAll('roster:').filter(r => r.teacher_id === currentUser.username);
-
-      if (activeExamId) return renderExamManager(activeExamId);
-      if (activeClassId) return renderClassManager(activeClassId);
-
-      let content = '';
-      if (currentPage === 'exams') {
-        content = `
-          <button class="btn btn-primary" onclick="createExam()">+ ساخت آزمون جدید</button>
-          <div class="grid" style="margin-top: 20px;">
-            ${myExams.map(ex => `
-              <div class="card">
-                <h3>${ex.title}</h3>
-                <p style="font-size: 12px; color: #666; margin: 10px 0;">${new Date(ex.created).toLocaleDateString('fa-IR')}</p>
-                <button class="btn btn-primary" onclick="openExam('${ex.id}')">مدیریت سوالات</button>
-                <button class="btn btn-danger" onclick="deleteExam('${ex.id}')">حذف</button>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      } else if (currentPage === 'classes') {
-        content = `
-          <button class="btn btn-primary" onclick="createClass()">+ افزودن کلاس</button>
-          <div class="grid" style="margin-top: 20px;">
-            ${myClasses.map(c => {
-              const count = myRoster.filter(r => r.class_id === c.id).length;
-              return `
-                <div class="card">
-                  <h3>${c.name}</h3>
-                  <p style="font-size: 12px; color: #666; margin: 10px 0;">${count} دانش‌آموز</p>
-                  <button class="btn btn-primary" onclick="openClass('${c.id}')">مدیریت دانش‌آموزان</button>
-                  <button class="btn btn-danger" onclick="deleteClass('${c.id}')">حذف</button>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `;
-      } else {
-        content = `
-          <div class="grid">
-            <div class="card stat"><div class="stat-number">${myExams.length}</div><div class="stat-label">آزمون‌ها</div></div>
-            <div class="card stat"><div class="stat-number">${myClasses.length}</div><div class="stat-label">کلاس‌ها</div></div>
-            <div class="card stat"><div class="stat-number">${myRoster.length}</div><div class="stat-label">دانش‌آموزان</div></div>
-          </div>
-        `;
-      }
-
-      return `
-        <div style="display: flex; min-height: 100vh;">
-          <div style="width: 220px; background: #132A52; padding: 20px; color: white;">
-            <h2 style="margin-bottom: 30px;">پنل معلم</h2>
-            <div onclick="showPage('dashboard')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'dashboard' ? '#2563EB' : 'transparent'};">داشبورد</div>
-            <div onclick="showPage('exams')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'exams' ? '#2563EB' : 'transparent'};">آزمون‌ها</div>
-            <div onclick="showPage('classes')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'classes' ? '#2563EB' : 'transparent'};">کلاس‌ها</div>
-            <div onclick="logout()" style="padding: 12px; border-radius: 8px; cursor: pointer; color: #F87171; margin-top: 20px;">خروج</div>
-          </div>
-          <div style="flex: 1; padding: 30px;">
-            <h1 style="margin-bottom: 30px;">داشبورد معلم</h1>
-            ${content}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderExamManager(examId) {
-      const exam = db.get(`exam:${examId}`);
-      const questions = db.getAll('question:').filter(q => q.exam_id === examId);
-
-      return `
-        <div style="padding: 30px;">
-          <button class="btn" onclick="backToExams()">← بازگشت</button>
-          <h1 style="margin: 20px 0;">سوالات آزمون: ${exam.title}</h1>
-          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-            <div class="card" style="flex: 1; min-width: 400px;">
-              <h2 style="margin-bottom: 20px;">افزودن سوال</h2>
-              <label>متن سوال</label>
-              <textarea id="qText" rows="3" placeholder="متن سوال"></textarea>
-              <label>گزینه‌ها (روی دایره سبز کلیک کنید)</label>
-              <div id="options">
-                ${['A', 'B', 'C', 'D'].map((letter, i) => `
-                  <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
-                    <div onclick="setCorrect(${i})" id="correct-${i}" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid #CBD5E1; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center;"></div>
-                    <span style="font-weight: bold; width: 20px;">${letter}</span>
-                    <input type="text" id="option-${i}" placeholder="گزینه ${letter}" style="flex: 1;">
-                  </div>
-                `).join('')}
-              </div>
-              <label>نمره</label>
-              <input type="number" id="qMark" value="1" min="1" style="width: 100px;">
-              <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="saveQuestion('${examId}')">+ افزودن سوال</button>
-            </div>
-            <div style="flex: 1; min-width: 400px;">
-              <h2 style="margin-bottom: 20px;">سوالات (${questions.length})</h2>
-              ${questions.length === 0 ? '<div class="card" style="text-align: center; padding: 40px; color: #666;">هنوز سوالی اضافه نشده است</div>' : `
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                  ${questions.map((q, idx) => `
-                    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
-                      <div>
-                        <div style="font-weight: bold; margin-bottom: 4px;">${idx + 1}. ${q.question_text}</div>
-                        <div style="font-size: 12px; color: #666;">پاسخ: ${q.correct_answer} · نمره: ${q.mark}</div>
-                      </div>
-                      <button class="btn btn-danger" onclick="deleteQuestion('${q.id}', '${examId}')">حذف</button>
-                    </div>
-                  `).join('')}
-                </div>
-              `}
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderClassManager(classId) {
-      const cls = db.get(`class:${classId}`);
-      const roster = db.getAll('roster:').filter(r => r.class_id === classId);
-
-      return `
-        <div style="padding: 30px;">
-          <button class="btn" onclick="backToClasses()">← بازگشت</button>
-          <h1 style="margin: 20px 0;">دانش‌آموزان کلاس: ${cls.name}</h1>
-          <div class="card" style="margin-bottom: 20px;">
-            <h2 style="margin-bottom: 16px;">افزودن دانش‌آموز</h2>
-            <div style="display: flex; gap: 12px;">
-              <input type="text" id="studentName" placeholder="نام دانش‌آموز" onkeypress="if(event.key==='Enter')addStudent('${classId}')" style="flex: 1;">
-              <button class="btn btn-primary" onclick="addStudent('${classId}')">+ افزودن</button>
-            </div>
-          </div>
-          <div class="card">
-            <h2 style="margin-bottom: 16px;">لیست دانش‌آموزان (${roster.length})</h2>
-            ${roster.length === 0 ? '<p style="text-align: center; padding: 40px; color: #666;">هنوز دانش‌آموزی اضافه نشده است</p>' : `
-              <table>
-                <thead><tr><th>نام</th><th>کد ورود</th><th></th></tr></thead>
-                <tbody>
-                  ${roster.map(m => `
-                    <tr>
-                      <td style="font-weight: bold;">${m.fullname}</td>
-                      <td><span style="font-family: monospace; font-size: 18px; font-weight: bold; color: #2563EB; letter-spacing: 2px;">${m.code}</span></td>
-                      <td><button class="btn btn-danger" onclick="deleteStudent('${m.id}', '${classId}')">حذف</button></td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            `}
-          </div>
-        </div>
-      `;
-    }
-
-    let currentRole = 'teacher';
-    function setRole(role) {
-      currentRole = role;
-      document.getElementById('role-admin').style.background = role === 'admin' ? '#2563EB' : '#F1F5F9';
-      document.getElementById('role-admin').style.color = role === 'admin' ? 'white' : '#475569';
-      document.getElementById('role-teacher').style.background = role === 'teacher' ? '#2563EB' : '#F1F5F9';
-      document.getElementById('role-teacher').style.color = role === 'teacher' ? 'white' : '#475569';
-    }
-
-    function showRegister() { currentPage = 'register'; render(); }
-    function showLogin() { currentPage = 'login'; render(); }
-
-    function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const error = document.getElementById('error');
-      if (!username || !password) { error.textContent = 'نام کاربری و رمز عبور را وارد کنید'; return; }
-      const user = db.get(`user:${currentRole}:${username}`);
-      if (!user || user.password !== password) { error.textContent = 'نام کاربری یا رمز عبور اشتباه است'; return; }
-      currentUser = user;
-      db.set('currentUser', user);
-      currentPage = 'dashboard';
-      render();
-    }
-
-    function register() {
-      const fullname = document.getElementById('fullname').value;
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const error = document.getElementById('error');
-      if (!fullname || !username || !password) { error.textContent = 'همه فیلدها را پر کنید'; return; }
-      const existing = db.get(`user:${currentRole}:${username}`);
-      if (existing) { error.textContent = 'این نام کاربری قبلاً ثبت شده است'; return; }
-      const user = { id: uid(), role: currentRole, username, password, fullname, created: new Date().toISOString() };
-      db.set(`user:${currentRole}:${username}`, user);
-      currentUser = user;
-      db.set('currentUser', user);
-      currentPage = 'dashboard';
-      render();
-    }
-
-    function logout() {
-      db.delete('currentUser');
-      currentUser = null;
-      currentPage = 'login';
-      render();
-    }
-
-    function showPage(page) { currentPage = page; activeExamId = null; activeClassId = null; render(); }
-
-    function createExam() {
-      const title = prompt('عنوان آزمون:');
-      if (!title) return;
-      const id = uid();
-      db.set(`exam:${id}`, { id, title, teacher_id: currentUser.username, created: new Date().toISOString() });
-      render();
-    }
-
-    function deleteExam(id) {
-      if (!confirm('آزمون حذف شود؟')) return;
-      db.delete(`exam:${id}`);
-      db.getAll('question:').filter(q => q.exam_id === id).forEach(q => db.delete(`question:${q.id}`));
-      render();
-    }
-
-    function openExam(id) { activeExamId = id; render(); }
-    function backToExams() { activeExamId = null; render(); }
-
-    let correctOption = 0;
-    function setCorrect(i) {
-      correctOption = i;
-      for (let j = 0; j < 4; j++) {
-        const el = document.getElementById(`correct-${j}`);
-        if (j === i) {
-          el.style.background = '#16A34A';
-          el.style.borderColor = '#16A34A';
-          el.innerHTML = '✓';
-          el.style.color = 'white';
-        } else {
-          el.style.background = 'white';
-          el.style.borderColor = '#CBD5E1';
-          el.innerHTML = '';
+        function deleteKey(k) {
+            try { localStorage.removeItem(k); return true; } catch { return false; }
         }
-      }
-    }
 
-    function saveQuestion(examId) {
-      const qText = document.getElementById('qText').value;
-      const options = [0, 1, 2, 3].map(i => document.getElementById(`option-${i}`).value);
-      const mark = document.getElementById('qMark').value;
-      if (!qText.trim()) { alert('متن سوال را وارد کنید'); return; }
-      if (options.some(o => !o.trim())) { alert('همه گزینه‌ها را پر کنید'); return; }
-      const id = uid();
-      const question = {
-        id, exam_id: examId, type: 'mc', question_text: qText.trim(), mark: Number(mark) || 1,
-        option_a: options[0], option_b: options[1], option_c: options[2], option_d: options[3],
-        correct_answer: ['A', 'B', 'C', 'D'][correctOption]
-      };
-      db.set(`question:${id}`, question);
-      render();
-    }
+        function listPrefix(p) {
+            try { return Object.keys(localStorage).filter(k => k.startsWith(p)); } catch { return []; }
+        }
 
-    function deleteQuestion(id, examId) {
-      if (!confirm('سوال حذف شود؟')) return;
-      db.delete(`question:${id}`);
-      render();
-    }
+        function loadAll(p) {
+            return listPrefix(p).map(k => getJSON(k)).filter(Boolean);
+        }
 
-    function createClass() {
-      const name = prompt('نام کلاس:');
-      if (!name) return;
-      const id = uid();
-      db.set(`class:${id}`, { id, name: name.trim(), teacher_id: currentUser.username, created: new Date().toISOString() });
-      render();
-    }
+        function generateCode(existing) {
+            let c;
+            do { c = String(Math.floor(100000 + Math.random() * 900000)); } while (existing.includes(c));
+            return c;
+        }
 
-    function deleteClass(id) {
-      if (!confirm('کلاس و دانش‌آموزان آن حذف شوند؟')) return;
-      db.delete(`class:${id}`);
-      db.getAll('roster:').filter(r => r.class_id === id).forEach(r => db.delete(`roster:${r.id}`));
-      render();
-    }
+        function shuffleArray(a) {
+            const arr = [...a];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
 
-    function openClass(id) { activeClassId = id; render(); }
-    function backToClasses() { activeClassId = null; render(); }
+        function awardedMarkOf(a) {
+            if (a.awarded_mark != null) return a.awarded_mark;
+            return a.is_correct ? a.mark : 0;
+        }
 
-    function addStudent(classId) {
-      const name = document.getElementById('studentName').value;
-      if (!name.trim()) { alert('نام دانش‌آموز را وارد کنید'); return; }
-      const roster = db.getAll('roster:').filter(r => r.class_id === classId);
-      const allCodes = roster.map(r => r.code);
-      const id = uid();
-      const code = generateCode(allCodes);
-      const student = { id, class_id: classId, teacher_id: currentUser.username, fullname: name.trim(), code, created: new Date().toISOString() };
-      db.set(`roster:${id}`, student);
-      render();
-    }
+        function downloadTextFile(fn, content, mime) {
+            const blob = new Blob([content], { type: mime });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fn;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
 
-    function deleteStudent(id, classId) {
-      if (!confirm('دانش‌آموز حذف شود؟')) return;
-      db.delete(`roster:${id}`);
-      render();
-    }
+        // ============================================================
+        // کامپوننت‌های UI
+        // ============================================================
 
-    render();
-  </script>
+        function Field({ label, children }) {
+            return React.createElement('div', { className: 'field' },
+                React.createElement('label', null, label),
+                children
+            );
+        }
+
+        function Button({ children, variant = 'primary', style, onClick, disabled, className = '' }) {
+            const v = {
+                primary: { background: '#2563EB', color: '#fff' },
+                ghost: { background: '#F0F4F8', color: '#3A4A5A' },
+                danger: { background: '#FEE2E2', color: '#DC2626' },
+                success: { background: '#16A34A', color: '#fff' },
+                outline: { background: 'transparent', color: '#2563EB', border: '1.5px solid #2563EB' },
+            };
+            const base = {
+                padding: '9px 16px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                border: 'none',
+                transition: 'all 0.1s',
+                ...v[variant],
+                ...style
+            };
+            return React.createElement('button', { style: base, onClick, disabled, className }, children);
+        }
+
+        function TextInput({ value, onChange, placeholder, type = 'text', style = {}, ...props }) {
+            return React.createElement('input', {
+                type,
+                value,
+                onChange: e => onChange(e.target.value),
+                placeholder,
+                style: {
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    border: '1.5px solid #DCE3EA',
+                    fontSize: 13,
+                    outline: 'none',
+                    fontFamily: 'inherit',
+                    background: '#fff',
+                    color: '#1A2A3A',
+                    ...style
+                },
+                ...props
+            });
+        }
+
+        function Badge({ children, tone = 'blue' }) {
+            const t = { blue: 'badge-blue', green: 'badge-green', orange: 'badge-orange', red: 'badge-red',
+                gray: 'badge-gray' };
+            return React.createElement('span', { className: 'badge ' + (t[tone] || 'badge-gray') }, children);
+        }
+
+        function Modal({ title, children, onClose }) {
+            return React.createElement('div', { className: 'modal-overlay' },
+                React.createElement('div', { className: 'modal' },
+                    React.createElement('div', { className: 'modal-header' },
+                        React.createElement('h2', null, title),
+                        React.createElement('button', { className: 'modal-close', onClick: onClose }, '✕')
+                    ),
+                    children
+                )
+            );
+        }
+
+        function EmptyState({ text }) {
+            return React.createElement('div', { className: 'empty' }, text);
+        }
+
+        function StatBox({ num, label }) {
+            return React.createElement('div', { className: 'stat-box' },
+                React.createElement('div', { className: 'num' }, num),
+                React.createElement('div', { className: 'label' }, label)
+            );
+        }
+
+        function TabBar({ tabs, active, onChange }) {
+            return React.createElement('div', { className: 'tab-bar' },
+                tabs.map(t =>
+                    React.createElement('button', {
+                        key: t.key,
+                        className: active === t.key ? 'active' : '',
+                        onClick: () => onChange(t.key)
+                    }, t.label)
+                )
+            );
+        }
+
+        // ============================================================
+        // صفحه ورود
+        // ============================================================
+
+        function LoginScreen({ onLogin, onRegister }) {
+            const [username, setUsername] = React.useState('');
+            const [password, setPassword] = React.useState('');
+            const [error, setError] = React.useState('');
+            const [loading, setLoading] = React.useState(false);
+            const [showPw, setShowPw] = React.useState(false);
+
+            const submit = () => {
+                setError('');
+                if (!username || !password) {
+                    setError('لطفاً نام کاربری و رمز عبور را وارد کنید.');
+                    return;
+                }
+                setLoading(true);
+                const teacher = getJSON(`teacher:${username}`);
+                setTimeout(() => {
+                    setLoading(false);
+                    if (!teacher || teacher.password !== password) {
+                        setError('نام کاربری یا رمز عبور اشتباه است.');
+                        return;
+                    }
+                    onLogin(teacher);
+                }, 300);
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'logo' }, '🏫'),
+                React.createElement('h1', { style: { fontSize: 22, color: '#1A2A3A', marginBottom: 2,
+                        textAlign: 'center' } }, 'سامانه جامع مدیریت مدرسه'),
+                React.createElement('div', { className: 'text-muted', style: { marginBottom: 18,
+                        textAlign: 'center' } }, 'ورود به پنل مدیریت'),
+
+                React.createElement(Field, { label: 'نام کاربری' },
+                    React.createElement(TextInput, {
+                        value: username,
+                        onChange: setUsername,
+                        placeholder: 'نام کاربری خود را وارد کنید',
+                        onKeyDown: e => e.key === 'Enter' && submit()
+                    })
+                ),
+                React.createElement(Field, { label: 'رمز عبور' },
+                    React.createElement('div', { style: { position: 'relative' } },
+                        React.createElement(TextInput, {
+                            type: showPw ? 'text' : 'password',
+                            value: password,
+                            onChange: setPassword,
+                            placeholder: 'رمز عبور خود را وارد کنید',
+                            onKeyDown: e => e.key === 'Enter' && submit()
+                        }),
+                        React.createElement('span', {
+                            style: { position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
+                                cursor: 'pointer', fontSize: 16 },
+                            onClick: () => setShowPw(!showPw)
+                        }, showPw ? '🙈' : '👁️')
+                    )
+                ),
+
+                error && React.createElement('div', { style: { color: '#DC2626', fontSize: 13, margin: '6px 0' } },
+                    error),
+
+                React.createElement(Button, {
+                    onClick: submit,
+                    disabled: loading,
+                    style: { width: '100%', padding: '11px 0' }
+                }, loading ? 'در حال ورود...' : 'ورود به سامانه'),
+
+                React.createElement('div', { style: { textAlign: 'center', marginTop: 12, fontSize: 13,
+                        color: '#6B7A8A' } },
+                    'حساب کاربری ندارید؟ ',
+                    React.createElement('span', {
+                        style: { color: '#2563EB', fontWeight: 700, cursor: 'pointer' },
+                        onClick: onRegister
+                    }, 'ثبت‌نام مدیر')
+                )
+            );
+        }
+
+        // ============================================================
+        // صفحه ثبت‌نام مدیر
+        // ============================================================
+
+        function RegisterScreen({ onRegistered, goLogin }) {
+            const [fullname, setFullname] = React.useState('');
+            const [username, setUsername] = React.useState('');
+            const [password, setPassword] = React.useState('');
+            const [email, setEmail] = React.useState('');
+            const [error, setError] = React.useState('');
+            const [loading, setLoading] = React.useState(false);
+
+            const submit = () => {
+                setError('');
+                if (!fullname || !username || !password || !email) {
+                    setError('همه فیلدها را پر کنید.');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    setError('ایمیل معتبر نیست.');
+                    return;
+                }
+                if (password.length < 4) {
+                    setError('رمز عبور باید حداقل ۴ کاراکتر باشد.');
+                    return;
+                }
+                setLoading(true);
+                if (getJSON(`teacher:${username}`)) {
+                    setLoading(false);
+                    setError('این نام کاربری قبلاً ثبت شده است.');
+                    return;
+                }
+                const teacher = {
+                    username,
+                    password,
+                    fullname,
+                    email,
+                    role: 'admin',
+                    created_at: new Date().toISOString()
+                };
+                setJSON(`teacher:${username}`, teacher);
+                setLoading(false);
+                onRegistered(teacher);
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'logo' }, '📝'),
+                React.createElement('h1', { style: { fontSize: 20, color: '#1A2A3A', textAlign: 'center' } },
+                    'ثبت‌نام مدیر سامانه'),
+                React.createElement('div', { className: 'text-muted', style: { marginBottom: 14,
+                        textAlign: 'center' } }, 'فقط یک‌بار برای راه‌اندازی سامانه'),
+
+                React.createElement(Field, { label: 'نام و نام‌خانوادگی' },
+                    React.createElement(TextInput, { value: fullname, onChange: setFullname,
+                        placeholder: 'مثلاً: علی محمدی' })
+                ),
+                React.createElement(Field, { label: 'نام کاربری' },
+                    React.createElement(TextInput, { value: username, onChange: setUsername,
+                        placeholder: 'یک نام کاربری یکتا انتخاب کنید' })
+                ),
+                React.createElement(Field, { label: 'رمز عبور' },
+                    React.createElement(TextInput, { type: 'password', value: password, onChange: setPassword,
+                        placeholder: 'حداقل ۴ کاراکتر' })
+                ),
+                React.createElement(Field, { label: 'ایمیل' },
+                    React.createElement(TextInput, { type: 'email', value: email, onChange: setEmail,
+                        placeholder: 'برای بازیابی رمز عبور' })
+                ),
+
+                error && React.createElement('div', { style: { color: '#DC2626', fontSize: 13, margin: '6px 0' } },
+                    error),
+
+                React.createElement(Button, {
+                    onClick: submit,
+                    disabled: loading,
+                    style: { width: '100%', padding: '11px 0' }
+                }, loading ? 'در حال ثبت...' : 'ثبت‌نام مدیر'),
+
+                React.createElement('div', { style: { textAlign: 'center', marginTop: 12, fontSize: 13,
+                        color: '#6B7A8A' } },
+                    'قبلاً ثبت‌نام کردید؟ ',
+                    React.createElement('span', {
+                        style: { color: '#2563EB', fontWeight: 700, cursor: 'pointer' },
+                        onClick: goLogin
+                    }, 'ورود به سامانه')
+                )
+            );
+        }
+
+        // ============================================================
+        // داشبورد ادمین
+        // ============================================================
+
+        function AdminDashboard({ teacher, onNavigate, refresh }) {
+            const teachers = loadAll('teacher:').filter(t => t.username !== teacher.username);
+            const exams = loadAll('exam:');
+            const classes = loadAll('class:');
+            const students = loadAll('student:');
+            const questions = loadAll('question:');
+
+            const tabs = [
+                { key: 'dashboard', label: '📊 داشبورد' },
+                { key: 'teachers', label: '👨‍🏫 معلمان' },
+                { key: 'all-exams', label: '📝 آزمون‌ها' },
+                { key: 'all-results', label: '📊 نتایج' },
+            ];
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '📊 داشبورد مدیریت'),
+                    React.createElement('div', { className: 'user' },
+                        teacher.fullname,
+                        React.createElement('span', { style: { margin: '0 6px' } }, '|'),
+                        React.createElement('span', {
+                            style: { cursor: 'pointer', color: '#DC2626' },
+                            onClick: () => { localStorage.clear();
+                                location.reload(); }
+                        }, '🚪 خروج')
+                    )
+                ),
+
+                React.createElement(TabBar, {
+                    tabs: tabs,
+                    active: 'dashboard',
+                    onChange: (key) => {
+                        if (key === 'teachers') onNavigate('teachers');
+                        else if (key === 'all-exams') onNavigate('all-exams');
+                        else if (key === 'all-results') onNavigate('all-results');
+                    }
+                }),
+
+                React.createElement('div', { className: 'grid-3' },
+                    React.createElement(StatBox, { num: teachers.length, label: 'معلمان' }),
+                    React.createElement(StatBox, { num: exams.length, label: 'آزمون‌ها' }),
+                    React.createElement(StatBox, { num: questions.length, label: 'سوالات' }),
+                    React.createElement(StatBox, { num: classes.length, label: 'کلاس‌ها' }),
+                    React.createElement(StatBox, { num: students.length, label: 'دانش‌آموزان' })
+                ),
+
+                React.createElement('div', { className: 'border-top' },
+                    React.createElement('h2', null, '👨‍🏫 لیست معلمان'),
+                    teachers.length === 0 ?
+                    React.createElement(EmptyState, { text: 'هنوز معلمی به سامانه اضافه نشده است.' }) :
+                    teachers.map(t =>
+                        React.createElement('div', { className: 'list-item', key: t.username },
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'title' }, t.fullname),
+                                React.createElement('div', { className: 'sub' },
+                                    '👤 ' + t.username + ' · 📧 ' + t.email)
+                            ),
+                            React.createElement(Badge, { tone: 'blue' }, 'معلم')
+                        )
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // مدیریت معلمان (ادمین)
+        // ============================================================
+
+        function TeachersScreen({ teacher, onBack, refresh }) {
+            const [showModal, setShowModal] = React.useState(false);
+            const [fullname, setFullname] = React.useState('');
+            const [username, setUsername] = React.useState('');
+            const [password, setPassword] = React.useState('');
+            const [email, setEmail] = React.useState('');
+            const [error, setError] = React.useState('');
+            const [loading, setLoading] = React.useState(false);
+
+            const teachers = loadAll('teacher:').filter(t => t.username !== teacher.username);
+
+            const addTeacher = () => {
+                setError('');
+                if (!fullname || !username || !password || !email) {
+                    setError('همه فیلدها را پر کنید.');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    setError('ایمیل معتبر نیست.');
+                    return;
+                }
+                if (password.length < 4) {
+                    setError('رمز عبور باید حداقل ۴ کاراکتر باشد.');
+                    return;
+                }
+                setLoading(true);
+                if (getJSON(`teacher:${username}`)) {
+                    setLoading(false);
+                    setError('این نام کاربری قبلاً ثبت شده است.');
+                    return;
+                }
+                setJSON(`teacher:${username}`, {
+                    username,
+                    password,
+                    fullname,
+                    email,
+                    role: 'teacher',
+                    created_at: new Date().toISOString()
+                });
+                setLoading(false);
+                setShowModal(false);
+                setFullname('');
+                setUsername('');
+                setPassword('');
+                setEmail('');
+                refresh();
+            };
+
+            const removeTeacher = (username) => {
+                if (!confirm(`معلم "${username}" حذف شود؟ همه داده‌های او پاک می‌شود.`)) return;
+                deleteKey(`teacher:${username}`);
+                loadAll('exam:').filter(e => e.teacher_id === username).forEach(e => {
+                    deleteKey(`exam:${e.id}`);
+                    loadAll('question:').filter(q => q.exam_id === e.id).forEach(q => deleteKey(`question:${q.id}`));
+                });
+                loadAll('class:').filter(c => c.teacher_id === username).forEach(c => {
+                    deleteKey(`class:${c.id}`);
+                    loadAll('roster:').filter(r => r.class_id === c.id).forEach(r => deleteKey(`roster:${r.id}`));
+                });
+                refresh();
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '👨‍🏫 مدیریت معلمان'),
+                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                ),
+
+                React.createElement(Button, { onClick: () => setShowModal(true) }, '➕ افزودن معلم جدید'),
+
+                React.createElement('div', { className: 'mt-10' },
+                    teachers.length === 0 ?
+                    React.createElement(EmptyState, { text: 'هنوز معلمی به سامانه اضافه نشده است.' }) :
+                    teachers.map(t =>
+                        React.createElement('div', { className: 'list-item', key: t.username },
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'title' }, t.fullname),
+                                React.createElement('div', { className: 'sub' },
+                                    '👤 ' + t.username + ' · 📧 ' + t.email)
+                            ),
+                            React.createElement('div', { className: 'flex' },
+                                React.createElement(Badge, { tone: 'green' }, 'معلم'),
+                                React.createElement(Button, {
+                                    variant: 'danger',
+                                    className: 'btn-sm',
+                                    onClick: () => removeTeacher(t.username)
+                                }, '🗑️')
+                            )
+                        )
+                    )
+                ),
+
+                showModal && React.createElement(Modal, { title: 'افزودن معلم جدید', onClose: () => setShowModal(
+                        false) },
+                    React.createElement(Field, { label: 'نام و نام‌خانوادگی' },
+                        React.createElement(TextInput, { value: fullname, onChange: setFullname,
+                            placeholder: 'مثلاً: زهرا احمدی' })
+                    ),
+                    React.createElement(Field, { label: 'نام کاربری' },
+                        React.createElement(TextInput, { value: username, onChange: setUsername,
+                            placeholder: 'یک نام کاربری یکتا' })
+                    ),
+                    React.createElement(Field, { label: 'رمز عبور' },
+                        React.createElement(TextInput, { type: 'password', value: password, onChange: setPassword,
+                            placeholder: 'حداقل ۴ کاراکتر' })
+                    ),
+                    React.createElement(Field, { label: 'ایمیل' },
+                        React.createElement(TextInput, { type: 'email', value: email, onChange: setEmail,
+                            placeholder: 'ایمیل معلم' })
+                    ),
+                    error && React.createElement('div', { style: { color: '#DC2626', fontSize: 13,
+                            margin: '6px 0' } }, error),
+                    React.createElement('div', { className: 'flex', style: { marginTop: 10,
+                            justifyContent: 'flex-end' } },
+                        React.createElement(Button, { variant: 'ghost', onClick: () => setShowModal(false) },
+                            'انصراف'),
+                        React.createElement(Button, { onClick: addTeacher, disabled: loading },
+                            loading ? 'در حال ثبت...' : 'افزودن معلم'
+                        )
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // همه آزمون‌ها (ادمین)
+        // ============================================================
+
+        function AllExamsScreen({ onBack, refresh }) {
+            const exams = loadAll('exam:').sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            const teachers = loadAll('teacher:');
+            const questions = loadAll('question:');
+
+            const getTeacherName = (id) => {
+                const t = teachers.find(t => t.username === id);
+                return t ? t.fullname : id;
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '📝 همه آزمون‌ها'),
+                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                ),
+
+                exams.length === 0 ?
+                React.createElement(EmptyState, { text: 'هنوز آزمونی در سامانه ثبت نشده است.' }) :
+                exams.map(ex =>
+                    React.createElement('div', { className: 'list-item', key: ex.id },
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'title' }, ex.title),
+                            React.createElement('div', { className: 'sub' },
+                                'معلم: ' + getTeacherName(ex.teacher_id),
+                                ex.duration_minutes ? ` · ${ex.duration_minutes} دقیقه` : '',
+                                ` · ${new Date(ex.created_at).toLocaleDateString('fa-IR')}`
+                            )
+                        ),
+                        React.createElement(Badge, { tone: 'blue' },
+                            questions.filter(q => q.exam_id === ex.id).length + ' سوال'
+                        )
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // همه نتایج (ادمین)
+        // ============================================================
+
+        function AllResultsScreen({ onBack, refresh }) {
+            const exams = loadAll('exam:');
+            const answers = loadAll('answer:');
+            const teachers = loadAll('teacher:');
+
+            const getTeacherName = (id) => {
+                const t = teachers.find(t => t.username === id);
+                return t ? t.fullname : id;
+            };
+
+            const examStats = exams.map(ex => {
+                const exAnswers = answers.filter(a => a.exam_id === ex.id);
+                const uniqueStudents = [...new Set(exAnswers.map(a => a.student_id))];
+                let total = 0,
+                    got = 0;
+                exAnswers.forEach(a => { total += a.mark || 1;
+                    got += awardedMarkOf(a); });
+                const avg = total ? Math.round((got / total) * 100) : 0;
+                return { ...ex, studentCount: uniqueStudents.length, avg, answerCount: exAnswers.length };
+            }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '📊 همه نتایج'),
+                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                ),
+
+                examStats.length === 0 ?
+                React.createElement(EmptyState, { text: 'هنوز آزمونی در سامانه ثبت نشده است.' }) :
+                examStats.map(ex =>
+                    React.createElement('div', { className: 'list-item', key: ex.id },
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'title' }, ex.title),
+                            React.createElement('div', { className: 'sub' },
+                                'معلم: ' + getTeacherName(ex.teacher_id),
+                                ` · ${ex.studentCount} دانش‌آموز`,
+                                ` · میانگین: ${ex.avg}%`
+                            )
+                        ),
+                        React.createElement(Badge, { tone: ex.avg >= 50 ? 'green' : 'orange' },
+                            ex.avg + '%'
+                        )
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // داشبورد معلم
+        // ============================================================
+
+        function TeacherDashboard({ teacher, onNavigate, refresh }) {
+            const exams = loadAll('exam:').filter(e => e.teacher_id === teacher.username);
+            const questions = loadAll('question:');
+            const classes = loadAll('class:').filter(c => c.teacher_id === teacher.username);
+            const roster = loadAll('roster:').filter(r => r.teacher_id === teacher.username);
+            const answers = loadAll('answer:');
+
+            const examIds = new Set(exams.map(e => e.id));
+            const myQuestions = questions.filter(q => examIds.has(q.exam_id));
+
+            let totalMarks = 0,
+                gotMarks = 0;
+            answers.forEach(a => {
+                if (examIds.has(a.exam_id)) {
+                    totalMarks += a.mark || 1;
+                    gotMarks += awardedMarkOf(a);
+                }
+            });
+            const avg = totalMarks ? Math.round((gotMarks / totalMarks) * 100) : 0;
+
+            const tabs = [
+                { key: 'dashboard', label: '📊 داشبورد' },
+                { key: 'exams', label: '📝 آزمون‌ها' },
+                { key: 'classes', label: '📚 کلاس‌ها' },
+                { key: 'students', label: '👨‍🎓 دانش‌آموزان' },
+                { key: 'results', label: '📊 نتایج' },
+                { key: 'messages', label: '💬 پیام‌ها' },
+            ];
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '📊 داشبورد معلم'),
+                    React.createElement('div', { className: 'user' },
+                        teacher.fullname,
+                        React.createElement('span', { style: { margin: '0 6px' } }, '|'),
+                        React.createElement('span', {
+                            style: { cursor: 'pointer', color: '#DC2626' },
+                            onClick: () => { localStorage.clear();
+                                location.reload(); }
+                        }, '🚪 خروج')
+                    )
+                ),
+
+                React.createElement(TabBar, {
+                    tabs: tabs,
+                    active: 'dashboard',
+                    onChange: (key) => {
+                        if (key === 'exams') onNavigate('exams');
+                        else if (key === 'classes') onNavigate('classes');
+                        else if (key === 'students') onNavigate('students');
+                        else if (key === 'results') onNavigate('results');
+                        else if (key === 'messages') onNavigate('messages');
+                    }
+                }),
+
+                React.createElement('div', { className: 'grid-3' },
+                    React.createElement(StatBox, { num: exams.length, label: 'آزمون‌ها' }),
+                    React.createElement(StatBox, { num: myQuestions.length, label: 'سوالات' }),
+                    React.createElement(StatBox, { num: classes.length, label: 'کلاس‌ها' }),
+                    React.createElement(StatBox, { num: roster.length, label: 'دانش‌آموزان' }),
+                    React.createElement(StatBox, { num: avg + '%', label: 'میانگین نمرات' })
+                ),
+
+                React.createElement('div', { className: 'border-top' },
+                    React.createElement('h2', null, 'آزمون‌های اخیر'),
+                    exams.length === 0 ?
+                    React.createElement(EmptyState, { text: 'هنوز آزمونی نساخته‌اید. از بخش آزمون‌ها شروع کنید.' }) :
+                    exams.slice(0, 5).map(ex => {
+                        const qCount = questions.filter(q => q.exam_id === ex.id).length;
+                        return React.createElement('div', { className: 'list-item', key: ex.id },
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'title' }, ex.title),
+                                React.createElement('div', { className: 'sub' },
+                                    qCount + ' سوال · ' + new Date(ex.created_at)
+                                    .toLocaleDateString('fa-IR')
+                                )
+                            ),
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'ghost',
+                                onClick: () => onNavigate('exams')
+                            }, 'مدیریت')
+                        );
+                    })
+                )
+            );
+        }
+
+        // ============================================================
+        // مدیریت آزمون‌ها (معلم)
+        // ============================================================
+
+        function ExamsScreen({ teacher, onBack, onNavigate, refresh }) {
+            const [showModal, setShowModal] = React.useState(false);
+            const [title, setTitle] = React.useState('');
+            const [duration, setDuration] = React.useState('');
+            const [code, setCode] = React.useState('');
+            const [opensAt, setOpensAt] = React.useState('');
+            const [closesAt, setClosesAt] = React.useState('');
+            const [shuffleQ, setShuffleQ] = React.useState(false);
+            const [showAnswers, setShowAnswers] = React.useState(false);
+            const [saving, setSaving] = React.useState(false);
+
+            const exams = loadAll('exam:').filter(e => e.teacher_id === teacher.username)
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            const questions = loadAll('question:');
+
+            const createExam = () => {
+                if (!title.trim()) return;
+                setSaving(true);
+                const id = uid();
+                setJSON(`exam:${id}`, {
+                    id,
+                    title: title.trim(),
+                    teacher_id: teacher.username,
+                    duration_minutes: Number(duration) || null,
+                    access_code: code.trim() || null,
+                    opens_at: opensAt || null,
+                    closes_at: closesAt || null,
+                    shuffle_questions: shuffleQ,
+                    show_answers: showAnswers,
+                    created_at: new Date().toISOString()
+                });
+                setSaving(false);
+                setTitle('');
+                setDuration('');
+                setCode('');
+                setOpensAt('');
+                setClosesAt('');
+                setShuffleQ(false);
+                setShowAnswers(false);
+                setShowModal(false);
+                refresh();
+            };
+
+            const removeExam = (id) => {
+                if (!confirm('آزمون حذف شود؟')) return;
+                deleteKey(`exam:${id}`);
+                loadAll('question:').filter(q => q.exam_id === id).forEach(q => deleteKey(`question:${q.id}`));
+                loadAll('answer:').filter(a => a.exam_id === id).forEach(a => deleteKey(`answer:${a.id}`));
+                refresh();
+            };
+
+            const copyExamLink = (id) => {
+                const link = window.location.href.split('?')[0] + '?exam=' + id;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(link).then(() => alert('لینک کپی شد!'));
+                } else {
+                    prompt('لینک آزمون:', link);
+                }
+            };
+
+            const printExam = (examId) => {
+                const qs = questions.filter(q => q.exam_id === examId);
+                if (qs.length === 0) { alert('این آزمون سوالی ندارد.'); return; }
+                let html =
+                    `<html><head><meta charset="UTF-8"><title>${exams.find(e=>e.id===examId).title}</title>
+                        <style>body{font-family:Tahoma;padding:30px;direction:rtl}h1{font-size:20px;border-bottom:2px solid #111;padding-bottom:10px}
+                        .q{margin-bottom:20px;border-bottom:1px solid #eee;padding-bottom:10px}</style></head><body>
+                        <h1>${exams.find(e=>e.id===examId).title}</h1>
+                        <p>نام: ......................................</p>`;
+                qs.forEach((q, i) => {
+                    html +=
+                        `<div class="q"><b>${i+1}. ${q.question_text}</b> (${q.mark} نمره)<br>`;
+                    if (q.type === 'mc') {
+                        html +=
+                            `A) ${q.option_a}<br>B) ${q.option_b}<br>C) ${q.option_c}<br>D) ${q.option_d}<br>`;
+                    }
+                    html += `</div>`;
+                });
+                html += `</body></html>`;
+                const win = window.open('', '_blank');
+                if (win) { win.document.write(html);
+                    win.document.close();
+                    setTimeout(() => win.print(), 300); } else { alert('پاپ‌آپ مسدود شده است.'); }
+            };
+
+            const qCount = (id) => questions.filter(q => q.exam_id === id).length;
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '📝 آزمون‌ها'),
+                    React.createElement('div', { className: 'flex' },
+                        React.createElement(Button, { onClick: () => setShowModal(true) }, '➕ آزمون جدید'),
+                        React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                    )
+                ),
+
+                exams.length === 0 ?
+                React.createElement(EmptyState, { text: 'هنوز آزمونی نساخته‌اید. دکمه "آزمون جدید" را بزنید.' }) :
+                exams.map(ex =>
+                    React.createElement('div', { className: 'list-item', key: ex.id },
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'title' }, ex.title),
+                            React.createElement('div', { className: 'sub' },
+                                qCount(ex.id) + ' سوال',
+                                ex.duration_minutes ? ` · ${ex.duration_minutes} دقیقه` : '',
+                                ` · ${new Date(ex.created_at).toLocaleDateString('fa-IR')}`,
+                                ex.access_code ? ' · 🔒 کد دارد' : ' · 🔓 بدون کد'
+                            ),
+                            React.createElement('div', { className: 'flex', style: { marginTop: 4 } },
+                                ex.shuffle_questions && React.createElement(Badge, { tone: 'gray' },
+                                    '🔀 تصادفی'),
+                                ex.show_answers && React.createElement(Badge, { tone: 'green' },
+                                    'نمایش پاسخ‌ها')
+                            )
+                        ),
+                        React.createElement('div', { className: 'flex' },
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'ghost',
+                                onClick: () => onNavigate('questions', ex.id)
+                            }, 'سوالات'),
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'ghost',
+                                onClick: () => copyExamLink(ex.id)
+                            }, '📋 لینک'),
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'ghost',
+                                onClick: () => printExam(ex.id)
+                            }, '🖨️ چاپ'),
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'danger',
+                                onClick: () => removeExam(ex.id)
+                            }, '🗑️')
+                        )
+                    )
+                ),
+
+                showModal && React.createElement(Modal, { title: 'ساخت آزمون جدید', onClose: () => setShowModal(
+                        false) },
+                    React.createElement(Field, { label: 'عنوان آزمون' },
+                        React.createElement(TextInput, { value: title, onChange: setTitle,
+                            placeholder: 'مثلاً: ریاضی فصل ۴' })
+                    ),
+                    React.createElement('div', { className: 'grid-2' },
+                        React.createElement(Field, { label: 'مدت زمان (دقیقه)' },
+                            React.createElement(TextInput, { type: 'number', value: duration,
+                                onChange: setDuration, placeholder: 'اختیاری' })
+                        ),
+                        React.createElement(Field, { label: 'کد دسترسی' },
+                            React.createElement(TextInput, { value: code, onChange: setCode,
+                                placeholder: 'اختیاری' })
+                        )
+                    ),
+                    React.createElement('div', { className: 'grid-2' },
+                        React.createElement(Field, { label: 'زمان باز شدن' },
+                            React.createElement(TextInput, { type: 'datetime-local', value: opensAt,
+                                onChange: setOpensAt })
+                        ),
+                        React.createElement(Field, { label: 'زمان بسته شدن' },
+                            React.createElement(TextInput, { type: 'datetime-local', value: closesAt,
+                                onChange: setClosesAt })
+                        )
+                    ),
+                    React.createElement('div', { className: 'flex', style: { marginBottom: 10 } },
+                        React.createElement('label', { style: { display: 'flex', alignItems: 'center',
+                                gap: 6, fontSize: 13, cursor: 'pointer' } },
+                            React.createElement('input', {
+                                type: 'checkbox',
+                                checked: shuffleQ,
+                                onChange: () => setShuffleQ(!shuffleQ),
+                                style: { width: 'auto', margin: 0 }
+                            }),
+                            'ترتیب سوالات تصادفی باشد'
+                        ),
+                        React.createElement('label', { style: { display: 'flex', alignItems: 'center',
+                                gap: 6, fontSize: 13, cursor: 'pointer' } },
+                            React.createElement('input', {
+                                type: 'checkbox',
+                                checked: showAnswers,
+                                onChange: () => setShowAnswers(!showAnswers),
+                                style: { width: 'auto', margin: 0 }
+                            }),
+                            'نمایش پاسخ‌ها بعد از آزمون'
+                        )
+                    ),
+                    React.createElement('div', { className: 'flex', style: { marginTop: 10,
+                            justifyContent: 'flex-end' } },
+                        React.createElement(Button, { variant: 'ghost', onClick: () => setShowModal(false) },
+                            'انصراف'),
+                        React.createElement(Button, { onClick: createExam, disabled: saving },
+                            saving ? 'در حال ساخت...' : 'ساخت آزمون'
+                        )
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // مدیریت سوالات (معلم)
+        // ============================================================
+
+        function QuestionsScreen({ exam, onBack, refresh }) {
+            const [text, setText] = React.useState('');
+            const [mark, setMark] = React.useState(1);
+            const [type, setType] = React.useState('mc');
+            const [options, setOptions] = React.useState(['', '', '', '']);
+            const [correct, setCorrect] = React.useState(0);
+            const [modelAnswer, setModelAnswer] = React.useState('');
+            const [keywords, setKeywords] = React.useState('');
+            const [saving, setSaving] = React.useState(false);
+            const [editingId, setEditingId] = React.useState(null);
+            const [showBulk, setShowBulk] = React.useState(false);
+            const [bulkText, setBulkText] = React.useState('');
+
+            const questions = loadAll('question:').filter(q => q.exam_id === exam.id);
+
+            const resetForm = () => {
+                setText('');
+                setMark(1);
+                setType('mc');
+                setOptions(['', '', '', '']);
+                setCorrect(0);
+                setModelAnswer('');
+                setKeywords('');
+                setEditingId(null);
+            };
+
+            const startEdit = (q) => {
+                setEditingId(q.id);
+                setText(q.question_text);
+                setMark(q.mark || 1);
+                setType(q.type || 'mc');
+                if (q.type === 'mc') {
+                    setOptions([q.option_a || '', q.option_b || '', q.option_c || '', q.option_d || '']);
+                    setCorrect(['A', 'B', 'C', 'D'].indexOf(q.correct_answer) || 0);
+                } else {
+                    setModelAnswer(q.model_answer || '');
+                    setKeywords((q.keywords || []).join(', '));
+                }
+            };
+
+            const saveQuestion = () => {
+                if (!text.trim()) return;
+                if (type === 'mc' && options.some(o => !o.trim())) {
+                    alert('همه گزینه‌ها را پر کنید.');
+                    return;
+                }
+                setSaving(true);
+                const id = editingId || uid();
+                const payload = {
+                    id,
+                    exam_id: exam.id,
+                    question_text: text.trim(),
+                    mark: Number(mark) || 1,
+                    type: type,
+                    created_at: new Date().toISOString()
+                };
+                if (type === 'mc') {
+                    payload.option_a = options[0];
+                    payload.option_b = options[1];
+                    payload.option_c = options[2];
+                    payload.option_d = options[3];
+                    payload.correct_answer = ['A', 'B', 'C', 'D'][correct];
+                } else {
+                    payload.model_answer = modelAnswer.trim() || null;
+                    payload.keywords = keywords.split(',').map(k => k.trim()).filter(Boolean);
+                }
+                setJSON(`question:${id}`, payload);
+                setSaving(false);
+                resetForm();
+                refresh();
+            };
+
+            const removeQuestion = (id) => {
+                if (!confirm('این سوال حذف شود؟')) return;
+                deleteKey(`question:${id}`);
+                if (editingId === id) resetForm();
+                refresh();
+            };
+
+            const parseBulk = (text) => {
+                const blocks = text.split(/\n\s*(?:---)?\s*\n/).map(b => b.trim()).filter(Boolean);
+                const parsed = [];
+                blocks.forEach((block) => {
+                    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+                    const qLine = lines.find(l => /^Q:/i.test(l));
+                    if (!qLine) return;
+                    const typeLine = lines.find(l => /^TYPE:/i.test(l));
+                    const isEssay = typeLine && /essay|تشریحی/i.test(typeLine.replace(/^TYPE:/i, '').trim());
+                    const markLine = lines.find(l => /^MARK:/i.test(l));
+                    if (isEssay) {
+                        const answerLine = lines.find(l => /^ANSWER:/i.test(l));
+                        parsed.push({
+                            type: 'essay',
+                            question_text: qLine.replace(/^Q:/i, '').trim(),
+                            model_answer: answerLine ? answerLine.replace(/^ANSWER:/i, '').trim() : '',
+                            mark: markLine ? Number(markLine.replace(/^MARK:/i, '').trim()) || 1 : 1
+                        });
+                    } else {
+                        const optA = lines.find(l => /^A\)/i.test(l));
+                        const optB = lines.find(l => /^B\)/i.test(l));
+                        const optC = lines.find(l => /^C\)/i.test(l));
+                        const optD = lines.find(l => /^D\)/i.test(l));
+                        const ansLine = lines.find(l => /^ANSWER:/i.test(l));
+                        if (!optA || !optB || !optC || !optD || !ansLine) return;
+                        const answers = ansLine.replace(/^ANSWER:/i, '').trim().toUpperCase().split(/[,\s]+/)
+                            .filter(Boolean);
+                        parsed.push({
+                            type: 'mc',
+                            question_text: qLine.replace(/^Q:/i, '').trim(),
+                            option_a: optA.replace(/^A\)/i, '').trim(),
+                            option_b: optB.replace(/^B\)/i, '').trim(),
+                            option_c: optC.replace(/^C\)/i, '').trim(),
+                            option_d: optD.replace(/^D\)/i, '').trim(),
+                            correct_answer: answers.length === 1 ? answers[0] : 'A',
+                            mark: markLine ? Number(markLine.replace(/^MARK:/i, '').trim()) || 1 : 1
+                        });
+                    }
+                });
+                return parsed;
+            };
+
+            const runBulkImport = () => {
+                const parsed = parseBulk(bulkText);
+                if (parsed.length === 0) { alert('سوال معتبری پیدا نشد.'); return; }
+                parsed.forEach(p => {
+                    const id = uid();
+                    setJSON(`question:${id}`, { ...p, id, exam_id: exam.id, created_at: new Date()
+                            .toISOString() });
+                });
+                setBulkText('');
+                setShowBulk(false);
+                refresh();
+            };
+
+            const letters = ['A', 'B', 'C', 'D'];
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '❓ ' + exam.title),
+                    React.createElement('div', { className: 'flex' },
+                        React.createElement(Button, { variant: 'ghost', className: 'btn-sm',
+                            onClick: () => setShowBulk(!showBulk) }, '📥 وارد کردن دسته‌ای'),
+                        React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                    )
+                ),
+
+                showBulk &&
+                React.createElement('div', { style: { background: '#F8FAFC', padding: 12, borderRadius: 8,
+                        marginBottom: 12 } },
+                    React.createElement('div', { className: 'text-muted', style: { fontSize: 11,
+                            marginBottom: 6 } },
+                        'فرمت: Q: متن سوال، A) گزینه، B) گزینه، ...، ANSWER: پاسخ صحیح، MARK: نمره'
+                    ),
+                    React.createElement(TextInput, {
+                        value: bulkText,
+                        onChange: setBulkText,
+                        placeholder: 'سوالات را با فرمت بالا وارد کنید...',
+                        style: { minHeight: 80 }
+                    }),
+                    React.createElement('div', { className: 'flex', style: { marginTop: 6 } },
+                        React.createElement(Button, { className: 'btn-sm', onClick: runBulkImport },
+                            'افزودن سوالات'),
+                        React.createElement(Button, { className: 'btn-sm', variant: 'ghost',
+                            onClick: () => { setShowBulk(false);
+                                setBulkText(''); } }, 'لغو')
+                    )
+                ),
+
+                React.createElement('div', { style: { background: '#F8FAFC', padding: 14, borderRadius: 8,
+                        marginBottom: 14 } },
+                    React.createElement('div', { className: 'grid-2' },
+                        React.createElement(Field, { label: 'متن سوال' },
+                            React.createElement(TextInput, { value: text, onChange: setText,
+                                placeholder: 'متن سوال را وارد کنید' })
+                        ),
+                        React.createElement(Field, { label: 'نمره' },
+                            React.createElement(TextInput, { type: 'number', value: mark, onChange: setMark,
+                                style: { maxWidth: 100 } })
+                        )
+                    ),
+                    React.createElement(Field, { label: 'نوع سوال' },
+                        React.createElement('select', { value: type, onChange: e => setType(e.target.value),
+                                style: { width: '100%', padding: '8px 12px', borderRadius: 8,
+                                    border: '1.5px solid #DCE3EA', fontSize: 13, fontFamily: 'inherit',
+                                    background: 'white' } },
+                            React.createElement('option', { value: 'mc' }, 'چهارگزینه‌ای'),
+                            React.createElement('option', { value: 'essay' }, 'تشریحی')
+                        )
+                    ),
+                    type === 'mc' ?
+                    React.createElement('div', { className: 'grid-2' },
+                        options.map((opt, i) =>
+                            React.createElement(Field, { key: i, label: 'گزینه ' + letters[i] },
+                                React.createElement('div', { className: 'flex', style: { alignItems: 'center',
+                                        gap: 6 } },
+                                    React.createElement('input', {
+                                        type: 'radio',
+                                        name: 'correct',
+                                        checked: correct === i,
+                                        onChange: () => setCorrect(i),
+                                        style: { width: 'auto', margin: 0 }
+                                    }),
+                                    React.createElement(TextInput, {
+                                        value: opt,
+                                        onChange: v => { const o = [...options];
+                                            o[i] = v;
+                                            setOptions(o); },
+                                        placeholder: 'گزینه ' + letters[i]
+                                    })
+                                )
+                            )
+                        )
+                    ) :
+                    React.createElement(React.Fragment, null,
+                        React.createElement(Field, { label: 'پاسخ نمونه (اختیاری)' },
+                            React.createElement(TextInput, { value: modelAnswer, onChange: setModelAnswer,
+                                placeholder: 'پاسخ نمونه برای راهنمایی' })
+                        ),
+                        React.createElement(Field, { label: 'کلمات کلیدی (با ویرگول جدا کنید)' },
+                            React.createElement(TextInput, { value: keywords, onChange: setKeywords,
+                                placeholder: 'مثلاً: کلمه۱, کلمه۲, کلمه۳' })
+                        )
+                    ),
+                    React.createElement('div', { className: 'flex', style: { marginTop: 8 } },
+                        React.createElement(Button, { onClick: saveQuestion, disabled: saving },
+                            editingId ? '💾 ذخیره تغییرات' : '➕ افزودن سوال'
+                        ),
+                        editingId &&
+                        React.createElement(Button, { variant: 'ghost', onClick: resetForm }, 'لغو ویرایش')
+                    )
+                ),
+
+                questions.length === 0 ?
+                React.createElement(EmptyState, { text: 'هنوز سوالی اضافه نشده.' }) :
+                questions.map((q, i) =>
+                    React.createElement('div', { className: 'list-item', key: q.id },
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'title' }, `${i+1}. ${q.question_text}`),
+                            React.createElement('div', { className: 'sub' },
+                                'نمره: ' + q.mark,
+                                q.type === 'essay' ? ' · تشریحی' : ' · چهارگزینه‌ای',
+                                q.type === 'mc' ? ` · پاسخ صحیح: ${q.correct_answer}` : ''
+                            )
+                        ),
+                        React.createElement('div', { className: 'flex' },
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'ghost',
+                                onClick: () => startEdit(q)
+                            }, '✏️'),
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'danger',
+                                onClick: () => removeQuestion(q.id)
+                            }, '🗑️')
+                        )
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // مدیریت کلاس‌ها (معلم)
+        // ============================================================
+
+        function ClassesScreen({ teacher, onBack, onNavigate, refresh }) {
+            const [showModal, setShowModal] = React.useState(false);
+            const [name, setName] = React.useState('');
+            const [saving, setSaving] = React.useState(false);
+            const [editingId, setEditingId] = React.useState(null);
+            const [editName, setEditName] = React.useState('');
+
+            const classes = loadAll('class:').filter(c => c.teacher_id === teacher.username);
+            const roster = loadAll('roster:');
+
+            const createClass = () => {
+                if (!name.trim()) return;
+                setSaving(true);
+                const id = uid();
+                setJSON(`class:${id}`, {
+                    id,
+                    name: name.trim(),
+                    teacher_id: teacher.username,
+                    created_at: new Date().toISOString()
+                });
+                setSaving(false);
+                setName('');
+                setShowModal(false);
+                refresh();
+            };
+
+            const updateClass = (id) => {
+                if (!editName.trim()) return;
+                const cls = classes.find(c => c.id === id);
+                if (cls) {
+                    setJSON(`class:${id}`, { ...cls, name: editName.trim() });
+                    setEditingId(null);
+                    setEditName('');
+                    refresh();
+                }
+            };
+
+            const removeClass = (id) => {
+                if (!confirm('این کلاس حذف شود؟')) return;
+                deleteKey(`class:${id}`);
+                loadAll('roster:').filter(r => r.class_id === id).forEach(r => deleteKey(`roster:${r.id}`));
+                refresh();
+            };
+
+            const startEdit = (c) => {
+                setEditingId(c.id);
+                setEditName(c.name);
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '📚 کلاس‌ها'),
+                    React.createElement('div', { className: 'flex' },
+                        React.createElement(Button, { onClick: () => setShowModal(true) }, '➕ کلاس جدید'),
+                        React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                    )
+                ),
+
+                classes.length === 0 ?
+                React.createElement(EmptyState, { text: 'هنوز کلاسی نساخته‌اید.' }) :
+                classes.map(c => {
+                    const count = roster.filter(r => r.class_id === c.id).length;
+                    return React.createElement('div', { className: 'list-item', key: c.id },
+                        React.createElement('div', null,
+                            editingId === c.id ?
+                            React.createElement('div', { className: 'flex' },
+                                React.createElement(TextInput, {
+                                    value: editName,
+                                    onChange: setEditName,
+                                    placeholder: 'نام جدید',
+                                    style: { maxWidth: 200, margin: 0 }
+                                }),
+                                React.createElement(Button, { className: 'btn-sm', onClick: () =>
+                                        updateClass(c.id) }, 'ذخیره'),
+                                React.createElement(Button, { className: 'btn-sm', variant: 'ghost',
+                                    onClick: () => { setEditingId(null);
+                                        setEditName(''); } }, 'لغو')
+                            ) :
+                            React.createElement(React.Fragment, null,
+                                React.createElement('div', { className: 'title' }, c.name),
+                                React.createElement('div', { className: 'sub' }, count + ' دانش‌آموز')
+                            )
+                        ),
+                        editingId !== c.id &&
+                        React.createElement('div', { className: 'flex' },
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'ghost',
+                                onClick: () => onNavigate('roster', c.id)
+                            }, 'دانش‌آموزان'),
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'ghost',
+                                onClick: () => startEdit(c)
+                            }, '✏️'),
+                            React.createElement(Button, {
+                                className: 'btn-sm',
+                                variant: 'danger',
+                                onClick: () => removeClass(c.id)
+                            }, '🗑️')
+                        )
+                    );
+                }),
+
+                showModal && React.createElement(Modal, { title: 'افزودن کلاس جدید', onClose: () => setShowModal(
+                        false) },
+                    React.createElement(Field, { label: 'نام کلاس' },
+                        React.createElement(TextInput, { value: name, onChange: setName,
+                            placeholder: 'مثلاً: هفتم الف' })
+                    ),
+                    React.createElement('div', { className: 'flex', style: { marginTop: 10,
+                            justifyContent: 'flex-end' } },
+                        React.createElement(Button, { variant: 'ghost', onClick: () => setShowModal(false) },
+                            'انصراف'),
+                        React.createElement(Button, { onClick: createClass, disabled: saving },
+                            saving ? 'در حال ساخت...' : 'ساخت کلاس'
+                        )
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // مدیریت دانش‌آموزان (معلم) - Roster
+        // ============================================================
+
+        function RosterScreen({ classroom, teacher, onBack, refresh }) {
+            const [name, setName] = React.useState('');
+            const [saving, setSaving] = React.useState(false);
+            const [showBulk, setShowBulk] = React.useState(false);
+            const [bulkText, setBulkText] = React.useState('');
+
+            const roster = loadAll('roster:').filter(r => r.class_id === classroom.id);
+            const allCodes = loadAll('roster:').filter(r => r.teacher_id === teacher.username).map(r => r.code);
+
+            const addStudent = () => {
+                if (!name.trim()) return;
+                setSaving(true);
+                const id = uid();
+                const code = generateCode(allCodes);
+                setJSON(`roster:${id}`, {
+                    id,
+                    class_id: classroom.id,
+                    teacher_id: teacher.username,
+                    fullname: name.trim(),
+                    code,
+                    created_at: new Date().toISOString()
+                });
+                allCodes.push(code);
+                setSaving(false);
+                setName('');
+                refresh();
+            };
+
+            const addBulkStudents = () => {
+                const names = bulkText.split(/[\n,]/).map(n => n.trim()).filter(Boolean);
+                if (names.length === 0) { alert('هیچ نامی وارد نشده است.'); return; }
+                let added = 0;
+                names.forEach(n => {
+                    const id = uid();
+                    const code = generateCode(allCodes);
+                    setJSON(`roster:${id}`, {
+                        id,
+                        class_id: classroom.id,
+                        teacher_id: teacher.username,
+                        fullname: n,
+                        code,
+                        created_at: new Date().toISOString()
+                    });
+                    allCodes.push(code);
+                    added++;
+                });
+                setBulkText('');
+                setShowBulk(false);
+                refresh();
+                alert(added + ' دانش‌آموز اضافه شد.');
+            };
+
+            const removeStudent = (id) => {
+                if (!confirm('این دانش‌آموز حذف شود؟')) return;
+                deleteKey(`roster:${id}`);
+                refresh();
+            };
+
+            const regenerateCode = (student) => {
+                const newCode = generateCode(allCodes.filter(c => c !== student.code));
+                setJSON(`roster:${student.id}`, { ...student, code: newCode });
+                refresh();
+            };
+
+            const printCodes = () => {
+                if (roster.length === 0) { alert('هیچ دانش‌آموزی وجود ندارد.'); return; }
+                let html =
+                    `<html><head><meta charset="UTF-8"><title>کدهای ورود</title>
+                        <style>body{font-family:Tahoma;padding:20px;direction:rtl}.card{display:inline-block;border:2px dashed #999;border-radius:12px;padding:16px;margin:8px;width:160px;text-align:center}
+                        .code{font-size:24px;font-weight:bold;color:#2563EB;letter-spacing:3px}</style></head><body>`;
+                roster.forEach(s => {
+                    html +=
+                        `<div class="card"><div>${classroom.name}</div><div style="font-weight:bold;margin:6px 0">${s.fullname}</div><div class="code">${s.code}</div></div>`;
+                });
+                html += `</body></html>`;
+                const win = window.open('', '_blank');
+                if (win) { win.document.write(html);
+                    win.document.close();
+                    setTimeout(() => win.print(), 300); } else { alert('پاپ‌آپ مسدود شده است.'); }
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '👨‍🎓 ' + classroom.name),
+                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                ),
+
+                React.createElement('div', { className: 'flex', style: { marginBottom: 10 } },
+                    React.createElement(Button, { onClick: () => setShowBulk(!showBulk), variant: 'ghost',
+                        className: 'btn-sm' }, showBulk ? 'افزودن تکی' : '📥 افزودن گروهی'),
+                    roster.length > 0 &&
+                    React.createElement(Button, { onClick: printCodes, variant: 'ghost', className: 'btn-sm' },
+                        '🖨️ چاپ کدها')
+                ),
+
+                showBulk ?
+                React.createElement('div', { style: { background: '#F8FAFC', padding: 12, borderRadius: 8,
+                        marginBottom: 10 } },
+                    React.createElement('div', { className: 'text-muted', style: { fontSize: 11,
+                            marginBottom: 4 } }, 'هر نام را در یک خط یا با ویرگول جدا کنید.'),
+                    React.createElement(TextInput, {
+                        value: bulkText,
+                        onChange: setBulkText,
+                        placeholder: 'علی رضایی\nمریم احمدی\nسارا کریمی',
+                        style: { minHeight: 60 }
+                    }),
+                    React.createElement('div', { className: 'flex', style: { marginTop: 6 } },
+                        React.createElement(Button, { className: 'btn-sm', onClick: addBulkStudents },
+                            'افزودن همه'),
+                        React.createElement(Button, { className: 'btn-sm', variant: 'ghost',
+                            onClick: () => { setShowBulk(false);
+                                setBulkText(''); } }, 'لغو')
+                    )
+                ) :
+                React.createElement('div', { className: 'flex' },
+                    React.createElement(TextInput, {
+                        value: name,
+                        onChange: setName,
+                        placeholder: 'نام دانش‌آموز',
+                        style: { flex: 1 }
+                    }),
+                    React.createElement(Button, { onClick: addStudent, disabled: saving },
+                        saving ? '...' : '➕'
+                    )
+                ),
+
+                roster.length === 0 ?
+                React.createElement(EmptyState, { text: 'هنوز دانش‌آموزی اضافه نشده است.' }) :
+                roster.map(s =>
+                    React.createElement('div', { className: 'list-item', key: s.id },
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'title' }, s.fullname),
+                            React.createElement('div', { className: 'sub' },
+                                React.createElement('span', { className: 'code-display' }, s.code),
+                                React.createElement('span', {
+                                    style: { cursor: 'pointer', color: '#2563EB', fontSize: 11,
+                                        marginRight: 8 },
+                                    onClick: () => regenerateCode(s)
+                                }, '🔄 کد جدید')
+                            )
+                        ),
+                        React.createElement(Button, {
+                            className: 'btn-sm',
+                            variant: 'danger',
+                            onClick: () => removeStudent(s.id)
+                        }, '🗑️')
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // مدیریت دانش‌آموزان (معلم) - لیست همه
+        // ============================================================
+
+        function StudentsScreen({ teacher, onBack, refresh }) {
+            const roster = loadAll('roster:').filter(r => r.teacher_id === teacher.username);
+            const classes = loadAll('class:').filter(c => c.teacher_id === teacher.username);
+            const answers = loadAll('answer:');
+
+            const getClassName = (id) => {
+                const c = classes.find(c => c.id === id);
+                return c ? c.name : '—';
+            };
+
+            const getStudentStats = (studentId) => {
+                const studentAnswers = answers.filter(a => a.student_id === studentId);
+                const examIds = [...new Set(studentAnswers.map(a => a.exam_id))];
+                let total = 0,
+                    got = 0;
+                studentAnswers.forEach(a => { total += a.mark || 1;
+                    got += awardedMarkOf(a); });
+                const avg = total ? Math.round((got / total) * 100) : 0;
+                return { examCount: examIds.length, avg };
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '👨‍🎓 همه دانش‌آموزان'),
+                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                ),
+
+                roster.length === 0 ?
+                React.createElement(EmptyState, { text: 'هنوز دانش‌آموزی به کلاس‌ها اضافه نشده است.' }) :
+                roster.map(s => {
+                    const stats = getStudentStats(s.id);
+                    return React.createElement('div', { className: 'list-item', key: s.id },
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'title' }, s.fullname),
+                            React.createElement('div', { className: 'sub' },
+                                'کلاس: ' + getClassName(s.class_id),
+                                ' · کد: ' + React.createElement('span', { className: 'code-display' },
+                                    s.code),
+                                stats.examCount > 0 ?
+                                ` · ${stats.examCount} آزمون · میانگین: ${stats.avg}%` :
+                                ' · هنوز آزمونی نداده'
+                            )
+                        ),
+                        React.createElement(Badge, { tone: stats.avg >= 50 ? 'green' : 'gray' },
+                            stats.avg > 0 ? stats.avg + '%' : 'ثبت‌نشده'
+                        )
+                    );
+                })
+            );
+        }
+
+        // ============================================================
+        // نتایج (معلم)
+        // ============================================================
+
+        function ResultsScreen({ teacher, onBack, refresh }) {
+            const [examId, setExamId] = React.useState(null);
+            const exams = loadAll('exam:').filter(e => e.teacher_id === teacher.username);
+            const questions = loadAll('question:');
+            const answers = loadAll('answer:');
+            const roster = loadAll('roster:').filter(r => r.teacher_id === teacher.username);
+
+            const exam = exams.find(e => e.id === examId);
+            const examQuestions = exam ? questions.filter(q => q.exam_id === exam.id) : [];
+            const examAnswers = exam ? answers.filter(a => a.exam_id === exam.id) : [];
+
+            const byStudent = {};
+            examAnswers.forEach(a => {
+                byStudent[a.student_id] = byStudent[a.student_id] || [];
+                byStudent[a.student_id].push(a);
+            });
+
+            const rows = Object.entries(byStudent).map(([sid, list]) => {
+                const student = roster.find(r => r.id === sid);
+                const total = list.reduce((s, a) => s + (a.mark || 1), 0);
+                const got = list.reduce((s, a) => s + awardedMarkOf(a), 0);
+                const pct = total ? Math.round((got / total) * 100) : 0;
+                const correctCount = list.filter(a => a.is_correct).length;
+                return {
+                    name: student ? student.fullname : '—',
+                    code: student ? student.code : '—',
+                    pct,
+                    correctCount,
+                    total: list.length,
+                    answers: list
+                };
+            }).sort((a, b) => b.pct - a.pct);
+
+            const avg = rows.length ? Math.round(rows.reduce((s, r) => s + r.pct, 0) / rows.length) : 0;
+
+            const exportCSV = () => {
+                if (rows.length === 0) { alert('هیچ داده‌ای برای خروجی وجود ندارد.'); return; }
+                const header = ['رتبه', 'نام', 'کد', 'نمره', 'پاسخ صحیح', 'تعداد سوالات'];
+                const lines = [header.join(',')];
+                rows.forEach((r, i) => {
+                    lines.push([i + 1, r.name, r.code, r.pct + '%', r.correctCount + '/' + r.total, r.total]
+                        .join(','));
+                });
+                downloadTextFile(exam.title + '-نتایج.csv', '\uFEFF' + lines.join('\n'), 'text/csv;charset=utf-8;');
+            };
+
+            // تصحیح تشریحی
+            const [essayGrades, setEssayGrades] = React.useState({});
+            const essayAnswers = examAnswers.filter(a => {
+                const q = questions.find(q => q.id === a.question_id);
+                return q && q.type === 'essay' && a.selected_option;
+            });
+
+            const saveEssayGrade = (answerId, mark, maxMark) => {
+                const val = Math.min(Math.max(Number(mark) || 0, 0), maxMark);
+                const current = getJSON(`answer:${answerId}`);
+                if (current) {
+                    setJSON(`answer:${answerId}`, { ...current, awarded_mark: val, is_correct: val >= maxMark });
+                    refresh();
+                }
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '📊 نتایج'),
+                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                ),
+
+                React.createElement(Field, { label: 'انتخاب آزمون' },
+                    React.createElement('select', { value: examId || '', onChange: e => setExamId(e.target.value) },
+                        React.createElement('option', { value: '' }, '— انتخاب کنید —'),
+                        exams.map(e =>
+                            React.createElement('option', { key: e.id, value: e.id }, e.title)
+                        )
+                    )
+                ),
+
+                exam && React.createElement(React.Fragment, null,
+                    React.createElement('div', { className: 'grid-3' },
+                        React.createElement(StatBox, { num: rows.length, label: 'شرکت‌کنندگان' }),
+                        React.createElement(StatBox, { num: avg + '%', label: 'میانگین نمرات' }),
+                        React.createElement(StatBox, { num: examQuestions.length, label: 'تعداد سوالات' })
+                    ),
+
+                    rows.length === 0 ?
+                    React.createElement(EmptyState, { text: 'هنوز کسی در این آزمون شرکت نکرده است.' }) :
+                    React.createElement(React.Fragment, null,
+                        React.createElement('div', { className: 'flex', style: { marginBottom: 10 } },
+                            React.createElement(Button, { className: 'btn-sm', variant: 'ghost',
+                                onClick: exportCSV }, '📥 خروجی CSV')
+                        ),
+                        rows.map((r, i) =>
+                            React.createElement('div', { className: 'list-item', key: i },
+                                React.createElement('div', null,
+                                    React.createElement('div', { className: 'title' },
+                                        `${i+1}. ${r.name}`,
+                                        React.createElement(Badge, {
+                                            tone: r.pct >= 70 ? 'green' : r.pct >= 50 ? 'orange' :
+                                            'red',
+                                            style: { marginRight: 8 }
+                                        }, r.pct + '%')
+                                    ),
+                                    React.createElement('div', { className: 'sub' },
+                                        'کد: ' + r.code,
+                                        ` · ${r.correctCount} پاسخ صحیح از ${r.total}`
+                                    )
+                                )
+                            )
+                        )
+                    ),
+
+                    essayAnswers.length > 0 &&
+                    React.createElement('div', { className: 'border-top' },
+                        React.createElement('h2', null, '📝 تصحیح تشریحی'),
+                        essayAnswers.map(a => {
+                            const q = questions.find(q => q.id === a.question_id);
+                            const student = roster.find(r => r.id === a.student_id);
+                            const grade = essayGrades[a.id] || a.awarded_mark || '';
+                            return React.createElement('div', { className: 'list-item', key: a.id },
+                                React.createElement('div', null,
+                                    React.createElement('div', { className: 'title' }, student ?
+                                        student.fullname : '—'),
+                                    React.createElement('div', { className: 'sub' },
+                                        q ? q.question_text : '—',
+                                        React.createElement('br', null),
+                                        React.createElement('span', { style: { color: '#6B7A8A',
+                                                fontSize: 11 } }, a.selected_option)
+                                    )
+                                ),
+                                React.createElement('div', { className: 'flex' },
+                                    React.createElement('input', {
+                                        type: 'number',
+                                        min: 0,
+                                        max: q ? q.mark : 1,
+                                        value: grade,
+                                        onChange: e => setEssayGrades({ ...essayGrades,
+                                            [a.id]: e.target.value }),
+                                        style: { width: 60, padding: '4px 8px',
+                                            borderRadius: 6, border: '1.5px solid #DCE3EA',
+                                            fontSize: 13 }
+                                    }),
+                                    React.createElement(Button, {
+                                        className: 'btn-sm',
+                                        onClick: () => saveEssayGrade(a.id, grade, q ? q
+                                            .mark : 1)
+                                    }, 'ثبت')
+                                )
+                            );
+                        })
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // پیام‌ها (معلم)
+        // ============================================================
+
+        function MessagesScreen({ teacher, onBack, refresh }) {
+            const [text, setText] = React.useState('');
+            const [target, setTarget] = React.useState('all');
+            const [classId, setClassId] = React.useState('');
+            const [studentId, setStudentId] = React.useState('');
+            const [sending, setSending] = React.useState(false);
+
+            const classes = loadAll('class:').filter(c => c.teacher_id === teacher.username);
+            const roster = loadAll('roster:').filter(r => r.teacher_id === teacher.username);
+            const messages = loadAll('message:').filter(m => m.teacher_id === teacher.username)
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            const getTargetName = (m) => {
+                if (m.target === 'all') return 'همه دانش‌آموزان';
+                if (m.target === 'class') {
+                    const c = classes.find(c => c.id === m.target_id);
+                    return 'کلاس: ' + (c ? c.name : 'حذف‌شده');
+                }
+                const s = roster.find(r => r.id === m.target_id);
+                return 'دانش‌آموز: ' + (s ? s.fullname : 'حذف‌شده');
+            };
+
+            const sendMessage = () => {
+                if (!text.trim()) return;
+                if (target === 'class' && !classId) { alert('لطفاً یک کلاس انتخاب کنید.'); return; }
+                if (target === 'student' && !studentId) { alert('لطفاً یک دانش‌آموز انتخاب کنید.'); return; }
+                setSending(true);
+                const id = uid();
+                setJSON(`message:${id}`, {
+                    id,
+                    teacher_id: teacher.username,
+                    target: target,
+                    target_id: target === 'all' ? null : target === 'class' ? classId : studentId,
+                    text: text.trim(),
+                    created_at: new Date().toISOString()
+                });
+                setSending(false);
+                setText('');
+                refresh();
+                alert('پیام با موفقیت ارسال شد.');
+            };
+
+            const removeMessage = (id) => {
+                if (!confirm('این پیام حذف شود؟')) return;
+                deleteKey(`message:${id}`);
+                refresh();
+            };
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('h1', null, '💬 پیام‌ها'),
+                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
+                ),
+
+                React.createElement('div', { style: { background: '#F8FAFC', padding: 14, borderRadius: 8,
+                        marginBottom: 14 } },
+                    React.createElement(Field, { label: 'گیرنده' },
+                        React.createElement('div', { className: 'flex' },
+                            [
+                                { key: 'all', label: 'همه دانش‌آموزان' },
+                                { key: 'class', label: 'یک کلاس' },
+                                { key: 'student', label: 'یک دانش‌آموز' }
+                            ].map(t =>
+                                React.createElement(Button, {
+                                    key: t.key,
+                                    variant: target === t.key ? 'primary' : 'ghost',
+                                    className: 'btn-sm',
+                                    onClick: () => setTarget(t.key)
+                                }, t.label)
+                            )
+                        )
+                    ),
+                    target === 'class' &&
+                    React.createElement(Field, { label: 'انتخاب کلاس' },
+                        React.createElement('select', { value: classId, onChange: e => setClassId(e.target
+                                .value) },
+                            React.createElement('option', { value: '' }, '— انتخاب کنید —'),
+                            classes.map(c =>
+                                React.createElement('option', { key: c.id, value: c.id }, c.name)
+                            )
+                        )
+                    ),
+                    target === 'student' &&
+                    React.createElement(Field, { label: 'انتخاب دانش‌آموز' },
+                        React.createElement('select', { value: studentId, onChange: e => setStudentId(e.target
+                                .value) },
+                            React.createElement('option', { value: '' }, '— انتخاب کنید —'),
+                            roster.map(s =>
+                                React.createElement('option', { key: s.id, value: s.id }, s.fullname +
+                                    ' (' + (classes.find(c => c.id === s.class_id)?.name || '—') +
+                                    ')')
+                            )
+                        )
+                    ),
+                    React.createElement(Field, { label: 'متن پیام' },
+                        React.createElement(TextInput, {
+                            value: text,
+                            onChange: setText,
+                            placeholder: 'متن پیام را وارد کنید...',
+                            style: { minHeight: 50 }
+                        })
+                    ),
+                    React.createElement(Button, { onClick: sendMessage, disabled: sending },
+                        sending ? 'در حال ارسال...' : '📤 ارسال پیام'
+                    )
+                ),
+
+                messages.length === 0 ?
+                React.createElement(EmptyState, { text: 'هنوز پیامی ارسال نشده است.' }) :
+                messages.map(m =>
+                    React.createElement('div', { className: 'list-item', key: m.id },
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'title' }, m.text),
+                            React.createElement('div', { className: 'sub' },
+                                getTargetName(m),
+                                ` · ${new Date(m.created_at).toLocaleString('fa-IR')}`
+                            )
+                        ),
+                        React.createElement(Button, {
+                            className: 'btn-sm',
+                            variant: 'danger',
+                            onClick: () => removeMessage(m.id)
+                        }, '🗑️')
+                    )
+                )
+            );
+        }
+
+        // ============================================================
+        // پرتال دانش‌آموز
+        // ============================================================
+
+        function StudentPortal() {
+            const [code, setCode] = React.useState('');
+            const [student, setStudent] = React.useState(null);
+            const [error, setError] = React.useState('');
+
+            const lookup = () => {
+                if (!code.trim()) { setError('کد را وارد کنید.'); return; }
+                const found = loadAll('roster:').find(r => r.code === code.trim());
+                if (!found) { setError('کد پیدا نشد.'); return; }
+                setStudent(found);
+                setError('');
+            };
+
+            if (student) {
+                const answers = loadAll('answer:');
+                const exams = loadAll('exam:');
+                const messages = loadAll('message:').filter(m =>
+                    m.target === 'all' ||
+                    (m.target === 'class' && m.target_id === student.class_id) ||
+                    (m.target === 'student' && m.target_id === student.id)
+                );
+                const studentAnswers = answers.filter(a => a.student_id === student.id);
+                const byExam = {};
+                studentAnswers.forEach(a => {
+                    byExam[a.exam_id] = byExam[a.exam_id] || [];
+                    byExam[a.exam_id].push(a);
+                });
+                const results = Object.entries(byExam).map(([examId, list]) => {
+                    const exam = exams.find(e => e.id === examId);
+                    const total = list.reduce((s, a) => s + (a.mark || 1), 0);
+                    const got = list.reduce((s, a) => s + awardedMarkOf(a), 0);
+                    const pct = total ? Math.round((got / total) * 100) : 0;
+                    return { title: exam ? exam.title : '—', pct, count: list.length, date: list[0]?.answered_at ?
+                            new Date(list[0].answered_at).toLocaleDateString('fa-IR') : '—' };
+                }).sort((a, b) => b.pct - a.pct);
+
+                return React.createElement('div', { className: 'card' },
+                    React.createElement('div', { className: 'header' },
+                        React.createElement('h1', null, '👋 ' + student.fullname),
+                        React.createElement(Button, { variant: 'ghost', onClick: () => setStudent(null) },
+                            '🚪 خروج')
+                    ),
+                    React.createElement('div', { className: 'text-muted', style: { marginBottom: 14 } },
+                        'کلاس: ' + (loadAll('class:').find(c => c.id === student.class_id)?.name || '—')
+                    ),
+
+                    React.createElement('h2', null, '📊 نمرات شما'),
+                    results.length === 0 ?
+                    React.createElement(EmptyState, { text: 'هنوز در آزمونی شرکت نکرده‌اید.' }) :
+                    results.map(r =>
+                        React.createElement('div', { className: 'list-item', key: r.title },
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'title' }, r.title),
+                                React.createElement('div', { className: 'sub' }, r.date)
+                            ),
+                            React.createElement(Badge, { tone: r.pct >= 70 ? 'green' : r.pct >= 50 ?
+                                    'orange' : 'red' }, r.pct + '%')
+                        )
+                    ),
+
+                    messages.length > 0 &&
+                    React.createElement('div', { className: 'border-top' },
+                        React.createElement('h2', null, '💬 پیام‌های معلم'),
+                        messages.map(m =>
+                            React.createElement('div', { className: 'list-item', key: m.id },
+                                React.createElement('div', null,
+                                    React.createElement('div', { className: 'title' }, m.text),
+                                    React.createElement('div', { className: 'sub' },
+                                        new Date(m.created_at).toLocaleString('fa-IR'))
+                                )
+                            )
+                        )
+                    )
+                );
+            }
+
+            return React.createElement('div', { className: 'card' },
+                React.createElement('div', { className: 'logo' }, '👨‍🎓'),
+                React.createElement('h1', { style: { fontSize: 20, color: '#1A2A3A', marginBottom: 2,
+                        textAlign: 'center' } }, 'پرتال دانش‌آموزی'),
+                React.createElement('div', { className: 'text-muted', style: { marginBottom: 16,
+                        textAlign: 'center' } }, 'کد خود را وارد کنید تا نمرات و پیام‌ها را ببینید.'),
+
+                React.createElement(Field, { label: 'کد دانش‌آموزی' },
+                    React.createElement(TextInput, {
+                        value: code,
+                        onChange: setCode,
+                        placeholder: 'کد ۶ رقمی خود را وارد کنید',
+                        onKeyDown: e => e.key === 'Enter' && lookup(),
+                        style: { fontSize: 18, letterSpacing: 3, textAlign: 'center', fontWeight: 700 }
+                    })
+                ),
+
+                error && React.createElement('div', { style: { color: '#DC2626', fontSize: 13, margin: '6px 0' } },
+                    error),
+
+                React.createElement(Button, { onClick: lookup, style: { width: '100%' } }, 'ورود به پرتال')
+            );
+        }
+
+        // ============================================================
+        // اپلیکیشن اصلی
+        // ============================================================
+
+        function App() {
+            const [teacher, setTeacher] = React.useState(null);
+            const [view, setView] = React.useState('login');
+            const [activeExamId, setActiveExamId] = React.useState(null);
+            const [activeClassId, setActiveClassId] = React.useState(null);
+
+            const refresh = () => {};
+
+            const adminExists = loadAll('teacher:').length > 0;
+
+            if (!teacher) {
+                if (view === 'register' || !adminExists) {
+                    return React.createElement(RegisterScreen, {
+                        onRegistered: t => { setTeacher(t);
+                            setView('dashboard'); },
+                        goLogin: () => setView('login')
+                    });
+                }
+                return React.createElement(LoginScreen, {
+                    onLogin: t => { setTeacher(t);
+                        setView('dashboard'); },
+                    onRegister: () => setView('register')
+                });
+            }
+
+            const navigate = (page, id) => {
+                if (page === 'dashboard') { setView('dashboard');
+                    setActiveExamId(null);
+                    setActiveClassId(null); }
+                if (page === 'exams') { setView('exams'); }
+                if (page === 'questions' && id) { setView('questions');
+                    setActiveExamId(id); }
+                if (page === 'classes') { setView('classes'); }
+                if (page === 'roster' && id) { setView('roster');
+                    setActiveClassId(id); }
+                if (page === 'students') { setView('students'); }
+                if (page === 'results') { setView('results'); }
+                if (page === 'messages') { setView('messages'); }
+                if (page === 'teachers') { setView('teachers'); }
+                if (page === 'all-exams') { setView('all-exams'); }
+                if (page === 'all-results') { setView('all-results'); }
+                if (page === 'student-portal') { setView('student-portal'); }
+            };
+
+            const exam = loadAll('exam:').find(e => e.id === activeExamId);
+            const classroom = loadAll('class:').find(c => c.id === activeClassId);
+
+            // ادمین
+            if (teacher.role === 'admin') {
+                if (view === 'teachers') {
+                    return React.createElement(TeachersScreen, { teacher, onBack: () => setView('dashboard'),
+                        refresh });
+                }
+                if (view === 'all-exams') {
+                    return React.createElement(AllExamsScreen, { onBack: () => setView('dashboard'), refresh });
+                }
+                if (view === 'all-results') {
+                    return React.createElement(AllResultsScreen, { onBack: () => setView('dashboard'), refresh });
+                }
+                if (view === 'student-portal') {
+                    return React.createElement(StudentPortal, null);
+                }
+                return React.createElement(AdminDashboard, { teacher, onNavigate: navigate, refresh });
+            }
+
+            // معلم
+            if (view === 'exams') {
+                return React.createElement(ExamsScreen, { teacher, onBack: () => setView('dashboard'),
+                    onNavigate: navigate, refresh });
+            }
+            if (view === 'questions' && exam) {
+                return React.createElement(QuestionsScreen, { exam, onBack: () => setView('exams'), refresh });
+            }
+            if (view === 'classes') {
+                return React.createElement(ClassesScreen, { teacher, onBack: () => setView('dashboard'),
+                    onNavigate: navigate, refresh });
+            }
+            if (view === 'roster' && classroom) {
+                return React.createElement(RosterScreen, { classroom, teacher, onBack: () => setView('classes'),
+                    refresh });
+            }
+            if (view === 'students') {
+                return React.createElement(StudentsScreen, { teacher, onBack: () => setView('dashboard'), refresh });
+            }
+            if (view === 'results') {
+                return React.createElement(ResultsScreen, { teacher, onBack: () => setView('dashboard'), refresh });
+            }
+            if (view === 'messages') {
+                return React.createElement(MessagesScreen, { teacher, onBack: () => setView('dashboard'), refresh });
+            }
+            if (view === 'student-portal') {
+                return React.createElement(StudentPortal, null);
+            }
+
+            return React.createElement(TeacherDashboard, { teacher, onNavigate: navigate, refresh });
+        }
+
+        // ============================================================
+        // رندر
+        // ============================================================
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+        console.log('🏫 سامانه کامل مدرسه با موفقیت اجرا شد!');
+    </script>
 </body>
-</html>
+  </html>
