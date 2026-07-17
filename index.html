@@ -1,541 +1,475 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>سامانه مدیریت مدرسه</title>
-    <style>
-        *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Segoe UI',Tahoma,sans-serif;background:#F0F4F8;min-height:100vh;padding:15px}
-        #root{max-width:900px;margin:0 auto}
-        .card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:16px}
-        .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #E8EDF2}
-        .header h1{font-size:20px;color:#1A2A3A}
-        .header .user{font-size:13px;color:#6B7A8A}
-        .header .user span{color:#2563EB;font-weight:700}
-        .logo{font-size:28px;margin-bottom:6px;text-align:center}
-        h2{font-size:17px;color:#1A2A3A;margin-bottom:10px}
-        .flex{display:flex;gap:8px;flex-wrap:wrap}
-        .flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-        @media(max-width:600px){.grid-2{grid-template-columns:1fr}}
-        .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
-        label{display:block;font-size:12px;font-weight:600;color:#3A4A5A;margin-bottom:3px}
-        input,select,textarea{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #DCE3EA;font-size:13px;font-family:inherit;outline:none;background:#fff;transition:border-color .2s;margin-bottom:10px}
-        input:focus,select:focus,textarea:focus{border-color:#2563EB}
-        textarea{min-height:50px;resize:vertical}
-        button{padding:9px 16px;border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;background:#2563EB;color:#fff}
-        button:active{transform:scale(0.96)}
-        button:disabled{opacity:0.5;transform:none}
-        .btn-sm{padding:5px 12px;font-size:11px}
-        .btn-ghost{background:#F0F4F8;color:#3A4A5A}
-        .btn-danger{background:#FEE2E2;color:#DC2626}
-        .btn-success{background:#16A34A;color:#fff}
-        .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700}
-        .badge-blue{background:#DBEAFE;color:#2563EB}
-        .badge-green{background:#D1FAE5;color:#16A34A}
-        .badge-orange{background:#FEF3C7;color:#D97706}
-        .badge-red{background:#FEE2E2;color:#DC2626}
-        .badge-gray{background:#F3F4F6;color:#6B7280}
-        .list-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F0F4F8;flex-wrap:wrap;gap:6px}
-        .list-item:last-child{border-bottom:none}
-        .list-item .title{font-weight:600;color:#1A2A3A;font-size:14px}
-        .list-item .sub{font-size:11px;color:#6B7A8A}
-        .mt-10{margin-top:10px}
-        .mb-10{margin-bottom:10px}
-        .text-center{text-align:center}
-        .text-muted{color:#6B7A8A;font-size:13px}
-        .empty{text-align:center;padding:25px 0;color:#9AA8B8;font-size:13px}
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100}
-        .modal{background:#fff;border-radius:16px;padding:24px;max-width:450px;width:100%;max-height:90vh;overflow-y:auto}
-        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-        .modal-header h2{margin:0;font-size:17px}
-        .modal-close{cursor:pointer;font-size:20px;color:#9AA8B8;background:0;border:0;padding:0 6px}
-        .stat-box{background:#F8FAFC;padding:12px;border-radius:10px;text-align:center}
-        .stat-box .num{font-size:22px;font-weight:900;color:#1A2A3A}
-        .stat-box .label{font-size:10px;color:#6B7A8A}
-        .hidden{display:none}
-        .w-full{width:100%}
-        .border-top{border-top:1px solid #E8EDF2;padding-top:14px}
-        .code-display{font-family:monospace;font-size:18px;font-weight:900;color:#2563EB;letter-spacing:2px;background:#F0F4F8;padding:2px 10px;border-radius:6px;display:inline-block}
-        .tab-bar{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;border-bottom:2px solid #E8EDF2;padding-bottom:8px}
-        .tab-bar button{background:0;color:#6B7A8A;padding:6px 14px;font-size:12px;border-radius:8px 8px 0 0;border-bottom:2px solid transparent;margin-bottom:-9px}
-        .tab-bar button.active{color:#2563EB;border-bottom-color:#2563EB;background:#EFF6FF}
-        .clickable{cursor:pointer}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سامانه آزمون مدرسه</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Tahoma, Arial, sans-serif; background: #f5f5f5; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin: 5px; }
+    .btn-primary { background: #2563EB; color: white; }
+    .btn-danger { background: #DC2626; color: white; }
+    .btn-success { background: #16A34A; color: white; }
+    input, select, textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin: 5px 0; width: 100%; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; font-weight: bold; }
+    .hidden { display: none; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    .stat { text-align: center; padding: 20px; }
+    .stat-number { font-size: 36px; font-weight: bold; color: #2563EB; }
+    .stat-label { color: #666; margin-top: 10px; }
+  </style>
 </head>
 <body>
-<div id="root"></div>
-<script>
-'use strict';
+  <div id="app"></div>
 
-// ============================================================
-//  React مینیاتوری (آفلاین) - نسخه تعمیر شده
-// ============================================================
-
-const React = {
-    createElement: function(type, props, ...children) {
-        if (typeof type === 'function') {
-            return type(props || {});
-        }
-        const el = document.createElement(type);
-        if (props) {
-            for (const k in props) {
-                if (k === 'className') {
-                    el.className = props[k];
-                } else if (k === 'style' && typeof props[k] === 'object') {
-                    Object.assign(el.style, props[k]);
-                } else if (k.startsWith('on') && typeof props[k] === 'function') {
-                    // ✅ درست کردن event listener
-                    const eventName = k.substring(2).toLowerCase();
-                    el.addEventListener(eventName, props[k]);
-                } else if (k === 'dangerouslySetInnerHTML') {
-                    el.innerHTML = props[k].__html;
-                } else if (['value', 'type', 'placeholder', 'disabled', 'rows', 'min', 'max', 'step', 'checked', 'name'].includes(k)) {
-                    el[k] = props[k];
-                } else {
-                    el.setAttribute(k, props[k]);
-                }
-            }
-        }
-        for (const c of children) {
-            if (c === null || c === undefined || c === false) continue;
-            if (typeof c === 'string' || typeof c === 'number') {
-                el.appendChild(document.createTextNode(String(c)));
-            } else if (c instanceof Node) {
-                el.appendChild(c);
-            } else if (Array.isArray(c)) {
-                for (const sc of c) {
-                    if (sc instanceof Node) el.appendChild(sc);
-                }
-            }
-        }
-        return el;
-    },
-    useState: function(init) {
-        const state = {
-            value: typeof init === 'function' ? init() : init,
-            listeners: []
-        };
-        const set = function(nv) {
-            const next = typeof nv === 'function' ? nv(state.value) : nv;
-            if (next !== state.value) {
-                state.value = next;
-                state.listeners.forEach(l => l());
-            }
-        };
-        const get = function() { return state.value; };
-        const r = [get, set];
-        r._addListener = function(l) { state.listeners.push(l); };
-        return r;
-    },
-    useEffect: function(effect, deps) {
-        // فقط یکبار اجرا میشه
-        const ran = effect._ran;
-        if (!ran) {
-            effect();
-            effect._ran = true;
-        }
-    },
-    useCallback: function(fn, deps) { return fn; },
-    useRef: function(init) { return { current: init }; }
-};
-
-const ReactDOM = {
-    createRoot: function(container) {
-        return {
-            render: function(element) {
-                container.innerHTML = '';
-                if (element instanceof Node) {
-                    container.appendChild(element);
-                }
-            }
-        };
-    }
-};
-
-// ============================================================
-//  ابزارهای کمکی
-// ============================================================
-
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-
-function getJSON(k) {
-    try { const d = localStorage.getItem(k); return d ? JSON.parse(d) : null; } catch { return null; }
-}
-
-function setJSON(k, v) {
-    try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; }
-}
-
-function deleteKey(k) {
-    try { localStorage.removeItem(k); return true; } catch { return false; }
-}
-
-function listPrefix(p) {
-    try { return Object.keys(localStorage).filter(k => k.startsWith(p)); } catch { return []; }
-}
-
-function loadAll(p) {
-    return listPrefix(p).map(k => getJSON(k)).filter(Boolean);
-}
-
-function generateCode(existing) {
-    let c;
-    do { c = String(Math.floor(100000 + Math.random() * 900000)); } while (existing.includes(c));
-    return c;
-}
-
-function shuffleArray(a) {
-    const arr = [...a];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-function awardedMarkOf(a) {
-    if (a.awarded_mark != null) return a.awarded_mark;
-    return a.is_correct ? a.mark : 0;
-}
-
-function downloadTextFile(fn, content, mime) {
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fn;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-// ============================================================
-//  کامپوننت‌های UI
-// ============================================================
-
-function Field({ label, children }) {
-    return React.createElement('div', { className: 'field' },
-        React.createElement('label', null, label),
-        children
-    );
-}
-
-function Button({ children, variant = 'primary', style, onClick, disabled, className = '' }) {
-    const v = {
-        primary: { background: '#2563EB', color: '#fff' },
-        ghost: { background: '#F0F4F8', color: '#3A4A5A' },
-        danger: { background: '#FEE2E2', color: '#DC2626' },
-        success: { background: '#16A34A', color: '#fff' },
-        outline: { background: 'transparent', color: '#2563EB', border: '1.5px solid #2563EB' },
-    };
-    const base = {
-        padding: '9px 16px',
-        borderRadius: 8,
-        fontSize: 13,
-        fontWeight: 700,
-        cursor: 'pointer',
-        fontFamily: 'inherit',
-        border: 'none',
-        transition: 'all 0.1s',
-        ...v[variant],
-        ...style
-    };
-    return React.createElement('button', {
-        style: base,
-        onClick: onClick,
-        disabled: disabled,
-        className: className
-    }, children);
-}
-
-function TextInput({ value, onChange, placeholder, type = 'text', style = {}, ...props }) {
-    return React.createElement('input', {
-        type: type,
-        value: value,
-        onChange: function(e) { onChange(e.target.value); },
-        placeholder: placeholder,
-        style: {
-            width: '100%',
-            padding: '9px 12px',
-            borderRadius: 8,
-            border: '1.5px solid #DCE3EA',
-            fontSize: 13,
-            outline: 'none',
-            fontFamily: 'inherit',
-            background: '#fff',
-            color: '#1A2A3A',
-            ...style
-        },
-        ...props
-    });
-}
-
-function Badge({ children, tone = 'blue' }) {
-    const t = { blue: 'badge-blue', green: 'badge-green', orange: 'badge-orange', red: 'badge-red', gray: 'badge-gray' };
-    return React.createElement('span', { className: 'badge ' + (t[tone] || 'badge-gray') }, children);
-}
-
-function Modal({ title, children, onClose }) {
-    return React.createElement('div', { className: 'modal-overlay' },
-        React.createElement('div', { className: 'modal' },
-            React.createElement('div', { className: 'modal-header' },
-                React.createElement('h2', null, title),
-                React.createElement('button', { className: 'modal-close', onClick: onClose }, '✕')
-            ),
-            children
-        )
-    );
-}
-
-function EmptyState({ text }) {
-    return React.createElement('div', { className: 'empty' }, text);
-}
-
-function StatBox({ num, label }) {
-    return React.createElement('div', { className: 'stat-box' },
-        React.createElement('div', { className: 'num' }, num),
-        React.createElement('div', { className: 'label' }, label)
-    );
-}
-
-// ============================================================
-//  صفحه ورود
-// ============================================================
-
-function LoginScreen({ onLogin, onRegister }) {
-    const [username, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const [error, setError] = React.useState('');
-    const [loading, setLoading] = React.useState(false);
-    const [showPw, setShowPw] = React.useState(false);
-
-    const submit = function() {
-        setError('');
-        if (!username() || !password()) {
-            setError('لطفاً نام کاربری و رمز عبور را وارد کنید.');
-            return;
-        }
-        setLoading(true);
-        const teacher = getJSON('teacher:' + username());
-        setTimeout(function() {
-            setLoading(false);
-            if (!teacher || teacher.password !== password()) {
-                setError('نام کاربری یا رمز عبور اشتباه است.');
-                return;
-            }
-            onLogin(teacher);
-        }, 300);
+  <script>
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    const generateCode = (existing) => {
+      let code;
+      do { code = String(Math.floor(100000 + Math.random() * 900000)); } while (existing.includes(code));
+      return code;
     };
 
-    return React.createElement('div', { className: 'card' },
-        React.createElement('div', { className: 'logo' }, '🏫'),
-        React.createElement('h1', { style: { fontSize: 20, color: '#1A2A3A', marginBottom: 2 } }, 'سامانه مدیریت مدرسه'),
-        React.createElement('div', { className: 'text-muted', style: { marginBottom: 18 } }, 'ورود به پنل مدیریت'),
-
-        React.createElement(Field, { label: 'نام کاربری' },
-            React.createElement(TextInput, {
-                value: username(),
-                onChange: setUsername,
-                placeholder: 'نام کاربری خود را وارد کنید',
-                onKeyDown: function(e) { if (e.key === 'Enter') submit(); }
-            })
-        ),
-        React.createElement(Field, { label: 'رمز عبور' },
-            React.createElement('div', { style: { position: 'relative' } },
-                React.createElement(TextInput, {
-                    type: showPw() ? 'text' : 'password',
-                    value: password(),
-                    onChange: setPassword,
-                    placeholder: 'رمز عبور خود را وارد کنید',
-                    onKeyDown: function(e) { if (e.key === 'Enter') submit(); }
-                }),
-                React.createElement('span', {
-                    style: { position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
-                        cursor: 'pointer', fontSize: 16 },
-                    onClick: function() { setShowPw(!showPw()); }
-                }, showPw() ? '🙈' : '👁️')
-            )
-        ),
-
-        error() && React.createElement('div', { style: { color: '#DC2626', fontSize: 13, margin: '6px 0' } }, error()),
-
-        React.createElement(Button, {
-            onClick: submit,
-            disabled: loading(),
-            style: { width: '100%', padding: '11px 0' }
-        }, loading() ? 'در حال ورود...' : 'ورود به سامانه'),
-
-        React.createElement('div', { style: { textAlign: 'center', marginTop: 12, fontSize: 13, color: '#6B7A8A' } },
-            'حساب کاربری ندارید؟ ',
-            React.createElement('span', {
-                style: { color: '#2563EB', fontWeight: 700, cursor: 'pointer' },
-                onClick: onRegister
-            }, 'ثبت‌نام مدیر')
-        )
-    );
-}
-
-// ============================================================
-//  صفحه ثبت‌نام مدیر
-// ============================================================
-
-function RegisterScreen({ onRegistered, goLogin }) {
-    const [fullname, setFullname] = React.useState('');
-    const [username, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [error, setError] = React.useState('');
-    const [loading, setLoading] = React.useState(false);
-
-    const submit = function() {
-        setError('');
-        if (!fullname() || !username() || !password() || !email()) {
-            setError('همه فیلدها را پر کنید.');
-            return;
+    const db = {
+      get: (key) => JSON.parse(localStorage.getItem(key) || 'null'),
+      set: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
+      getAll: (prefix) => {
+        const items = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(prefix)) {
+            items.push(JSON.parse(localStorage.getItem(key)));
+          }
         }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email())) {
-            setError('ایمیل معتبر نیست.');
-            return;
-        }
-        if (password().length < 4) {
-            setError('رمز عبور باید حداقل ۴ کاراکتر باشد.');
-            return;
-        }
-        setLoading(true);
-        if (getJSON('teacher:' + username())) {
-            setLoading(false);
-            setError('این نام کاربری قبلاً ثبت شده است.');
-            return;
-        }
-        const teacher = {
-            username: username(),
-            password: password(),
-            fullname: fullname(),
-            email: email(),
-            role: 'admin',
-            created_at: new Date().toISOString()
-        };
-        setJSON('teacher:' + username(), teacher);
-        setLoading(false);
-        onRegistered(teacher);
+        return items;
+      },
+      delete: (key) => localStorage.removeItem(key)
     };
 
-    return React.createElement('div', { className: 'card' },
-        React.createElement('div', { className: 'logo' }, '📝'),
-        React.createElement('h1', { style: { fontSize: 19, color: '#1A2A3A' } }, 'ثبت‌نام مدیر سامانه'),
-        React.createElement('div', { className: 'text-muted', style: { marginBottom: 14 } }, 'فقط یک‌بار برای راه‌اندازی سامانه'),
+    let currentUser = db.get('currentUser');
+    let currentPage = 'login';
+    let activeExamId = null;
+    let activeClassId = null;
 
-        React.createElement(Field, { label: 'نام و نام‌خانوادگی' },
-            React.createElement(TextInput, { value: fullname(), onChange: setFullname, placeholder: 'مثلاً: علی محمدی' })
-        ),
-        React.createElement(Field, { label: 'نام کاربری' },
-            React.createElement(TextInput, { value: username(), onChange: setUsername, placeholder: 'یک نام کاربری یکتا انتخاب کنید' })
-        ),
-        React.createElement(Field, { label: 'رمز عبور' },
-            React.createElement(TextInput, { type: 'password', value: password(), onChange: setPassword, placeholder: 'حداقل ۴ کاراکتر' })
-        ),
-        React.createElement(Field, { label: 'ایمیل' },
-            React.createElement(TextInput, { type: 'email', value: email(), onChange: setEmail, placeholder: 'برای بازیابی رمز عبور' })
-        ),
-
-        error() && React.createElement('div', { style: { color: '#DC2626', fontSize: 13, margin: '6px 0' } }, error()),
-
-        React.createElement(Button, {
-            onClick: submit,
-            disabled: loading(),
-            style: { width: '100%', padding: '11px 0' }
-        }, loading() ? 'در حال ثبت...' : 'ثبت‌نام مدیر'),
-
-        React.createElement('div', { style: { textAlign: 'center', marginTop: 12, fontSize: 13, color: '#6B7A8A' } },
-            'قبلاً ثبت‌نام کردید؟ ',
-            React.createElement('span', {
-                style: { color: '#2563EB', fontWeight: 700, cursor: 'pointer' },
-                onClick: goLogin
-            }, 'ورود به سامانه')
-        )
-    );
-}
-
-// ============================================================
-//  اپلیکیشن اصلی - ساده شده
-// ============================================================
-
-function App() {
-    const [teacher, setTeacher] = React.useState(null);
-    const [view, setView] = React.useState('login');
-
-    // چک کردن وجود مدیر
-    const adminExists = loadAll('teacher:').length > 0;
-
-    if (!teacher) {
-        if (view === 'register' || !adminExists) {
-            return React.createElement(RegisterScreen, {
-                onRegistered: function(t) {
-                    setTeacher(t);
-                    setView('dashboard');
-                },
-                goLogin: function() { setView('login'); }
-            });
+    function render() {
+      const app = document.getElementById('app');
+      if (!currentUser) {
+        if (currentPage === 'register') {
+          app.innerHTML = renderRegister();
+        } else {
+          app.innerHTML = renderLogin();
         }
-        return React.createElement(LoginScreen, {
-            onLogin: function(t) {
-                setTeacher(t);
-                setView('dashboard');
-            },
-            onRegister: function() { setView('register'); }
-        });
+      } else if (currentUser.role === 'admin') {
+        app.innerHTML = renderAdminDashboard();
+      } else {
+        app.innerHTML = renderTeacherDashboard();
+      }
     }
 
-    // ===== داشبورد ساده =====
-    return React.createElement('div', { className: 'card' },
-        React.createElement('div', { className: 'header' },
-            React.createElement('h1', null, '📊 داشبورد ' + (teacher.role === 'admin' ? 'مدیر' : 'معلم')),
-            React.createElement('div', { className: 'user' },
-                teacher.fullname,
-                React.createElement('span', { style: { margin: '0 6px' } }, '|'),
-                React.createElement('span', {
-                    style: { cursor: 'pointer', color: '#DC2626' },
-                    onClick: function() {
-                        localStorage.clear();
-                        location.reload();
-                    }
-                }, '🚪 خروج')
-            )
-        ),
+    function renderLogin() {
+      return `
+        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);">
+          <div class="card" style="width: 100%; max-width: 400px;">
+            <h1 style="text-align: center; margin-bottom: 30px;">سامانه آزمون مدرسه</h1>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+              <button class="btn btn-primary" onclick="setRole('admin')" id="role-admin">مدیر</button>
+              <button class="btn" style="background: #F1F5F9;" onclick="setRole('teacher')" id="role-teacher">معلم</button>
+            </div>
+            <input type="text" id="username" placeholder="نام کاربری">
+            <input type="password" id="password" placeholder="رمز عبور" onkeypress="if(event.key==='Enter')login()">
+            <div id="error" style="color: red; margin: 10px 0;"></div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="login()">ورود</button>
+            <p style="text-align: center; margin-top: 20px; color: #666;">
+              حساب ندارید؟ <a href="#" onclick="showRegister()" style="color: #2563EB;">ثبت‌نام</a>
+            </p>
+          </div>
+        </div>
+      `;
+    }
 
-        React.createElement('div', { className: 'text-muted', style: { marginBottom: 16 } },
-            'نقش: ' + (teacher.role === 'admin' ? 'مدیر' : 'معلم') +
-            ' · تعداد معلمان: ' + loadAll('teacher:').length +
-            ' · تعداد آزمون‌ها: ' + loadAll('exam:').length
-        ),
+    function renderRegister() {
+      return `
+        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);">
+          <div class="card" style="width: 100%; max-width: 400px;">
+            <h1 style="text-align: center; margin-bottom: 30px;">ثبت‌نام</h1>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+              <button class="btn btn-primary" onclick="setRole('admin')" id="role-admin">مدیر مدرسه</button>
+              <button class="btn" style="background: #F1F5F9;" onclick="setRole('teacher')" id="role-teacher">معلم</button>
+            </div>
+            <input type="text" id="fullname" placeholder="نام و نام‌خانوادگی">
+            <input type="text" id="username" placeholder="نام کاربری">
+            <input type="password" id="password" placeholder="رمز عبور">
+            <div id="error" style="color: red; margin: 10px 0;"></div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="register()">ثبت‌نام</button>
+            <p style="text-align: center; margin-top: 20px; color: #666;">
+              قبلاً ثبت‌نام کردید؟ <a href="#" onclick="showLogin()" style="color: #2563EB;">ورود</a>
+            </p>
+          </div>
+        </div>
+      `;
+    }
 
-        React.createElement('div', { className: 'grid-3' },
-            React.createElement(StatBox, { num: loadAll('exam:').length, label: 'آزمون‌ها' }),
-            React.createElement(StatBox, { num: loadAll('class:').length, label: 'کلاس‌ها' }),
-            React.createElement(StatBox, { num: loadAll('roster:').length, label: 'دانش‌آموزان' })
-        ),
+    function renderAdminDashboard() {
+      const teachers = db.getAll('user:teacher:');
+      const exams = db.getAll('exam:');
+      const students = db.getAll('roster:');
 
-        React.createElement('div', { className: 'flex', style: { marginTop: 10 } },
-            React.createElement(Button, {
-                onClick: function() {
-                    setTeacher(null);
-                    setView('login');
-                }
-            }, '🔙 رفتن به صفحه ورود')
-        )
-    );
-}
+      let content = '';
+      if (currentPage === 'teachers') {
+        content = `
+          <h2>معلمان ثبت‌نام شده</h2>
+          ${teachers.length === 0 ? '<p style="text-align: center; padding: 40px; color: #666;">هنوز معلمی ثبت‌نام نکرده است</p>' : `
+            <table>
+              <thead><tr><th>نام</th><th>نام کاربری</th><th>تاریخ ثبت‌نام</th></tr></thead>
+              <tbody>
+                ${teachers.map(t => `<tr><td>${t.fullname}</td><td>${t.username}</td><td>${new Date(t.created).toLocaleDateString('fa-IR')}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          `}
+        `;
+      } else if (currentPage === 'exams') {
+        content = `
+          <h2>همه آزمون‌ها</h2>
+          ${exams.length === 0 ? '<p style="text-align: center; padding: 40px; color: #666;">هنوز آزمونی ساخته نشده است</p>' : `
+            <table>
+              <thead><tr><th>عنوان</th><th>معلم</th><th>تاریخ</th></tr></thead>
+              <tbody>
+                ${exams.map(e => {
+                  const teacher = teachers.find(t => t.username === e.teacher_id);
+                  return `<tr><td>${e.title}</td><td>${teacher?.fullname || '—'}</td><td>${new Date(e.created).toLocaleDateString('fa-IR')}</td></tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          `}
+        `;
+      } else {
+        content = `
+          <div class="grid">
+            <div class="card stat"><div class="stat-number">${teachers.length}</div><div class="stat-label">معلمان</div></div>
+            <div class="card stat"><div class="stat-number">${exams.length}</div><div class="stat-label">آزمون‌ها</div></div>
+            <div class="card stat"><div class="stat-number">${students.length}</div><div class="stat-label">دانش‌آموزان</div></div>
+          </div>
+        `;
+      }
 
-// ============================================================
-//  رندر
-// ============================================================
+      return `
+        <div style="display: flex; min-height: 100vh;">
+          <div style="width: 220px; background: #0F172A; padding: 20px; color: white;">
+            <h2 style="margin-bottom: 30px;">پنل مدیر</h2>
+            <div onclick="showPage('dashboard')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'dashboard' ? '#2563EB' : 'transparent'};">داشبورد</div>
+            <div onclick="showPage('teachers')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'teachers' ? '#2563EB' : 'transparent'};">معلمان</div>
+            <div onclick="showPage('exams')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'exams' ? '#2563EB' : 'transparent'};">آزمون‌ها</div>
+            <div onclick="logout()" style="padding: 12px; border-radius: 8px; cursor: pointer; color: #F87171; margin-top: 20px;">خروج</div>
+          </div>
+          <div style="flex: 1; padding: 30px;">
+            <h1 style="margin-bottom: 30px;">داشبورد مدیر</h1>
+            ${content}
+          </div>
+        </div>
+      `;
+    }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(App));
-console.log('✅ سامانه با موفقیت اجرا شد!');
-</script>
+    function renderTeacherDashboard() {
+      const myExams = db.getAll('exam:').filter(e => e.teacher_id === currentUser.username);
+      const myClasses = db.getAll('class:').filter(c => c.teacher_id === currentUser.username);
+      const myRoster = db.getAll('roster:').filter(r => r.teacher_id === currentUser.username);
+
+      if (activeExamId) return renderExamManager(activeExamId);
+      if (activeClassId) return renderClassManager(activeClassId);
+
+      let content = '';
+      if (currentPage === 'exams') {
+        content = `
+          <button class="btn btn-primary" onclick="createExam()">+ ساخت آزمون جدید</button>
+          <div class="grid" style="margin-top: 20px;">
+            ${myExams.map(ex => `
+              <div class="card">
+                <h3>${ex.title}</h3>
+                <p style="font-size: 12px; color: #666; margin: 10px 0;">${new Date(ex.created).toLocaleDateString('fa-IR')}</p>
+                <button class="btn btn-primary" onclick="openExam('${ex.id}')">مدیریت سوالات</button>
+                <button class="btn btn-danger" onclick="deleteExam('${ex.id}')">حذف</button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (currentPage === 'classes') {
+        content = `
+          <button class="btn btn-primary" onclick="createClass()">+ افزودن کلاس</button>
+          <div class="grid" style="margin-top: 20px;">
+            ${myClasses.map(c => {
+              const count = myRoster.filter(r => r.class_id === c.id).length;
+              return `
+                <div class="card">
+                  <h3>${c.name}</h3>
+                  <p style="font-size: 12px; color: #666; margin: 10px 0;">${count} دانش‌آموز</p>
+                  <button class="btn btn-primary" onclick="openClass('${c.id}')">مدیریت دانش‌آموزان</button>
+                  <button class="btn btn-danger" onclick="deleteClass('${c.id}')">حذف</button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else {
+        content = `
+          <div class="grid">
+            <div class="card stat"><div class="stat-number">${myExams.length}</div><div class="stat-label">آزمون‌ها</div></div>
+            <div class="card stat"><div class="stat-number">${myClasses.length}</div><div class="stat-label">کلاس‌ها</div></div>
+            <div class="card stat"><div class="stat-number">${myRoster.length}</div><div class="stat-label">دانش‌آموزان</div></div>
+          </div>
+        `;
+      }
+
+      return `
+        <div style="display: flex; min-height: 100vh;">
+          <div style="width: 220px; background: #132A52; padding: 20px; color: white;">
+            <h2 style="margin-bottom: 30px;">پنل معلم</h2>
+            <div onclick="showPage('dashboard')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'dashboard' ? '#2563EB' : 'transparent'};">داشبورد</div>
+            <div onclick="showPage('exams')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'exams' ? '#2563EB' : 'transparent'};">آزمون‌ها</div>
+            <div onclick="showPage('classes')" style="padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: ${currentPage === 'classes' ? '#2563EB' : 'transparent'};">کلاس‌ها</div>
+            <div onclick="logout()" style="padding: 12px; border-radius: 8px; cursor: pointer; color: #F87171; margin-top: 20px;">خروج</div>
+          </div>
+          <div style="flex: 1; padding: 30px;">
+            <h1 style="margin-bottom: 30px;">داشبورد معلم</h1>
+            ${content}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderExamManager(examId) {
+      const exam = db.get(`exam:${examId}`);
+      const questions = db.getAll('question:').filter(q => q.exam_id === examId);
+
+      return `
+        <div style="padding: 30px;">
+          <button class="btn" onclick="backToExams()">← بازگشت</button>
+          <h1 style="margin: 20px 0;">سوالات آزمون: ${exam.title}</h1>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="card" style="flex: 1; min-width: 400px;">
+              <h2 style="margin-bottom: 20px;">افزودن سوال</h2>
+              <label>متن سوال</label>
+              <textarea id="qText" rows="3" placeholder="متن سوال"></textarea>
+              <label>گزینه‌ها (روی دایره سبز کلیک کنید)</label>
+              <div id="options">
+                ${['A', 'B', 'C', 'D'].map((letter, i) => `
+                  <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
+                    <div onclick="setCorrect(${i})" id="correct-${i}" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid #CBD5E1; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center;"></div>
+                    <span style="font-weight: bold; width: 20px;">${letter}</span>
+                    <input type="text" id="option-${i}" placeholder="گزینه ${letter}" style="flex: 1;">
+                  </div>
+                `).join('')}
+              </div>
+              <label>نمره</label>
+              <input type="number" id="qMark" value="1" min="1" style="width: 100px;">
+              <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="saveQuestion('${examId}')">+ افزودن سوال</button>
+            </div>
+            <div style="flex: 1; min-width: 400px;">
+              <h2 style="margin-bottom: 20px;">سوالات (${questions.length})</h2>
+              ${questions.length === 0 ? '<div class="card" style="text-align: center; padding: 40px; color: #666;">هنوز سوالی اضافه نشده است</div>' : `
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  ${questions.map((q, idx) => `
+                    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <div style="font-weight: bold; margin-bottom: 4px;">${idx + 1}. ${q.question_text}</div>
+                        <div style="font-size: 12px; color: #666;">پاسخ: ${q.correct_answer} · نمره: ${q.mark}</div>
+                      </div>
+                      <button class="btn btn-danger" onclick="deleteQuestion('${q.id}', '${examId}')">حذف</button>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderClassManager(classId) {
+      const cls = db.get(`class:${classId}`);
+      const roster = db.getAll('roster:').filter(r => r.class_id === classId);
+
+      return `
+        <div style="padding: 30px;">
+          <button class="btn" onclick="backToClasses()">← بازگشت</button>
+          <h1 style="margin: 20px 0;">دانش‌آموزان کلاس: ${cls.name}</h1>
+          <div class="card" style="margin-bottom: 20px;">
+            <h2 style="margin-bottom: 16px;">افزودن دانش‌آموز</h2>
+            <div style="display: flex; gap: 12px;">
+              <input type="text" id="studentName" placeholder="نام دانش‌آموز" onkeypress="if(event.key==='Enter')addStudent('${classId}')" style="flex: 1;">
+              <button class="btn btn-primary" onclick="addStudent('${classId}')">+ افزودن</button>
+            </div>
+          </div>
+          <div class="card">
+            <h2 style="margin-bottom: 16px;">لیست دانش‌آموزان (${roster.length})</h2>
+            ${roster.length === 0 ? '<p style="text-align: center; padding: 40px; color: #666;">هنوز دانش‌آموزی اضافه نشده است</p>' : `
+              <table>
+                <thead><tr><th>نام</th><th>کد ورود</th><th></th></tr></thead>
+                <tbody>
+                  ${roster.map(m => `
+                    <tr>
+                      <td style="font-weight: bold;">${m.fullname}</td>
+                      <td><span style="font-family: monospace; font-size: 18px; font-weight: bold; color: #2563EB; letter-spacing: 2px;">${m.code}</span></td>
+                      <td><button class="btn btn-danger" onclick="deleteStudent('${m.id}', '${classId}')">حذف</button></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    let currentRole = 'teacher';
+    function setRole(role) {
+      currentRole = role;
+      document.getElementById('role-admin').style.background = role === 'admin' ? '#2563EB' : '#F1F5F9';
+      document.getElementById('role-admin').style.color = role === 'admin' ? 'white' : '#475569';
+      document.getElementById('role-teacher').style.background = role === 'teacher' ? '#2563EB' : '#F1F5F9';
+      document.getElementById('role-teacher').style.color = role === 'teacher' ? 'white' : '#475569';
+    }
+
+    function showRegister() { currentPage = 'register'; render(); }
+    function showLogin() { currentPage = 'login'; render(); }
+
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const error = document.getElementById('error');
+      if (!username || !password) { error.textContent = 'نام کاربری و رمز عبور را وارد کنید'; return; }
+      const user = db.get(`user:${currentRole}:${username}`);
+      if (!user || user.password !== password) { error.textContent = 'نام کاربری یا رمز عبور اشتباه است'; return; }
+      currentUser = user;
+      db.set('currentUser', user);
+      currentPage = 'dashboard';
+      render();
+    }
+
+    function register() {
+      const fullname = document.getElementById('fullname').value;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const error = document.getElementById('error');
+      if (!fullname || !username || !password) { error.textContent = 'همه فیلدها را پر کنید'; return; }
+      const existing = db.get(`user:${currentRole}:${username}`);
+      if (existing) { error.textContent = 'این نام کاربری قبلاً ثبت شده است'; return; }
+      const user = { id: uid(), role: currentRole, username, password, fullname, created: new Date().toISOString() };
+      db.set(`user:${currentRole}:${username}`, user);
+      currentUser = user;
+      db.set('currentUser', user);
+      currentPage = 'dashboard';
+      render();
+    }
+
+    function logout() {
+      db.delete('currentUser');
+      currentUser = null;
+      currentPage = 'login';
+      render();
+    }
+
+    function showPage(page) { currentPage = page; activeExamId = null; activeClassId = null; render(); }
+
+    function createExam() {
+      const title = prompt('عنوان آزمون:');
+      if (!title) return;
+      const id = uid();
+      db.set(`exam:${id}`, { id, title, teacher_id: currentUser.username, created: new Date().toISOString() });
+      render();
+    }
+
+    function deleteExam(id) {
+      if (!confirm('آزمون حذف شود؟')) return;
+      db.delete(`exam:${id}`);
+      db.getAll('question:').filter(q => q.exam_id === id).forEach(q => db.delete(`question:${q.id}`));
+      render();
+    }
+
+    function openExam(id) { activeExamId = id; render(); }
+    function backToExams() { activeExamId = null; render(); }
+
+    let correctOption = 0;
+    function setCorrect(i) {
+      correctOption = i;
+      for (let j = 0; j < 4; j++) {
+        const el = document.getElementById(`correct-${j}`);
+        if (j === i) {
+          el.style.background = '#16A34A';
+          el.style.borderColor = '#16A34A';
+          el.innerHTML = '✓';
+          el.style.color = 'white';
+        } else {
+          el.style.background = 'white';
+          el.style.borderColor = '#CBD5E1';
+          el.innerHTML = '';
+        }
+      }
+    }
+
+    function saveQuestion(examId) {
+      const qText = document.getElementById('qText').value;
+      const options = [0, 1, 2, 3].map(i => document.getElementById(`option-${i}`).value);
+      const mark = document.getElementById('qMark').value;
+      if (!qText.trim()) { alert('متن سوال را وارد کنید'); return; }
+      if (options.some(o => !o.trim())) { alert('همه گزینه‌ها را پر کنید'); return; }
+      const id = uid();
+      const question = {
+        id, exam_id: examId, type: 'mc', question_text: qText.trim(), mark: Number(mark) || 1,
+        option_a: options[0], option_b: options[1], option_c: options[2], option_d: options[3],
+        correct_answer: ['A', 'B', 'C', 'D'][correctOption]
+      };
+      db.set(`question:${id}`, question);
+      render();
+    }
+
+    function deleteQuestion(id, examId) {
+      if (!confirm('سوال حذف شود؟')) return;
+      db.delete(`question:${id}`);
+      render();
+    }
+
+    function createClass() {
+      const name = prompt('نام کلاس:');
+      if (!name) return;
+      const id = uid();
+      db.set(`class:${id}`, { id, name: name.trim(), teacher_id: currentUser.username, created: new Date().toISOString() });
+      render();
+    }
+
+    function deleteClass(id) {
+      if (!confirm('کلاس و دانش‌آموزان آن حذف شوند؟')) return;
+      db.delete(`class:${id}`);
+      db.getAll('roster:').filter(r => r.class_id === id).forEach(r => db.delete(`roster:${r.id}`));
+      render();
+    }
+
+    function openClass(id) { activeClassId = id; render(); }
+    function backToClasses() { activeClassId = null; render(); }
+
+    function addStudent(classId) {
+      const name = document.getElementById('studentName').value;
+      if (!name.trim()) { alert('نام دانش‌آموز را وارد کنید'); return; }
+      const roster = db.getAll('roster:').filter(r => r.class_id === classId);
+      const allCodes = roster.map(r => r.code);
+      const id = uid();
+      const code = generateCode(allCodes);
+      const student = { id, class_id: classId, teacher_id: currentUser.username, fullname: name.trim(), code, created: new Date().toISOString() };
+      db.set(`roster:${id}`, student);
+      render();
+    }
+
+    function deleteStudent(id, classId) {
+      if (!confirm('دانش‌آموز حذف شود؟')) return;
+      db.delete(`roster:${id}`);
+      render();
+    }
+
+    render();
+  </script>
 </body>
 </html>
