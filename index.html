@@ -1,579 +1,74 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>سامانه آزمون مدرسه</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #F8FAFC;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        #root {
-            width: 100%;
-            max-width: 420px;
-        }
-        .card {
-            background: white;
-            border-radius: 22px;
-            padding: 40px 30px;
-            box-shadow: 0 20px 60px rgba(19, 42, 82, 0.15);
-        }
-        .logo {
-            width: 70px;
-            height: 70px;
-            border-radius: 18px;
-            background: #2563EB;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 18px;
-            font-size: 32px;
-            color: white;
-        }
-        h1 {
-            font-size: 22px;
-            font-weight: 900;
-            color: #1E293B;
-            text-align: center;
-            margin-bottom: 4px;
-        }
-        .subtitle {
-            font-size: 13px;
-            color: #64748B;
-            text-align: center;
-            margin-bottom: 26px;
-        }
-        .field {
-            margin-bottom: 14px;
-        }
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 700;
-            color: #3A4A63;
-            margin-bottom: 5px;
-        }
-        input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1.5px solid #E2E8F0;
-            font-size: 14px;
-            font-family: inherit;
-            outline: none;
-            background: white;
-            color: #1E293B;
-            transition: border-color 0.15s;
-        }
-        input:focus {
-            border-color: #2563EB;
-        }
-        .input-wrapper {
-            position: relative;
-        }
-        .input-wrapper input {
-            padding-left: 44px;
-        }
-        .eye {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            font-size: 18px;
-            color: #94A3B8;
-            user-select: none;
-        }
-        button {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 10px;
-            background: #2563EB;
-            color: white;
-            font-size: 15px;
-            font-weight: 800;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.1s;
-            margin-top: 6px;
-        }
-        button:active {
-            transform: scale(0.97);
-        }
-        button:disabled {
-            opacity: 0.6;
-            transform: none;
-        }
-        .error {
-            color: #DC2626;
-            font-size: 13px;
-            margin: 10px 0;
-            text-align: center;
-        }
-        .success-box {
-            background: #F0FDF4;
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #BBF7D0;
-            margin-bottom: 16px;
-        }
-        .success-box h2 {
-            color: #16A34A;
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-        .success-box p {
-            color: #64748B;
-            font-size: 13px;
-        }
-        .badge {
-            display: inline-block;
-            background: #F1F5F9;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #475569;
-            margin: 0 auto 16px;
-            text-align: center;
-            width: 100%;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 18px;
-            font-size: 13px;
-            color: #94A3B8;
-        }
-        .footer span {
-            color: #2563EB;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .btn-danger {
-            background: #FEF2F2;
-            color: #DC2626;
-            margin-top: 10px;
-        }
-        .btn-danger:active {
-            transform: scale(0.97);
-        }
-        .mt-10 {
-            margin-top: 10px;
-        }
-        .hidden {
-            display: none !important;
-        }
-        /* استایل مخصوص لیست آزمون‌ها */
-        .exam-list {
-            margin-top: 16px;
-            border-top: 1px solid #EEF1F6;
-            padding-top: 16px;
-        }
-        .exam-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #F1F5F9;
-        }
-        .exam-item .title {
-            font-weight: 700;
-            color: #1E293B;
-            font-size: 14px;
-        }
-        .exam-item .date {
-            font-size: 11px;
-            color: #94A3B8;
-        }
-        .btn-sm {
-            padding: 6px 14px;
-            font-size: 12px;
-            width: auto;
-            margin: 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سامانه آزمون مدرسه</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #F8FAFC;
+      color: #1E293B;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    #root {
+      min-height: 100vh;
+    }
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+    /* Prevent text selection on buttons */
+    button {
+      user-select: none;
+    }
+    /* Focus outline for accessibility */
+    *:focus-visible {
+      outline: 2px solid #2563EB;
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
+  <div id="root"></div>
 
-    <script>
-        'use strict';
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-        // ============================================================
-        //  کتابخانه React مینیاتوری (برای آفلاین)
-        //  این یک پیاده‌سازی ساده از React است
-        // ============================================================
-
-        const React = {
-            createElement: function(type, props, ...children) {
-                // اگر type تابع باشد (کامپوننت)
-                if (typeof type === 'function') {
-                    return type(props || {});
-                }
-                // اگر type رشته باشد (تگ HTML)
-                const element = document.createElement(type);
-                if (props) {
-                    for (const key in props) {
-                        if (key === 'className') {
-                            element.className = props[key];
-                        } else if (key === 'style' && typeof props[key] === 'object') {
-                            Object.assign(element.style, props[key]);
-                        } else if (key.startsWith('on') && typeof props[key] === 'function') {
-                            const eventName = key.substring(2).toLowerCase();
-                            element.addEventListener(eventName, props[key]);
-                        } else if (key === 'dangerouslySetInnerHTML') {
-                            element.innerHTML = props[key].__html;
-                        } else if (key === 'value' || key === 'type' || key === 'placeholder' || key === 'disabled') {
-                            element[key] = props[key];
-                        } else {
-                            element.setAttribute(key, props[key]);
-                        }
-                    }
-                }
-                // افزودن children
-                for (const child of children) {
-                    if (child === null || child === undefined || child === false) continue;
-                    if (typeof child === 'string' || typeof child === 'number') {
-                        element.appendChild(document.createTextNode(String(child)));
-                    } else if (child instanceof Node) {
-                        element.appendChild(child);
-                    } else if (Array.isArray(child)) {
-                        for (const subChild of child) {
-                            if (subChild instanceof Node) {
-                                element.appendChild(subChild);
-                            }
-                        }
-                    }
-                }
-                return element;
-            },
-
-            useState: function(initialValue) {
-                const state = {
-                    value: typeof initialValue === 'function' ? initialValue() : initialValue,
-                    listeners: []
-                };
-
-                const setState = function(newValue) {
-                    const nextValue = typeof newValue === 'function' ? newValue(state.value) : newValue;
-                    if (nextValue !== state.value) {
-                        state.value = nextValue;
-                        for (const listener of state.listeners) {
-                            listener();
-                        }
-                    }
-                };
-
-                // برای رندر مجدد
-                let currentRerender = null;
-
-                const getValue = function() {
-                    return state.value;
-                };
-
-                // ذخیره listener برای رندر مجدد
-                const useStateReturn = [getValue, setState];
-                useStateReturn._addListener = function(listener) {
-                    state.listeners.push(listener);
-                };
-
-                return useStateReturn;
-            },
-
-            useEffect: function(effect, deps) {
-                // پیاده‌سازی ساده: فقط یکبار اجرا میشه
-                const isFirstRun = true;
-                if (isFirstRun) {
-                    effect();
-                }
-            },
-
-            useCallback: function(callback, deps) {
-                return callback;
-            },
-
-            useRef: function(initialValue) {
-                return { current: initialValue };
-            }
-        };
-
-        const ReactDOM = {
-            createRoot: function(container) {
-                return {
-                    render: function(element) {
-                        container.innerHTML = '';
-                        if (element instanceof Node) {
-                            container.appendChild(element);
-                        }
-                    }
-                };
-            }
-        };
-
-        // ============================================================
-        //  کامپوننت‌ها
-        // ============================================================
-
-        // ---------- LoginScreen ----------
-        function LoginScreen({ onLogin }) {
-            let usernameState = React.useState('');
-            let passwordState = React.useState('');
-            let errorState = React.useState('');
-            let loadingState = React.useState(false);
-            let showPwState = React.useState(false);
-
-            const getUsername = usernameState[0];
-            const setUsername = usernameState[1];
-            const getPassword = passwordState[0];
-            const setPassword = passwordState[1];
-            const getError = errorState[0];
-            const setError = errorState[1];
-            const getLoading = loadingState[0];
-            const setLoading = loadingState[1];
-            const getShowPw = showPwState[0];
-            const setShowPw = showPwState[1];
-
-            const handleSubmit = function() {
-                setError('');
-                if (!getUsername() || !getPassword()) {
-                    setError('نام کاربری و رمز عبور را وارد کنید.');
-                    return;
-                }
-                setLoading(true);
-
-                // شبیه‌سازی ورود
-                setTimeout(function() {
-                    setLoading(false);
-                    onLogin({ username: getUsername(), fullname: 'کاربر تست', role: 'teacher' });
-                }, 500);
-            };
-
-            // ساخت المان‌ها
-            const container = document.createElement('div');
-            container.className = 'card';
-
-            // لوگو
-            const logo = document.createElement('div');
-            logo.className = 'logo';
-            logo.textContent = '🎓';
-            container.appendChild(logo);
-
-            // عنوان
-            const title = document.createElement('h1');
-            title.textContent = 'سامانه آزمون مدرسه';
-            container.appendChild(title);
-
-            // زیرنویس
-            const subtitle = document.createElement('div');
-            subtitle.className = 'subtitle';
-            subtitle.textContent = 'ورود به پنل معلم / مدیر';
-            container.appendChild(subtitle);
-
-            // فیلد نام کاربری
-            const field1 = document.createElement('div');
-            field1.className = 'field';
-            const label1 = document.createElement('label');
-            label1.textContent = 'نام کاربری';
-            field1.appendChild(label1);
-            const input1 = document.createElement('input');
-            input1.type = 'text';
-            input1.placeholder = 'نام کاربری را وارد کنید';
-            input1.value = getUsername();
-            input1.addEventListener('input', function(e) {
-                setUsername(e.target.value);
-                reRender();
-            });
-            input1.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') handleSubmit();
-            });
-            field1.appendChild(input1);
-            container.appendChild(field1);
-
-            // فیلد رمز عبور
-            const field2 = document.createElement('div');
-            field2.className = 'field';
-            const label2 = document.createElement('label');
-            label2.textContent = 'رمز عبور';
-            field2.appendChild(label2);
-            const wrapper = document.createElement('div');
-            wrapper.className = 'input-wrapper';
-            const input2 = document.createElement('input');
-            input2.type = getShowPw() ? 'text' : 'password';
-            input2.placeholder = 'رمز عبور را وارد کنید';
-            input2.value = getPassword();
-            input2.addEventListener('input', function(e) {
-                setPassword(e.target.value);
-                reRender();
-            });
-            input2.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') handleSubmit();
-            });
-            wrapper.appendChild(input2);
-            const eye = document.createElement('span');
-            eye.className = 'eye';
-            eye.textContent = getShowPw() ? '🙈' : '👁️';
-            eye.addEventListener('click', function() {
-                setShowPw(!getShowPw());
-                reRender();
-            });
-            wrapper.appendChild(eye);
-            field2.appendChild(wrapper);
-            container.appendChild(field2);
-
-            // خطا
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error';
-            if (getError()) {
-                errorDiv.textContent = getError();
-            } else {
-                errorDiv.style.display = 'none';
-            }
-            container.appendChild(errorDiv);
-
-            // دکمه ورود
-            const btn = document.createElement('button');
-            btn.textContent = getLoading() ? 'در حال ورود...' : 'ورود';
-            btn.disabled = getLoading();
-            btn.addEventListener('click', handleSubmit);
-            container.appendChild(btn);
-
-            // فوتر
-            const footer = document.createElement('div');
-            footer.className = 'footer';
-            footer.innerHTML = 'حساب نداری؟ <span>ثبت‌نام</span>';
-            container.appendChild(footer);
-
-            // تابع رندر مجدد
-            function reRender() {
-                const newContainer = LoginScreen({ onLogin: onLogin });
-                container.parentNode.replaceChild(newContainer, container);
-                // به‌روزرسانی مرجع
-                for (const key in newContainer) {
-                    container[key] = newContainer[key];
-                }
-            }
-
-            // ذخیره رفرنس برای رندر مجدد
-            container._reRender = reRender;
-
-            return container;
-        }
-
-        // ---------- DashboardScreen ----------
-        function DashboardScreen({ user, onLogout }) {
-            const container = document.createElement('div');
-            container.className = 'card';
-
-            // لوگو
-            const logo = document.createElement('div');
-            logo.className = 'logo';
-            logo.textContent = '✅';
-            container.appendChild(logo);
-
-            // عنوان
-            const title = document.createElement('h1');
-            title.textContent = 'خوش آمدی، ' + user.fullname + '!';
-            container.appendChild(title);
-
-            // زیرنویس
-            const subtitle = document.createElement('div');
-            subtitle.className = 'subtitle';
-            subtitle.textContent = 'سامانه با موفقیت اجرا شد.';
-            container.appendChild(subtitle);
-
-            // باکس موفقیت
-            const successBox = document.createElement('div');
-            successBox.className = 'success-box';
-            const h2 = document.createElement('h2');
-            h2.textContent = '🎉 تبریک!';
-            successBox.appendChild(h2);
-            const p = document.createElement('p');
-            p.textContent = 'صفحه ورود و داشبورد به درستی کار میکنند.';
-            successBox.appendChild(p);
-            container.appendChild(successBox);
-
-            // نشان
-            const badge = document.createElement('div');
-            badge.className = 'badge';
-            badge.textContent = 'نسخه‌ی تست آفلاین';
-            container.appendChild(badge);
-
-            // توضیح
-            const desc = document.createElement('p');
-            desc.style.cssText = 'font-size:13px;color:#64748B;text-align:center;margin-bottom:12px;';
-            desc.textContent = 'این یک نسخه‌ی ساده برای تست است.';
-            container.appendChild(desc);
-
-            // دکمه خروج
-            const logoutBtn = document.createElement('button');
-            logoutBtn.className = 'btn-danger';
-            logoutBtn.textContent = '🗑️ پاک کردن داده‌ها و خروج';
-            logoutBtn.addEventListener('click', function() {
-                localStorage.clear();
-                onLogout();
-                // رندر مجدد کل برنامه
-                renderApp();
-            });
-            container.appendChild(logoutBtn);
-
-            return container;
-        }
-
-        // ---------- App اصلی ----------
-        function App() {
-            let savedUser = null;
-            try {
-                const saved = localStorage.getItem('test_user');
-                if (saved) savedUser = JSON.parse(saved);
-            } catch (e) {}
-
-            let currentUser = savedUser;
-
-            const handleLogin = function(userData) {
-                localStorage.setItem('test_user', JSON.stringify(userData));
-                currentUser = userData;
-                renderApp();
-            };
-
-            const handleLogout = function() {
-                localStorage.removeItem('test_user');
-                currentUser = null;
-                renderApp();
-            };
-
-            if (currentUser) {
-                return DashboardScreen({ user: currentUser, onLogout: handleLogout });
-            }
-
-            return LoginScreen({ onLogin: handleLogin });
-        }
-
-        // ============================================================
-        //  رندر کردن
-        // ============================================================
-
-        function renderApp() {
-            const root = document.getElementById('root');
-            const appElement = App();
-            root.innerHTML = '';
-            root.appendChild(appElement);
-        }
-
-        console.log('✅ برنامه شروع شد (آفلاین)');
-        renderApp();
-        console.log('✅ رندر انجام شد');
-    </script>
+  <!-- App Scripts (order matters!) -->
+  <script src="icons.js"></script>
+  <script src="ui.js"></script>
+  <script src="auth-screens.js"></script>
+  <script src="screens-admin.js"></script>
+  <script src="screens-exams.js"></script>
+  <script src="screens-taking.js"></script>
+  <script src="screens-classes.js"></script>
+  <script src="app.js"></script>
 </body>
-  </html>
+</html>
