@@ -1,25 +1,20 @@
 /* ---------------------------------------------------------
-ROOT APP — now supports admin + multiple teachers
+ROOT APP
 --------------------------------------------------------- */
 function EduExamApp() {
-  const [authView, setAuthView] = useState("login"); // login | register | forgot
-  const [portalMode, setPortalMode] = useState("teacher"); // teacher | student
+  const [authView, setAuthView] = useState("login");
+  const [portalMode, setPortalMode] = useState("teacher");
   const [teacher, setTeacher] = useState(null);
   const [view, setView] = useState("dashboard");
   const [activeExamId, setActiveExamId] = useState(null);
   const [activeClassId, setActiveClassId] = useState(null);
-  
-  // If the URL is a student exam link (?exam=ID), jump straight into it, no login needed.
   const [studentExamId, setStudentExamId] = useState(
     () => new URLSearchParams(window.location.search).get("exam")
   );
-  
-  // If the URL is a password-reset link (?reset=TOKEN), show the reset screen.
   const [resetToken, setResetToken] = useState(
     () => new URLSearchParams(window.location.search).get("reset")
   );
-  
-  const [adminExists, setAdminExists] = useState(false);
+  const [teacherExists, setTeacherExists] = useState(false);
   const [exams, setExams] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [students, setStudents] = useState([]);
@@ -28,53 +23,52 @@ function EduExamApp() {
   const [roster, setRoster] = useState([]);
   const [messages, setMessages] = useState([]);
   const [ready, setReady] = useState(false);
-  
+
   const refresh = useCallback(async () => {
     const [ex, qs, st, an, cl, ro, msg, teacherKeys] = await Promise.all([
       loadAll("exam:"), loadAll("question:"), loadAll("student:"), loadAll("answer:"),
       loadAll("class:"), loadAll("roster:"), loadAll("message:"), listPrefix("teacher:"),
     ]);
     setExams(ex); setQuestions(qs); setStudents(st); setAnswers(an); setClasses(cl); setRoster(ro); setMessages(msg);
-    setAdminExists(teacherKeys.length > 0);
+    setTeacherExists(teacherKeys.length > 0);
   }, []);
-  
+
   useEffect(() => {
     (async () => {
       await refresh();
       setReady(true);
     })();
   }, [refresh]);
-  
-  // Optimistic local-state helpers for classes/roster
+
   const addLocalClass = useCallback((record) => {
     setClasses((prev) => [...prev, record]);
   }, []);
-  
+
   const removeLocalClass = useCallback((id) => {
     setClasses((prev) => prev.filter((c) => c.id !== id));
     setRoster((prev) => prev.filter((r) => r.class_id !== id));
   }, []);
-  
+
   const updateLocalClass = useCallback((record) => {
     setClasses((prev) => prev.map((c) => (c.id === record.id ? record : c)));
   }, []);
-  
+
   const addLocalRoster = useCallback((record) => {
     setRoster((prev) => [...prev, record]);
   }, []);
-  
+
   const addLocalRosterMany = useCallback((records) => {
     setRoster((prev) => [...prev, ...records]);
   }, []);
-  
+
   const updateLocalRoster = useCallback((record) => {
     setRoster((prev) => prev.map((r) => (r.id === record.id ? record : r)));
   }, []);
-  
+
   const removeLocalRoster = useCallback((id) => {
     setRoster((prev) => prev.filter((r) => r.id !== id));
   }, []);
-  
+
   if (!ready) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F8FAFC", fontFamily: "inherit", color: "#64748B" }}>
@@ -82,8 +76,7 @@ function EduExamApp() {
       </div>
     );
   }
-  
-  // Student is taking an exam — separate full-screen flow, no auth needed.
+
   if (studentExamId) {
     const exam = exams.find((e) => e.id === studentExamId);
     if (!exam) {
@@ -109,8 +102,7 @@ function EduExamApp() {
       />
     );
   }
-  
-  // Password-reset link (?reset=TOKEN)
+
   if (resetToken) {
     return (
       <ResetPasswordScreen
@@ -124,18 +116,18 @@ function EduExamApp() {
       />
     );
   }
-  
+
   if (!teacher) {
-    const showRegister = authView === "register" && !adminExists;
+    const showRegister = authView === "register" && !teacherExists;
     const showForgot = authView === "forgot";
-    
+
     if (showForgot) {
       return <ForgotPasswordScreen goLogin={() => setAuthView("login")} />;
     }
-    
+
     return showRegister ? (
       <RegisterScreen
-        onRegistered={(t) => { setTeacher(t); setAdminExists(true); }}
+        onRegistered={(t) => { setTeacher(t); setTeacherExists(true); }}
         goLogin={() => setAuthView("login")}
       />
     ) : (
@@ -143,72 +135,17 @@ function EduExamApp() {
         onLogin={setTeacher}
         goRegister={() => setAuthView("register")}
         goForgot={() => setAuthView("forgot")}
-        allowRegister={!adminExists}
+        allowRegister={!teacherExists}
         portalMode={portalMode}
         setPortalMode={setPortalMode}
         portalData={{ roster, students, answers, exams, questions, classes, messages }}
       />
     );
   }
-  
+
   const activeExam = exams.find((e) => e.id === activeExamId);
   const activeClass = classes.find((c) => c.id === activeClassId);
-  
-  // Admin dashboard — can see all teachers and their data
-  if (teacher.role === "admin") {
-    return (
-      <div style={{ display: "flex", flexDirection: "row-reverse", minHeight: "100vh" }}>
-        <AdminSidebar
-          active={view}
-          onNavigate={(v) => { setView(v); setActiveExamId(null); setActiveClassId(null); }}
-          onLogout={() => { setTeacher(null); setView("dashboard"); }}
-          teacherName={teacher.fullname}
-        />
-        <div style={{ flex: 1, background: "#F8FAFC", minHeight: "100vh" }}>
-          {view === "dashboard" && (
-            <AdminDashboardScreen
-              teacher={teacher}
-              exams={exams}
-              questions={questions}
-              students={students}
-              answers={answers}
-              classes={classes}
-              roster={roster}
-              refresh={refresh}
-            />
-          )}
-          {view === "teachers" && (
-            <TeachersScreen
-              teacher={teacher}
-              refresh={refresh}
-            />
-          )}
-          {view === "all-exams" && (
-            <AllExamsScreen
-              teacher={teacher}
-              exams={exams}
-              questions={questions}
-              answers={answers}
-            />
-          )}
-          {view === "all-results" && (
-            <AllResultsScreen
-              teacher={teacher}
-              exams={exams}
-              questions={questions}
-              students={students}
-              answers={answers}
-            />
-          )}
-          {view === "settings" && (
-            <SettingsScreen teacher={teacher} onUpdate={setTeacher} refresh={refresh} />
-          )}
-        </div>
-      </div>
-    );
-  }
-  
-  // Teacher dashboard — can only see their own data
+
   return (
     <div style={{ display: "flex", flexDirection: "row-reverse", minHeight: "100vh" }}>
       <Sidebar
@@ -284,8 +221,7 @@ function EduExamApp() {
         {view === "settings" && (
           <SettingsScreen teacher={teacher} onUpdate={setTeacher} refresh={refresh} />
         )}
-        
-        {/* Quick access: preview the student exam-taking flow */}
+
         {(view === "exams" || view === "dashboard") && exams.some(e => e.teacher_id === teacher.username) && (
           <div style={{ position: "fixed", bottom: 22, left: 22 }}>
             <select
