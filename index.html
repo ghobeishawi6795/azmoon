@@ -17,17 +17,23 @@
     }
     #root { min-height: 100vh; }
   </style>
+  <!-- Babel برای تبدیل JSX در مرورگر -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
+
+  <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="icons.js"></script>
-  <script src="ui.js"></script>
-  <script src="auth-screens.js"></script>
-  <script src="screens-exams.js"></script>
-  <script src="screens-taking.js"></script>
-  <script src="screens-classes.js"></script>
-  <script src="app.js"></script>
+
+  <!-- فایل‌های JSX با type="text/babel" -->
+  <script type="text/babel" src="icons.js"></script>
+  <script type="text/babel" src="ui.js"></script>
+  <script type="text/babel" src="auth-screens.js"></script>
+  <script type="text/babel" src="screens-exams.js"></script>
+  <script type="text/babel" src="screens-taking.js"></script>
+  <script type="text/babel" src="screens-classes.js"></script>
+  <script type="text/babel" src="app.js"></script>
 </body>
 </html>
