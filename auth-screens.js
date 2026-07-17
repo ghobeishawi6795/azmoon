@@ -1,125 +1,11 @@
 /* ---------------------------------------------------------
-AUTH SCREENS + STUDENT PORTAL
+AUTH SCREENS (login / register / password reset)
 --------------------------------------------------------- */
-
-function StudentPortalScreen({ roster, students, answers, exams, questions, classes, messages }) {
-  const [codeInput, setCodeInput] = useState("");
-  const [activeRoster, setActiveRoster] = useState(null);
-  const [notFound, setNotFound] = useState(false);
-
-  const lookup = () => {
-    const code = codeInput.trim();
-    if (!code) return;
-    const found = roster.find((r) => r.code === code);
-    if (found) {
-      setActiveRoster(found);
-      setNotFound(false);
-    } else {
-      setActiveRoster(null);
-      setNotFound(true);
-    }
-  };
-
-  if (!activeRoster) {
-    return (
-      <div style={{ padding: "20px 10px" }}>
-        <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B", marginBottom: 6 }}>پرتال دانش‌آموزی</div>
-        <div style={{ fontSize: 13, color: "#64748B", marginBottom: 20 }}>کدی که معلمت به تو داده را وارد کن.</div>
-        <Field label="کد دانش‌آموزی">
-          <TextInput
-            value={codeInput}
-            onChange={(e) => setCodeInput(e.target.value.replace(/\D/g, ""))}
-            onKeyDown={(e) => e.key === "Enter" && lookup()}
-            placeholder="کد خود را وارد کن"
-            style={{ fontSize: 18, letterSpacing: 3, textAlign: "center", fontWeight: 700 }}
-            maxLength={6}
-          />
-        </Field>
-        {notFound && <div style={{ color: "#DC2626", fontSize: 13, marginBottom: 14 }}>کد پیدا نشد. از معلم خود بپرس.</div>}
-        <Button type="button" onClick={lookup} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }}>ورود</Button>
-      </div>
-    );
-  }
-
-  const className = classes.find((c) => c.id === activeRoster.class_id)?.name || "—";
-  const myStudentIds = students
-    .filter((s) => s.teacher_id === activeRoster.teacher_id && s.fullname.trim() === activeRoster.fullname.trim())
-    .map((s) => s.id);
-  const myAnswers = answers.filter((a) => myStudentIds.includes(a.student_id));
-  const byExam = {};
-  myAnswers.forEach((a) => {
-    byExam[a.exam_id] = byExam[a.exam_id] || [];
-    byExam[a.exam_id].push(a);
-  });
-
-  const results = Object.entries(byExam).map(([examId, list]) => {
-    const exam = exams.find((e) => e.id === examId);
-    const totalMarks = list.reduce((s, a) => s + (a.mark || 1), 0);
-    const gotMarks = list.reduce((s, a) => s + awardedMarkOf(a), 0);
-    const pendingCount = list.filter((a) => a.is_correct === null && a.awarded_mark == null).length;
-    const pct = totalMarks ? Math.round((gotMarks / totalMarks) * 1000) / 10 : 0;
-    const date = list[0]?.answered_at ? new Date(list[0].answered_at).toLocaleDateString("fa-IR") : "—";
-    return { examId, title: exam?.title || "—", pct, pendingCount, date };
-  }).sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  const myMessages = messages.filter((m) =>
-    m.teacher_id === activeRoster.teacher_id &&
-    (m.target_type === "all" || (m.target_type === "class" && m.target_id === activeRoster.class_id) || (m.target_type === "student" && m.target_id === activeRoster.id))
-  ).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-  return (
-    <div style={{ padding: "20px 10px", maxHeight: "70vh", overflowY: "auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-        <div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B" }}>{activeRoster.fullname}</div>
-          <div style={{ fontSize: 13, color: "#64748B" }}>کلاس: {className}</div>
-        </div>
-        <span onClick={() => { setActiveRoster(null); setCodeInput(""); }} style={{ fontSize: 12, color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>خروج</span>
-      </div>
-
-      <div style={{ fontSize: 15, fontWeight: 800, color: "#1E293B", marginBottom: 10 }}>نمرات آزمون‌ها</div>
-      {results.length === 0 ? (
-        <div style={{ fontSize: 13, color: "#94A3B8", marginBottom: 20 }}>هنوز در آزمونی شرکت نکرده‌ای.</div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-          {results.map((r) => (
-            <div key={r.examId} style={{ border: "1px solid #EEF1F6", borderRadius: 10, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B" }}>{r.title}</div>
-                <div style={{ fontSize: 11, color: "#94A3B8" }}>{r.date}</div>
-              </div>
-              <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: 16, fontWeight: 800, color: r.pct >= 50 ? "#16A34A" : "#DC2626" }}>{r.pct}%</div>
-                {r.pendingCount > 0 && <div style={{ fontSize: 10, color: "#D97706" }}>در انتظار تصحیح</div>}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div style={{ fontSize: 15, fontWeight: 800, color: "#1E293B", marginBottom: 10 }}>پیام‌های معلم</div>
-      {myMessages.length === 0 ? (
-        <div style={{ fontSize: 13, color: "#94A3B8" }}>پیامی برای تو ثبت نشده.</div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {myMessages.map((m) => (
-            <div key={m.id} style={{ background: "#F8FAFC", borderRadius: 10, padding: "10px 14px" }}>
-              <div style={{ fontSize: 13, color: "#334155", whiteSpace: "pre-wrap", marginBottom: 4 }}>{m.text}</div>
-              <div style={{ fontSize: 11, color: "#94A3B8" }}>{new Date(m.created_at).toLocaleString("fa-IR")}</div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function ForgotPasswordScreen({ goLogin }) {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-
   const submit = async () => {
     setError("");
     if (!username) { setError("نام کاربری را وارد کنید."); return; }
@@ -131,14 +17,12 @@ function ForgotPasswordScreen({ goLogin }) {
         body: JSON.stringify({ username }),
       });
     } catch {
-      /* ignore */
+      /* ignore — always show the same generic message */
     }
     setLoading(false);
     setSent(true);
   };
-
   const handleKeyDown = (e) => { if (e.key === "Enter") submit(); };
-
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#132A52,#1D3E73)", padding: 20 }}>
       <div style={{ width: "100%", maxWidth: 420, background: "#fff", borderRadius: 22, padding: "40px 36px", boxShadow: "0 20px 60px rgba(19,42,82,.35)" }}>
@@ -146,13 +30,13 @@ function ForgotPasswordScreen({ goLogin }) {
         {sent ? (
           <>
             <div style={{ fontSize: 13, color: "#334155", lineHeight: 1.9, marginBottom: 22 }}>
-              اگر این نام کاربری در سامانه ثبت شده باشد، ایمیلی حاوی لینک بازیابی رمز عبور برای شما ارسال شد.
+              اگر این نام کاربری در سامانه ثبت شده باشد، ایمیلی حاوی لینک بازیابی رمز عبور برای شما ارسال شد. صندوق ایمیل خود را بررسی کنید (پوشه‌ی اسپم را هم چک کنید).
             </div>
             <Button type="button" onClick={goLogin} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }}>بازگشت به ورود</Button>
           </>
         ) : (
           <>
-            <div style={{ fontSize: 13, color: "#64748B", marginBottom: 26 }}>نام کاربری خود را وارد کنید.</div>
+            <div style={{ fontSize: 13, color: "#64748B", marginBottom: 26 }}>نام کاربری خود را وارد کنید تا لینک بازیابی به ایمیل ثبت‌شده‌تان ارسال شود.</div>
             <Field label="نام کاربری">
               <TextInput value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={handleKeyDown} placeholder="نام کاربری" />
             </Field>
@@ -176,7 +60,6 @@ function ResetPasswordScreen({ token, onDone }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null);
-
   const submit = async () => {
     setError("");
     if (!password || !confirm) { setError("هر دو فیلد را پر کنید."); return; }
@@ -195,19 +78,18 @@ function ResetPasswordScreen({ token, onDone }) {
     }
     setLoading(false);
   };
-
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#132A52,#1D3E73)", padding: 20 }}>
       <div style={{ width: "100%", maxWidth: 420, background: "#fff", borderRadius: 22, padding: "40px 36px", boxShadow: "0 20px 60px rgba(19,42,82,.35)" }}>
         <div style={{ fontSize: 22, fontWeight: 800, color: "#1E293B", marginBottom: 6 }}>تنظیم رمز عبور جدید</div>
         {status === "ok" ? (
           <>
-            <div style={{ fontSize: 13, color: "#16A34A", lineHeight: 1.9, marginBottom: 22 }}>رمز عبور با موفقیت تغییر کرد.</div>
+            <div style={{ fontSize: 13, color: "#16A34A", lineHeight: 1.9, marginBottom: 22 }}>رمز عبور با موفقیت تغییر کرد. حالا می‌توانید با رمز جدید وارد شوید.</div>
             <Button type="button" onClick={onDone} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }}>ورود به سامانه</Button>
           </>
         ) : status === "invalid" ? (
           <>
-            <div style={{ fontSize: 13, color: "#DC2626", lineHeight: 1.9, marginBottom: 22 }}>لینک بازیابی نامعتبر است.</div>
+            <div style={{ fontSize: 13, color: "#DC2626", lineHeight: 1.9, marginBottom: 22 }}>لینک بازیابی نامعتبر است یا منقضی شده. دوباره درخواست بازیابی رمز عبور بدهید.</div>
             <Button type="button" onClick={onDone} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }}>بازگشت به ورود</Button>
           </>
         ) : (
@@ -230,13 +112,15 @@ function ResetPasswordScreen({ token, onDone }) {
   );
 }
 
+/* ---------------------------------------------------------
+LOGIN SCREEN — supports both admin and teacher login
+--------------------------------------------------------- */
 function LoginScreen({ onLogin, goRegister, allowRegister, goForgot, portalMode, setPortalMode, portalData }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const submit = async () => {
     setError("");
     if (!username || !password) { setError("نام کاربری و رمز عبور را وارد کنید."); return; }
@@ -249,9 +133,7 @@ function LoginScreen({ onLogin, goRegister, allowRegister, goForgot, portalMode,
     }
     onLogin(teacher);
   };
-
   const handleKeyDown = (e) => { if (e.key === "Enter") submit(); };
-
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#132A52,#1D3E73)", padding: 20 }}>
       <div style={{ display: "flex", width: "100%", maxWidth: 860, background: "#fff", borderRadius: 22, overflow: "hidden", boxShadow: "0 20px 60px rgba(19,42,82,.35)" }}>
@@ -259,11 +141,11 @@ function LoginScreen({ onLogin, goRegister, allowRegister, goForgot, portalMode,
           <div style={{ width: 70, height: 70, borderRadius: 18, background: "rgba(255,255,255,.15)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 22 }}>
             <GraduationCap size={36} />
           </div>
-          <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 10 }}>آزمون‌ساز معلم</div>
+          <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 10 }}>سامانه آزمون مدرسه</div>
           <div style={{ fontSize: 13, color: "#C9D6EE", textAlign: "center", lineHeight: 1.9 }}>
-            بساز، برگزار کن، نتیجه بگیر.
+            مدیریت آزمون‌ها، کلاس‌ها و دانش‌آموزان
             <br />
-            سامانه‌ی آزمون آنلاین برای معلمان.
+            ویژه‌ی مدیر و معلمان مدرسه
           </div>
         </div>
         <div style={{ flex: 1.15, padding: "44px 40px", display: "flex", flexDirection: "column" }}>
@@ -271,7 +153,7 @@ function LoginScreen({ onLogin, goRegister, allowRegister, goForgot, portalMode,
             <div onClick={() => setPortalMode && setPortalMode("teacher")} style={{
               flex: 1, textAlign: "center", padding: "10px 4px", borderRadius: 10, cursor: "pointer", fontSize: 13, fontWeight: 700,
               background: portalMode !== "student" ? "#2563EB" : "#F1F5F9", color: portalMode !== "student" ? "#fff" : "#475569",
-            }}>ورود معلم</div>
+            }}>ورود معلم / مدیر</div>
             <div onClick={() => setPortalMode && setPortalMode("student")} style={{
               flex: 1, textAlign: "center", padding: "10px 4px", borderRadius: 10, cursor: "pointer", fontSize: 13, fontWeight: 700,
               background: portalMode === "student" ? "#2563EB" : "#F1F5F9", color: portalMode === "student" ? "#fff" : "#475569",
@@ -282,10 +164,10 @@ function LoginScreen({ onLogin, goRegister, allowRegister, goForgot, portalMode,
           ) : (
             <>
               <div style={{ fontSize: 22, fontWeight: 800, color: "#1E293B", marginBottom: 6 }}>خوش برگشتی!</div>
-              <div style={{ fontSize: 13, color: "#64748B", marginBottom: 26 }}>برای ورود، اطلاعات حساب معلم را وارد کن.</div>
+              <div style={{ fontSize: 13, color: "#64748B", marginBottom: 26 }}>با حساب مدیر یا معلم خود وارد شوید.</div>
               <div>
                 <Field label="نام کاربری">
-                  <TextInput value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={handleKeyDown} placeholder="مثلاً: ali_teacher" />
+                  <TextInput value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={handleKeyDown} placeholder="نام کاربری" />
                 </Field>
                 <Field label="رمز عبور">
                   <div style={{ position: "relative" }}>
@@ -306,7 +188,7 @@ function LoginScreen({ onLogin, goRegister, allowRegister, goForgot, portalMode,
               {allowRegister && (
                 <div style={{ textAlign: "center", marginTop: 20, fontSize: 13, color: "#64748B" }}>
                   حساب نداری؟{" "}
-                  <span onClick={goRegister} style={{ color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>ثبت‌نام</span>
+                  <span onClick={goRegister} style={{ color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>ثبت‌نام به‌عنوان مدیر</span>
                 </div>
               )}
             </>
@@ -317,6 +199,11 @@ function LoginScreen({ onLogin, goRegister, allowRegister, goForgot, portalMode,
   );
 }
 
+/* ---------------------------------------------------------
+REGISTER SCREEN — now only for the FIRST admin of the system.
+After admin is created, this screen is hidden. Admin adds
+teachers from their own dashboard.
+--------------------------------------------------------- */
 function RegisterScreen({ onRegistered, goLogin }) {
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
@@ -324,7 +211,6 @@ function RegisterScreen({ onRegistered, goLogin }) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const submit = async () => {
     setError("");
     if (!fullname || !username || !password || !email) { setError("همه فیلدها را پر کنید."); return; }
@@ -337,12 +223,70 @@ function RegisterScreen({ onRegistered, goLogin }) {
       setError("این نام کاربری قبلاً ثبت شده است.");
       return;
     }
+    const teacher = {
+      username,
+      password,
+      fullname,
+      email,
+      role: "admin",
+      created_at: new Date().toISOString(),
+    };
+    await setJSON(`teacher:${username}`, teacher);
+    setLoading(false);
+    onRegistered(teacher);
+  };
+  const handleKeyDown = (e) => { if (e.key === "Enter") submit(); };
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#132A52,#1D3E73)", padding: 20 }}>
+      <div style={{ width: "100%", maxWidth: 460, background: "#fff", borderRadius: 22, padding: "40px 36px", boxShadow: "0 20px 60px rgba(19,42,82,.35)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+          <div style={{ width: 42, height: 42, borderRadius: 12, background: "#FEF3C7", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Award size={22} color="#D97706" />
+          </div>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B" }}>ساخت حساب مدیر</div>
+            <div style={{ fontSize: 12, color: "#64748B" }}>فقط یک‌بار — برای راه‌اندازی سامانه</div>
+          </div>
+        </div>
+        <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.9, marginBottom: 22, background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 10, padding: "12px 14px" }}>
+          شما به‌عنوان <b>مدیر سامانه</b> ثبت‌نام می‌شوید. پس از ساخت این حساب، فقط شما می‌توانید معلم‌ها را اضافه و مدیریت کنید.
+        </div>
+        <div>
+          <Field label="نام و نام‌خانوادگی">
+            <TextInput value={fullname} onChange={(e) => setFullname(e.target.value)} onKeyDown={handleKeyDown} placeholder="مثلاً: علی محمدی" />
+          </Field>
+          <Field label="نام کاربری">
+            <TextInput value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={handleKeyDown} placeholder="یک نام کاربری یکتا (مثلاً: admin)" />
+          </Field>
+          <Field label="رمز عبور">
+            <TextInput type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyDown} placeholder="حداقل ۴ کاراکتر" />
+          </Field>
+          <Field label="ایمیل">
+            <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown} placeholder="برای بازیابی رمز عبور" />
+          </Field>
+          {error && <div style={{ color: "#DC2626", fontSize: 13, marginBottom: 14 }}>{error}</div>}
+          <Button type="button" onClick={submit} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }} disabled={loading}>
+            {loading ? "در حال ثبت..." : "ساخت حساب مدیر"}
+          </Button>
+        </div>
+        <div style={{ textAlign: "center", marginTop: 20, fontSize: 13, color: "#64748B" }}>
+          قبلاً مدیر ثبت‌نام کرده؟{" "}
+          <span onClick={goLogin} style={{ color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>ورود</span>
+        </div>
+      </div>
+    </div>
+  );
+}st existing = await getJSON(`teacher:${username}`);
+    if (existing) {
+      setLoading(false);
+      setError("این نام کاربری قبلاً ثبت شده است.");
+      return;
+    }
     const teacher = { username, password, fullname, email, created_at: new Date().toISOString() };
     await setJSON(`teacher:${username}`, teacher);
     setLoading(false);
     onRegistered(teacher);
   };
-
   const handleKeyDown = (e) => { if (e.key === "Enter") submit(); };
 
   return (
@@ -361,7 +305,7 @@ function RegisterScreen({ onRegistered, goLogin }) {
             <TextInput type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyDown} placeholder="رمز عبور" />
           </Field>
           <Field label="ایمیل">
-            <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown} placeholder="برای بازیابی رمز عبور" />
+            <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown} placeholder="برای بازیابی رمز عبور استفاده می‌شود" />
           </Field>
           {error && <div style={{ color: "#DC2626", fontSize: 13, marginBottom: 14 }}>{error}</div>}
           <Button type="button" onClick={submit} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }} disabled={loading}>
@@ -375,4 +319,8 @@ function RegisterScreen({ onRegistered, goLogin }) {
       </div>
     </div>
   );
-  }
+}
+
+/* ---------------------------------------------------------
+   DASHBOARD
+--------------------------------------------------------- */
