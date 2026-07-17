@@ -1,1508 +1,614 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>سامانه مدیریت مدرسه</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #F0F4F8;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        #root {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #E8EDF2;
-        }
-        .header h1 {
-            font-size: 22px;
-            color: #1A2A3A;
-        }
-        .header .user {
-            font-size: 14px;
-            color: #6B7A8A;
-        }
-        .header .user span {
-            color: #2563EB;
-            font-weight: 700;
-        }
-        .logo {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        h2 {
-            font-size: 18px;
-            color: #1A2A3A;
-            margin-bottom: 12px;
-        }
-        .flex {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        @media (max-width: 600px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-        }
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #3A4A5A;
-            margin-bottom: 4px;
-        }
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: 10px;
-            border: 1.5px solid #DCE3EA;
-            font-size: 14px;
-            font-family: inherit;
-            outline: none;
-            background: white;
-            transition: border-color 0.2s;
-            margin-bottom: 12px;
-        }
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #2563EB;
-        }
-        textarea {
-            min-height: 60px;
-            resize: vertical;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.15s;
-            background: #2563EB;
-            color: white;
-        }
-        button:active {
-            transform: scale(0.97);
-        }
-        button:disabled {
-            opacity: 0.5;
-            transform: none;
-        }
-        .btn-sm {
-            padding: 6px 14px;
-            font-size: 12px;
-        }
-        .btn-ghost {
-            background: #F0F4F8;
-            color: #3A4A5A;
-        }
-        .btn-danger {
-            background: #FEE2E2;
-            color: #DC2626;
-        }
-        .btn-success {
-            background: #16A34A;
-            color: white;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1.5px solid #2563EB;
-            color: #2563EB;
-        }
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .badge-blue {
-            background: #DBEAFE;
-            color: #2563EB;
-        }
-        .badge-green {
-            background: #D1FAE5;
-            color: #16A34A;
-        }
-        .badge-orange {
-            background: #FEF3C7;
-            color: #D97706;
-        }
-        .badge-red {
-            background: #FEE2E2;
-            color: #DC2626;
-        }
-        .badge-gray {
-            background: #F3F4F6;
-            color: #6B7280;
-        }
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #F0F4F8;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .list-item:last-child {
-            border-bottom: none;
-        }
-        .list-item .title {
-            font-weight: 600;
-            color: #1A2A3A;
-        }
-        .list-item .sub {
-            font-size: 12px;
-            color: #6B7A8A;
-        }
-        .mt-10 {
-            margin-top: 10px;
-        }
-        .mb-10 {
-            margin-bottom: 10px;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .text-muted {
-            color: #6B7A8A;
-            font-size: 13px;
-        }
-        .empty {
-            text-align: center;
-            padding: 30px 0;
-            color: #9AA8B8;
-            font-size: 14px;
-        }
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 100;
-        }
-        .modal {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 450px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        .modal-header h2 {
-            margin: 0;
-        }
-        .modal-close {
-            cursor: pointer;
-            font-size: 22px;
-            color: #9AA8B8;
-            background: none;
-            border: none;
-            padding: 0 8px;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .stat-box {
-            background: #F8FAFC;
-            padding: 14px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        .stat-box .num {
-            font-size: 24px;
-            font-weight: 900;
-            color: #1A2A3A;
-        }
-        .stat-box .label {
-            font-size: 11px;
-            color: #6B7A8A;
-        }
-        .hidden {
-            display: none !important;
-        }
-        .w-full {
-            width: 100%;
-        }
-        .gap-8 {
-            gap: 8px;
-        }
-        .mt-16 {
-            margin-top: 16px;
-        }
-        .border-top {
-            border-top: 1px solid #E8EDF2;
-            padding-top: 16px;
-        }
-        .code-display {
-            font-family: monospace;
-            font-size: 20px;
-            font-weight: 900;
-            color: #2563EB;
-            letter-spacing: 3px;
-            background: #F0F4F8;
-            padding: 4px 12px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سامانه آزمون مدرسه</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Vazirmatn', sans-serif; background: #F8FAFC; color: #1E293B; }
+    button { cursor: pointer; font-family: inherit; }
+    input, textarea, select { font-family: inherit; }
+  </style>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-    <div id="root"></div>
+  <div id="root"></div>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-    <script>
-        'use strict';
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-        // ============================================================
-        //  React مینیاتوری (آفلاین)
-        // ============================================================
+    // توابع کمکی
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    const generateCode = (existing) => {
+      let code;
+      do { code = String(Math.floor(100000 + Math.random() * 900000)); } while (existing.includes(code));
+      return code;
+    };
 
-        const React = {
-            createElement: function(type, props, ...children) {
-                if (typeof type === 'function') {
-                    return type(props || {});
-                }
-                const el = document.createElement(type);
-                if (props) {
-                    for (const key in props) {
-                        if (key === 'className') { el.className = props[key]; } else if (key === 'style' && typeof props[
-                                key] === 'object') {
-                            Object.assign(el.style, props[key]);
-                        } else if (key.startsWith('on') && typeof props[key] === 'function') {
-                            el.addEventListener(key.substring(2).toLowerCase(), props[key]);
-                        } else if (key === 'dangerouslySetInnerHTML') {
-                            el.innerHTML = props[key].__html;
-                        } else if (['value', 'type', 'placeholder', 'disabled', 'rows', 'min', 'max', 'step'].includes(
-                            key)) {
-                            el[key] = props[key];
-                        } else {
-                            el.setAttribute(key, props[key]);
-                        }
-                    }
-                }
-                for (const child of children) {
-                    if (child === null || child === undefined || child === false) continue;
-                    if (typeof child === 'string' || typeof child === 'number') {
-                        el.appendChild(document.createTextNode(String(child)));
-                    } else if (child instanceof Node) {
-                        el.appendChild(child);
-                    } else if (Array.isArray(child)) {
-                        for (const sc of child) {
-                            if (sc instanceof Node) el.appendChild(sc);
-                        }
-                    }
-                }
-                return el;
-            },
-            useState: function(init) {
-                const state = {
-                    value: typeof init === 'function' ? init() : init,
-                    listeners: []
-                };
-                const set = function(newVal) {
-                    const next = typeof newVal === 'function' ? newVal(state.value) : newVal;
-                    if (next !== state.value) {
-                        state.value = next;
-                        state.listeners.forEach(l => l());
-                    }
-                };
-                const get = function() { return state.value; };
-                const result = [get, set];
-                result._addListener = function(l) { state.listeners.push(l); };
-                return result;
-            },
-            useEffect: function(effect, deps) { effect(); },
-            useCallback: function(fn, deps) { return fn; },
-            useRef: function(init) { return { current: init }; }
-        };
-
-        const ReactDOM = {
-            createRoot: function(container) {
-                return {
-                    render: function(el) {
-                        container.innerHTML = '';
-                        if (el instanceof Node) container.appendChild(el);
-                    }
-                };
-            }
-        };
-
-        // ============================================================
-        //  ابزارهای کمکی
-        // ============================================================
-
-        const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-
-        function getJSON(key) {
-            try { const d = localStorage.getItem(key); return d ? JSON.parse(d) : null; } catch { return null; }
+    const db = {
+      get: (key) => JSON.parse(localStorage.getItem(key) || 'null'),
+      set: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
+      getAll: (prefix) => {
+        const items = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(prefix)) {
+            items.push(JSON.parse(localStorage.getItem(key)));
+          }
         }
+        return items;
+      },
+      delete: (key) => localStorage.removeItem(key)
+    };
 
-        function setJSON(key, val) {
-            try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch { return false; }
-        }
+    // کامپوننت‌های UI
+    const Button = ({ children, onClick, variant = 'primary', style }) => {
+      const colors = {
+        primary: { background: '#2563EB', color: '#fff' },
+        success: { background: '#16A34A', color: '#fff' },
+        danger: { background: '#DC2626', color: '#fff' },
+        ghost: { background: '#fff', color: '#334155', border: '1.5px solid #E2E8F0' }
+      };
+      return (
+        <button onClick={onClick} style={{
+          padding: '10px 18px', borderRadius: 8, fontSize: 14, fontWeight: 700,
+          border: 'none', ...colors[variant], ...style
+        }}>{children}</button>
+      );
+    };
 
-        function deleteKey(key) {
-            try { localStorage.removeItem(key); return true; } catch { return false; }
-        }
+    const Input = ({ value, onChange, placeholder, type = 'text', style }) => (
+      <input type={type} value={value} onChange={onChange} placeholder={placeholder} style={{
+        width: '100%', padding: '12px 16px', border: '1.5px solid #E2E8F0',
+        borderRadius: 8, fontSize: 14, outline: 'none', ...style
+      }} />
+    );
 
-        function listPrefix(prefix) {
-            try { return Object.keys(localStorage).filter(k => k.startsWith(prefix)); } catch { return []; }
-        }
+    // صفحه ورود
+    function LoginScreen({ onLogin, onRegister }) {
+      const [username, setUsername] = useState('');
+      const [password, setPassword] = useState('');
+      const [error, setError] = useState('');
+      const [role, setRole] = useState('teacher');
 
-        function loadAll(prefix) {
-            return listPrefix(prefix).map(k => getJSON(k)).filter(Boolean);
-        }
+      const submit = () => {
+        setError('');
+        if (!username || !password) { setError('نام کاربری و رمز عبور را وارد کنید'); return; }
+        const user = db.get(`user:${role}:${username}`);
+        if (!user || user.password !== password) { setError('نام کاربری یا رمز عبور اشتباه است'); return; }
+        onLogin(user);
+      };
 
-        function generateCode(existing) {
-            let code;
-            do { code = String(Math.floor(100000 + Math.random() * 900000)); } while (existing.includes(code));
-            return code;
-        }
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)', padding: 20 }}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: 40, width: '100%', maxWidth: 400 }}>
+            <h1 style={{ textAlign: 'center', marginBottom: 30, fontSize: 24 }}>سامانه آزمون مدرسه</h1>
+            
+            <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+              <button onClick={() => setRole('admin')} style={{
+                flex: 1, padding: '10px', borderRadius: 8, border: 'none', fontSize: 13, fontWeight: 700,
+                background: role === 'admin' ? '#2563EB' : '#F1F5F9', color: role === 'admin' ? '#fff' : '#475569'
+              }}>مدیر</button>
+              <button onClick={() => setRole('teacher')} style={{
+                flex: 1, padding: '10px', borderRadius: 8, border: 'none', fontSize: 13, fontWeight: 700,
+                background: role === 'teacher' ? '#2563EB' : '#F1F5F9', color: role === 'teacher' ? '#fff' : '#475569'
+              }}>معلم</button>
+            </div>
 
-        function shuffleArray(arr) {
-            const a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: '#475569' }}>نام کاربری</label>
+              <Input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="نام کاربری" />
+            </div>
 
-        function awardedMarkOf(a) {
-            if (a.awarded_mark != null) return a.awarded_mark;
-            return a.is_correct ? a.mark : 0;
-        }
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: '#475569' }}>رمز عبور</label>
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="رمز عبور" />
+            </div>
 
-        // ============================================================
-        //  کامپوننت‌های UI
-        // ============================================================
+            {error && <div style={{ color: '#DC2626', fontSize: 13, marginBottom: 16, textAlign: 'center' }}>{error}</div>}
 
-        function Field({ label, children }) {
-            return React.createElement('div', { className: 'field' },
-                React.createElement('label', null, label),
-                children
-            );
-        }
+            <Button onClick={submit} style={{ width: '100%', padding: '14px', fontSize: 15 }}>ورود</Button>
 
-        function Button({ children, variant = 'primary', style, onClick, disabled, className = '' }) {
-            const variants = {
-                primary: { background: '#2563EB', color: '#fff' },
-                ghost: { background: '#F0F4F8', color: '#3A4A5A' },
-                danger: { background: '#FEE2E2', color: '#DC2626' },
-                success: { background: '#16A34A', color: '#fff' },
-                outline: { background: 'transparent', color: '#2563EB', border: '1.5px solid #2563EB' },
-            };
-            const base = {
-                padding: '10px 18px',
-                borderRadius: 10,
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                border: 'none',
-                transition: 'all 0.1s',
-                ...variants[variant],
-                ...style
-            };
-            return React.createElement('button', { style: base, onClick, disabled, className }, children);
-        }
+            <div style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: '#64748B' }}>
+              حساب ندارید؟ <span onClick={onRegister} style={{ color: '#2563EB', cursor: 'pointer', fontWeight: 700 }}>ثبت‌نام</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
-        function TextInput({ value, onChange, placeholder, type = 'text', style = {}, ...props }) {
-            return React.createElement('input', {
-                type,
-                value,
-                onChange: e => onChange(e.target.value),
-                placeholder,
-                style: { width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid #DCE3EA',
-                    fontSize: 14, outline: 'none', fontFamily: 'inherit', background: '#fff',
-                    color: '#1A2A3A', ...style },
-                ...props
-            });
-        }
+    // صفحه ثبت‌نام
+    function RegisterScreen({ onRegistered, onBack }) {
+      const [fullname, setFullname] = useState('');
+      const [username, setUsername] = useState('');
+      const [password, setPassword] = useState('');
+      const [role, setRole] = useState('teacher');
+      const [error, setError] = useState('');
 
-        function Badge({ children, tone = 'blue' }) {
-            const tones = {
-                blue: 'badge-blue',
-                green: 'badge-green',
-                orange: 'badge-orange',
-                red: 'badge-red',
-                gray: 'badge-gray'
-            };
-            return React.createElement('span', { className: 'badge ' + (tones[tone] || 'badge-gray') }, children);
-        }
+      const submit = () => {
+        setError('');
+        if (!fullname || !username || !password) { setError('همه فیلدها را پر کنید'); return; }
+        const existing = db.get(`user:${role}:${username}`);
+        if (existing) { setError('این نام کاربری قبلاً ثبت شده است'); return; }
+        const user = { id: uid(), role, username, password, fullname, created: new Date().toISOString() };
+        db.set(`user:${role}:${username}`, user);
+        onRegistered(user);
+      };
 
-        function Modal({ title, children, onClose }) {
-            return React.createElement('div', { className: 'modal-overlay' },
-                React.createElement('div', { className: 'modal' },
-                    React.createElement('div', { className: 'modal-header' },
-                        React.createElement('h2', null, title),
-                        React.createElement('button', { className: 'modal-close', onClick: onClose }, '✕')
-                    ),
-                    children
-                )
-            );
-        }
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)', padding: 20 }}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: 40, width: '100%', maxWidth: 400 }}>
+            <h1 style={{ textAlign: 'center', marginBottom: 30, fontSize: 24 }}>ثبت‌نام</h1>
+            
+            <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+              <button onClick={() => setRole('admin')} style={{
+                flex: 1, padding: '10px', borderRadius: 8, border: 'none', fontSize: 13, fontWeight: 700,
+                background: role === 'admin' ? '#2563EB' : '#F1F5F9', color: role === 'admin' ? '#fff' : '#475569'
+              }}>مدیر مدرسه</button>
+              <button onClick={() => setRole('teacher')} style={{
+                flex: 1, padding: '10px', borderRadius: 8, border: 'none', fontSize: 13, fontWeight: 700,
+                background: role === 'teacher' ? '#2563EB' : '#F1F5F9', color: role === 'teacher' ? '#fff' : '#475569'
+              }}>معلم</button>
+            </div>
 
-        function EmptyState({ text }) {
-            return React.createElement('div', { className: 'empty' }, text);
-        }
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: '#475569' }}>نام و نام‌خانوادگی</label>
+              <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="مثلاً: زهرا احمدی" />
+            </div>
 
-        // ============================================================
-        //  صفحه ورود
-        // ============================================================
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: '#475569' }}>نام کاربری</label>
+              <Input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="نام کاربری" />
+            </div>
 
-        function LoginScreen({ onLogin, onRegister }) {
-            const [username, setUsername] = React.useState('');
-            const [password, setPassword] = React.useState('');
-            const [error, setError] = React.useState('');
-            const [loading, setLoading] = React.useState(false);
-            const [showPw, setShowPw] = React.useState(false);
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: '#475569' }}>رمز عبور</label>
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="رمز عبور" />
+            </div>
 
-            const submit = () => {
-                setError('');
-                if (!username || !password) { setError('نام کاربری و رمز عبور را وارد کنید.'); return; }
-                setLoading(true);
-                const teacher = getJSON(`teacher:${username}`);
-                setTimeout(() => {
-                    setLoading(false);
-                    if (!teacher || teacher.password !== password) {
-                        setError('نام کاربری یا رمز عبور اشتباه است.');
-                        return;
-                    }
-                    onLogin(teacher);
-                }, 300);
-            };
+            {error && <div style={{ color: '#DC2626', fontSize: 13, marginBottom: 16, textAlign: 'center' }}>{error}</div>}
 
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'logo' }, '🏫'),
-                React.createElement('h1', { style: { fontSize: 22, color: '#1A2A3A', marginBottom: 4 } },
-                    'سامانه مدیریت مدرسه'),
-                React.createElement('div', { className: 'text-muted', style: { marginBottom: 20 } },
-                    'ورود به پنل مدیریت'),
+            <Button onClick={submit} style={{ width: '100%', padding: '14px', fontSize: 15 }}>ثبت‌نام</Button>
 
-                React.createElement(Field, { label: 'نام کاربری' },
-                    React.createElement(TextInput, { value: username, onChange: setUsername,
-                        placeholder: 'نام کاربری', onKeyDown: e => e.key === 'Enter' && submit() })
-                ),
-                React.createElement(Field, { label: 'رمز عبور' },
-                    React.createElement('div', { style: { position: 'relative' } },
-                        React.createElement(TextInput, {
-                            type: showPw ? 'text' : 'password',
-                            value: password,
-                            onChange: setPassword,
-                            placeholder: 'رمز عبور',
-                            onKeyDown: e => e.key === 'Enter' && submit()
-                        }),
-                        React.createElement('span', {
-                            style: { position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-                                cursor: 'pointer', fontSize: 18 },
-                            onClick: () => setShowPw(!showPw)
-                        }, showPw ? '🙈' : '👁️')
-                    )
-                ),
+            <div style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: '#64748B' }}>
+              قبلاً ثبت‌نام کردید؟ <span onClick={onBack} style={{ color: '#2563EB', cursor: 'pointer', fontWeight: 700 }}>ورود</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
-                error && React.createElement('div', { style: { color: '#DC2626', fontSize: 13, margin: '8px 0' } },
-                    error),
+    // داشبورد مدیر
+    function AdminDashboard({ user, onLogout }) {
+      const [view, setView] = useState('dashboard');
+      const teachers = db.getAll('user:teacher:');
+      const exams = db.getAll('exam:');
+      const students = db.getAll('roster:');
 
-                React.createElement(Button, { onClick: submit, disabled: loading, style: { width: '100%' } },
-                    loading ? 'در حال ورود...' : 'ورود'
-                ),
+      return (
+        <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div style={{ width: 220, background: '#0F172A', padding: 20, color: '#fff' }}>
+            <h2 style={{ marginBottom: 30, fontSize: 18 }}>پنل مدیر</h2>
+            <div onClick={() => setView('dashboard')} style={{ padding: 12, borderRadius: 8, cursor: 'pointer', marginBottom: 8, background: view === 'dashboard' ? '#2563EB' : 'transparent' }}>داشبورد</div>
+            <div onClick={() => setView('teachers')} style={{ padding: 12, borderRadius: 8, cursor: 'pointer', marginBottom: 8, background: view === 'teachers' ? '#2563EB' : 'transparent' }}>معلمان</div>
+            <div onClick={() => setView('exams')} style={{ padding: 12, borderRadius: 8, cursor: 'pointer', marginBottom: 8, background: view === 'exams' ? '#2563EB' : 'transparent' }}>آزمون‌ها</div>
+            <div onClick={onLogout} style={{ padding: 12, borderRadius: 8, cursor: 'pointer', color: '#F87171', marginTop: 20 }}>خروج</div>
+          </div>
 
-                React.createElement('div', { style: { textAlign: 'center', marginTop: 14, fontSize: 13,
-                        color: '#6B7A8A' } },
-                    'حساب نداری؟ ',
-                    React.createElement('span', {
-                        style: { color: '#2563EB', fontWeight: 700, cursor: 'pointer' },
-                        onClick: onRegister
-                    }, 'ثبت‌نام مدیر')
-                )
-            );
-        }
+          <div style={{ flex: 1, padding: 30 }}>
+            <h1 style={{ marginBottom: 30, fontSize: 24 }}>داشبورد مدیر</h1>
+            
+            {view === 'dashboard' && (
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0', minWidth: 200 }}>
+                  <div style={{ fontSize: 14, color: '#64748B', marginBottom: 8 }}>معلمان</div>
+                  <div style={{ fontSize: 32, fontWeight: 800 }}>{teachers.length}</div>
+                </div>
+                <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0', minWidth: 200 }}>
+                  <div style={{ fontSize: 14, color: '#64748B', marginBottom: 8 }}>آزمون‌ها</div>
+                  <div style={{ fontSize: 32, fontWeight: 800 }}>{exams.length}</div>
+                </div>
+                <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0', minWidth: 200 }}>
+                  <div style={{ fontSize: 14, color: '#64748B', marginBottom: 8 }}>دانش‌آموزان</div>
+                  <div style={{ fontSize: 32, fontWeight: 800 }}>{students.length}</div>
+                </div>
+              </div>
+            )}
 
-        // ============================================================
-        //  صفحه ثبت‌نام مدیر
-        // ============================================================
+            {view === 'teachers' && (
+              <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0' }}>
+                <h2 style={{ marginBottom: 20 }}>معلمان ثبت‌نام شده</h2>
+                {teachers.length === 0 ? (
+                  <p style={{ color: '#64748B', textAlign: 'center', padding: 40 }}>هنوز معلمی ثبت‌نام نکرده است</p>
+                ) : (
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid #E2E8F0' }}>
+                        <th style={{ padding: 12, textAlign: 'right' }}>نام</th>
+                        <th style={{ padding: 12, textAlign: 'right' }}>نام کاربری</th>
+                        <th style={{ padding: 12, textAlign: 'right' }}>تاریخ ثبت‌نام</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {teachers.map(t => (
+                        <tr key={t.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: 12 }}>{t.fullname}</td>
+                          <td style={{ padding: 12 }}>{t.username}</td>
+                          <td style={{ padding: 12 }}>{new Date(t.created).toLocaleDateString('fa-IR')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
 
-        function RegisterScreen({ onRegistered, goLogin }) {
-            const [fullname, setFullname] = React.useState('');
-            const [username, setUsername] = React.useState('');
-            const [password, setPassword] = React.useState('');
-            const [email, setEmail] = React.useState('');
-            const [error, setError] = React.useState('');
-            const [loading, setLoading] = React.useState(false);
-
-            const submit = () => {
-                setError('');
-                if (!fullname || !username || !password || !email) {
-                    setError('همه فیلدها را پر کنید.');
-                    return;
-                }
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    setError('ایمیل معتبر نیست.');
-                    return;
-                }
-                if (password.length < 4) {
-                    setError('رمز عبور باید حداقل ۴ کاراکتر باشد.');
-                    return;
-                }
-                setLoading(true);
-                if (getJSON(`teacher:${username}`)) {
-                    setLoading(false);
-                    setError('این نام کاربری قبلاً ثبت شده است.');
-                    return;
-                }
-                const teacher = {
-                    username,
-                    password,
-                    fullname,
-                    email,
-                    role: 'admin',
-                    created_at: new Date().toISOString()
-                };
-                setJSON(`teacher:${username}`, teacher);
-                setLoading(false);
-                onRegistered(teacher);
-            };
-
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'logo' }, '📝'),
-                React.createElement('h1', { style: { fontSize: 20, color: '#1A2A3A' } }, 'ثبت‌نام مدیر'),
-                React.createElement('div', { className: 'text-muted', style: { marginBottom: 16 } },
-                    'فقط یک‌بار برای راه‌اندازی سامانه'),
-
-                React.createElement(Field, { label: 'نام و نام‌خانوادگی' },
-                    React.createElement(TextInput, { value: fullname, onChange: setFullname,
-                        placeholder: 'مثلاً: علی محمدی' })
-                ),
-                React.createElement(Field, { label: 'نام کاربری' },
-                    React.createElement(TextInput, { value: username, onChange: setUsername,
-                        placeholder: 'یک نام کاربری یکتا' })
-                ),
-                React.createElement(Field, { label: 'رمز عبور' },
-                    React.createElement(TextInput, { type: 'password', value: password, onChange: setPassword,
-                        placeholder: 'حداقل ۴ کاراکتر' })
-                ),
-                React.createElement(Field, { label: 'ایمیل' },
-                    React.createElement(TextInput, { type: 'email', value: email, onChange: setEmail,
-                        placeholder: 'برای بازیابی رمز عبور' })
-                ),
-
-                error && React.createElement('div', { style: { color: '#DC2626', fontSize: 13, margin: '8px 0' } },
-                    error),
-
-                React.createElement(Button, { onClick: submit, disabled: loading, style: { width: '100%' } },
-                    loading ? 'در حال ثبت...' : 'ثبت‌نام'
-                ),
-
-                React.createElement('div', { style: { textAlign: 'center', marginTop: 14, fontSize: 13,
-                        color: '#6B7A8A' } },
-                    'قبلاً ثبت‌نام کردی؟ ',
-                    React.createElement('span', {
-                        style: { color: '#2563EB', fontWeight: 700, cursor: 'pointer' },
-                        onClick: goLogin
-                    }, 'ورود')
-                )
-            );
-        }
-
-        // ============================================================
-        //  داشبورد ادمین
-        // ============================================================
-
-        function AdminDashboard({ teacher, onNavigate, refresh }) {
-            const teachers = loadAll('teacher:').filter(t => t.username !== teacher.username);
-            const exams = loadAll('exam:');
-            const classes = loadAll('class:');
-            const students = loadAll('student:');
-
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '📊 داشبورد مدیر'),
-                    React.createElement('div', { className: 'user' },
-                        teacher.fullname,
-                        React.createElement('span', { style: { margin: '0 8px' } }, '|'),
-                        React.createElement('span', { style: { cursor: 'pointer', color: '#DC2626' },
-                            onClick: () => { localStorage.clear();
-                                location.reload(); } }, 'خروج')
-                    )
-                ),
-
-                React.createElement('div', { className: 'stats' },
-                    React.createElement('div', { className: 'stat-box' },
-                        React.createElement('div', { className: 'num' }, teachers.length),
-                        React.createElement('div', { className: 'label' }, 'معلمان')
-                    ),
-                    React.createElement('div', { className: 'stat-box' },
-                        React.createElement('div', { className: 'num' }, exams.length),
-                        React.createElement('div', { className: 'label' }, 'آزمون‌ها')
-                    ),
-                    React.createElement('div', { className: 'stat-box' },
-                        React.createElement('div', { className: 'num' }, classes.length),
-                        React.createElement('div', { className: 'label' }, 'کلاس‌ها')
-                    ),
-                    React.createElement('div', { className: 'stat-box' },
-                        React.createElement('div', { className: 'num' }, students.length),
-                        React.createElement('div', { className: 'label' }, 'دانش‌آموزان')
-                    )
-                ),
-
-                React.createElement('div', { className: 'flex', style: { marginBottom: 16 } },
-                    React.createElement(Button, { onClick: () => onNavigate('teachers') }, '👨‍🏫 مدیریت معلمان'),
-                    React.createElement(Button, { variant: 'ghost', onClick: () => onNavigate('all-exams') },
-                        '📝 همه آزمون‌ها')
-                ),
-
-                React.createElement('div', { className: 'border-top' },
-                    React.createElement('h2', null, 'معلمان'),
-                    teachers.length === 0 ?
-                    React.createElement(EmptyState, { text: 'هنوز معلمی اضافه نشده.' }) :
-                    teachers.map(t =>
-                        React.createElement('div', { className: 'list-item', key: t.username },
-                            React.createElement('div', null,
-                                React.createElement('div', { className: 'title' }, t.fullname),
-                                React.createElement('div', { className: 'sub' }, '👤 ' + t.username)
-                            ),
-                            React.createElement(Badge, { tone: 'blue' }, 'معلم')
-                        )
-                    )
-                )
-            );
-        }
-
-        // ============================================================
-        //  مدیریت معلمان (فقط ادمین)
-        // ============================================================
-
-        function TeachersScreen({ teacher, onBack, refresh }) {
-            const [showModal, setShowModal] = React.useState(false);
-            const [fullname, setFullname] = React.useState('');
-            const [username, setUsername] = React.useState('');
-            const [password, setPassword] = React.useState('');
-            const [email, setEmail] = React.useState('');
-            const [error, setError] = React.useState('');
-            const [loading, setLoading] = React.useState(false);
-
-            const teachers = loadAll('teacher:').filter(t => t.username !== teacher.username);
-
-            const addTeacher = () => {
-                setError('');
-                if (!fullname || !username || !password || !email) {
-                    setError('همه فیلدها را پر کنید.');
-                    return;
-                }
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    setError('ایمیل معتبر نیست.');
-                    return;
-                }
-                if (password.length < 4) {
-                    setError('رمز عبور باید حداقل ۴ کاراکتر باشد.');
-                    return;
-                }
-                setLoading(true);
-                if (getJSON(`teacher:${username}`)) {
-                    setLoading(false);
-                    setError('این نام کاربری قبلاً ثبت شده است.');
-                    return;
-                }
-                setJSON(`teacher:${username}`, {
-                    username,
-                    password,
-                    fullname,
-                    email,
-                    role: 'teacher',
-                    created_at: new Date().toISOString()
-                });
-                setLoading(false);
-                setShowModal(false);
-                setFullname('');
-                setUsername('');
-                setPassword('');
-                setEmail('');
-                refresh();
-            };
-
-            const removeTeacher = (username) => {
-                if (!confirm(`معلم "${username}" حذف شود؟ همه داده‌های او پاک می‌شود.`)) return;
-                deleteKey(`teacher:${username}`);
-                // حذف آزمون‌ها و سوالات و کلاس‌های این معلم
-                loadAll('exam:').filter(e => e.teacher_id === username).forEach(e => {
-                    deleteKey(`exam:${e.id}`);
-                    loadAll('question:').filter(q => q.exam_id === e.id).forEach(q => deleteKey(`question:${q.id}`));
-                });
-                loadAll('class:').filter(c => c.teacher_id === username).forEach(c => {
-                    deleteKey(`class:${c.id}`);
-                    loadAll('roster:').filter(r => r.class_id === c.id).forEach(r => deleteKey(`roster:${r.id}`));
-                });
-                refresh();
-            };
-
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '👨‍🏫 مدیریت معلمان'),
-                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
-                ),
-
-                React.createElement(Button, { onClick: () => setShowModal(true) }, '➕ افزودن معلم جدید'),
-
-                React.createElement('div', { className: 'mt-10' },
-                    teachers.length === 0 ?
-                    React.createElement(EmptyState, { text: 'هنوز معلمی اضافه نشده.' }) :
-                    teachers.map(t =>
-                        React.createElement('div', { className: 'list-item', key: t.username },
-                            React.createElement('div', null,
-                                React.createElement('div', { className: 'title' }, t.fullname),
-                                React.createElement('div', { className: 'sub' }, '👤 ' + t.username +
-                                    ' · 📧 ' + t.email)
-                            ),
-                            React.createElement('div', { className: 'flex' },
-                                React.createElement(Badge, { tone: 'green' }, 'معلم'),
-                                React.createElement(Button, {
-                                    variant: 'danger',
-                                    className: 'btn-sm',
-                                    onClick: () => removeTeacher(t.username)
-                                }, '🗑️')
-                            )
-                        )
-                    )
-                ),
-
-                showModal && React.createElement(Modal, { title: 'افزودن معلم جدید', onClose: () => setShowModal(
-                        false) },
-                    React.createElement(Field, { label: 'نام و نام‌خانوادگی' },
-                        React.createElement(TextInput, { value: fullname, onChange: setFullname,
-                            placeholder: 'مثلاً: زهرا احمدی' })
-                    ),
-                    React.createElement(Field, { label: 'نام کاربری' },
-                        React.createElement(TextInput, { value: username, onChange: setUsername,
-                            placeholder: 'یک نام کاربری یکتا' })
-                    ),
-                    React.createElement(Field, { label: 'رمز عبور' },
-                        React.createElement(TextInput, { type: 'password', value: password, onChange: setPassword,
-                            placeholder: 'حداقل ۴ کاراکتر' })
-                    ),
-                    React.createElement(Field, { label: 'ایمیل' },
-                        React.createElement(TextInput, { type: 'email', value: email, onChange: setEmail,
-                            placeholder: 'ایمیل معلم' })
-                    ),
-                    error && React.createElement('div', { style: { color: '#DC2626', fontSize: 13,
-                            margin: '8px 0' } }, error),
-                    React.createElement('div', { className: 'flex', style: { marginTop: 12,
-                            justifyContent: 'flex-end' } },
-                        React.createElement(Button, { variant: 'ghost', onClick: () => setShowModal(false) },
-                            'انصراف'),
-                        React.createElement(Button, { onClick: addTeacher, disabled: loading },
-                            loading ? 'در حال ثبت...' : 'افزودن معلم'
-                        )
-                    )
-                )
-            );
-        }
-
-        // ============================================================
-        //  همه آزمون‌ها (ادمین)
-        // ============================================================
-
-        function AllExamsScreen({ onBack, refresh }) {
-            const exams = loadAll('exam:').sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            const teachers = loadAll('teacher:');
-
-            const getTeacherName = (id) => {
-                const t = teachers.find(t => t.username === id);
-                return t ? t.fullname : id;
-            };
-
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '📝 همه آزمون‌ها'),
-                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
-                ),
-
-                exams.length === 0 ?
-                React.createElement(EmptyState, { text: 'هنوز آزمونی در سامانه ثبت نشده.' }) :
-                exams.map(ex =>
-                    React.createElement('div', { className: 'list-item', key: ex.id },
-                        React.createElement('div', null,
-                            React.createElement('div', { className: 'title' }, ex.title),
-                            React.createElement('div', { className: 'sub' },
-                                'معلم: ' + getTeacherName(ex.teacher_id),
-                                ex.duration_minutes ? ` · ${ex.duration_minutes} دقیقه` : '',
-                                ` · ${new Date(ex.created_at).toLocaleDateString('fa-IR')}`
-                            )
-                        ),
-                        React.createElement(Badge, { tone: 'blue' },
-                            loadAll('question:').filter(q => q.exam_id === ex.id).length + ' سوال'
-                        )
-                    )
-                )
-            );
-        }
-
-        // ============================================================
-        //  داشبورد معلم
-        // ============================================================
-
-        function TeacherDashboard({ teacher, onNavigate, refresh }) {
-            const exams = loadAll('exam:').filter(e => e.teacher_id === teacher.username);
-            const questions = loadAll('question:');
-            const classes = loadAll('class:').filter(c => c.teacher_id === teacher.username);
-            const roster = loadAll('roster:').filter(r => r.teacher_id === teacher.username);
-            const answers = loadAll('answer:');
-
-            const examIds = new Set(exams.map(e => e.id));
-            const myQuestions = questions.filter(q => examIds.has(q.exam_id));
-
-            let totalMarks = 0,
-                gotMarks = 0;
-            answers.forEach(a => {
-                if (examIds.has(a.exam_id)) {
-                    totalMarks += a.mark || 1;
-                    gotMarks += awardedMarkOf(a);
-                }
-            });
-            const avg = totalMarks ? Math.round((gotMarks / totalMarks) * 100) : 0;
-
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '📊 داشبورد معلم'),
-                    React.createElement('div', { className: 'user' },
-                        teacher.fullname,
-                        React.createElement('span', { style: { margin: '0 8px' } }, '|'),
-                        React.createElement('span', { style: { cursor: 'pointer', color: '#DC2626' },
-                            onClick: () => { localStorage.clear();
-                                location.reload(); } }, 'خروج')
-                    )
-                ),
-
-                React.createElement('div', { className: 'stats' },
-                    React.createElement('div', { className: 'stat-box' },
-                        React.createElement('div', { className: 'num' }, exams.length),
-                        React.createElement('div', { className: 'label' }, 'آزمون‌ها')
-                    ),
-                    React.createElement('div', { className: 'stat-box' },
-                        React.createElement('div', { className: 'num' }, myQuestions.length),
-                        React.createElement('div', { className: 'label' }, 'سوالات')
-                    ),
-                    React.createElement('div', { className: 'stat-box' },
-                        React.createElement('div', { className: 'num' }, classes.length),
-                        React.createElement('div', { className: 'label' }, 'کلاس‌ها')
-                    ),
-                    React.createElement('div', { className: 'stat-box' },
-                        React.createElement('div', { className: 'num' }, avg + '%'),
-                        React.createElement('div', { className: 'label' }, 'میانگین نمرات')
-                    )
-                ),
-
-                React.createElement('div', { className: 'flex', style: { marginBottom: 16 } },
-                    React.createElement(Button, { onClick: () => onNavigate('exams') }, '📝 آزمون‌ها'),
-                    React.createElement(Button, { variant: 'ghost', onClick: () => onNavigate('classes') },
-                        '📚 کلاس‌ها'),
-                    React.createElement(Button, { variant: 'ghost', onClick: () => onNavigate('students') },
-                        '👨‍🎓 دانش‌آموزان')
-                ),
-
-                React.createElement('div', { className: 'border-top' },
-                    React.createElement('h2', null, 'آزمون‌های اخیر'),
-                    exams.length === 0 ?
-                    React.createElement(EmptyState, { text: 'هنوز آزمونی نساخته‌ای.' }) :
-                    exams.slice(0, 5).map(ex => {
-                        const qCount = questions.filter(q => q.exam_id === ex.id).length;
-                        return React.createElement('div', { className: 'list-item', key: ex.id },
-                            React.createElement('div', null,
-                                React.createElement('div', { className: 'title' }, ex.title),
-                                React.createElement('div', { className: 'sub' },
-                                    qCount + ' سوال · ' + new Date(ex.created_at)
-                                    .toLocaleDateString('fa-IR')
-                                )
-                            ),
-                            React.createElement(Button, {
-                                variant: 'ghost',
-                                className: 'btn-sm',
-                                onClick: () => onNavigate('exams')
-                            }, 'مدیریت')
+            {view === 'exams' && (
+              <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0' }}>
+                <h2 style={{ marginBottom: 20 }}>همه آزمون‌ها</h2>
+                {exams.length === 0 ? (
+                  <p style={{ color: '#64748B', textAlign: 'center', padding: 40 }}>هنوز آزمونی ساخته نشده است</p>
+                ) : (
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid #E2E8F0' }}>
+                        <th style={{ padding: 12, textAlign: 'right' }}>عنوان</th>
+                        <th style={{ padding: 12, textAlign: 'right' }}>معلم</th>
+                        <th style={{ padding: 12, textAlign: 'right' }}>تاریخ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {exams.map(e => {
+                        const teacher = teachers.find(t => t.username === e.teacher_id);
+                        return (
+                          <tr key={e.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                            <td style={{ padding: 12 }}>{e.title}</td>
+                            <td style={{ padding: 12 }}>{teacher?.fullname || '—'}</td>
+                            <td style={{ padding: 12 }}>{new Date(e.created).toLocaleDateString('fa-IR')}</td>
+                          </tr>
                         );
-                    })
-                )
-            );
-        }
+                      })}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
 
-        // ============================================================
-        //  مدیریت آزمون‌ها (معلم)
-        // ============================================================
+    // داشبورد معلم
+    function TeacherDashboard({ user, onLogout }) {
+      const [view, setView] = useState('dashboard');
+      const [activeExamId, setActiveExamId] = useState(null);
+      const [activeClassId, setActiveClassId] = useState(null);
+      const [, forceUpdate] = useState(0);
 
-        function ExamsScreen({ teacher, onBack, onNavigate, refresh }) {
-            const [showModal, setShowModal] = React.useState(false);
-            const [title, setTitle] = React.useState('');
-            const [duration, setDuration] = React.useState('');
-            const [code, setCode] = React.useState('');
-            const [saving, setSaving] = React.useState(false);
+      const myExams = db.getAll('exam:').filter(e => e.teacher_id === user.username);
+      const myClasses = db.getAll('class:').filter(c => c.teacher_id === user.username);
+      const myRoster = db.getAll('roster:').filter(r => r.teacher_id === user.username);
 
-            const exams = loadAll('exam:').filter(e => e.teacher_id === teacher.username)
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            const questions = loadAll('question:');
+      const refresh = () => forceUpdate(n => n + 1);
 
-            const createExam = () => {
-                if (!title.trim()) return;
-                setSaving(true);
-                const id = uid();
-                setJSON(`exam:${id}`, {
-                    id,
-                    title: title.trim(),
-                    teacher_id: teacher.username,
-                    duration_minutes: Number(duration) || null,
-                    access_code: code.trim() || null,
-                    created_at: new Date().toISOString()
-                });
-                setSaving(false);
-                setTitle('');
-                setDuration('');
-                setCode('');
-                setShowModal(false);
-                refresh();
-            };
+      if (activeExamId) {
+        return <ExamManager examId={activeExamId} user={user} onBack={() => { setActiveExamId(null); refresh(); }} />;
+      }
 
-            const removeExam = (id) => {
-                if (!confirm('این آزمون حذف شود؟')) return;
-                deleteKey(`exam:${id}`);
-                loadAll('question:').filter(q => q.exam_id === id).forEach(q => deleteKey(`question:${q.id}`));
-                refresh();
-            };
+      if (activeClassId) {
+        return <ClassManager classId={activeClassId} user={user} onBack={() => { setActiveClassId(null); refresh(); }} />;
+      }
 
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '📝 آزمون‌ها'),
-                    React.createElement('div', { className: 'flex' },
-                        React.createElement(Button, { onClick: () => setShowModal(true) }, '➕ جدید'),
-                        React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙')
-                    )
-                ),
+      return (
+        <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div style={{ width: 220, background: '#132A52', padding: 20, color: '#fff' }}>
+            <h2 style={{ marginBottom: 30, fontSize: 18 }}>پنل معلم</h2>
+            <div onClick={() => setView('dashboard')} style={{ padding: 12, borderRadius: 8, cursor: 'pointer', marginBottom: 8, background: view === 'dashboard' ? '#2563EB' : 'transparent' }}>داشبورد</div>
+            <div onClick={() => setView('exams')} style={{ padding: 12, borderRadius: 8, cursor: 'pointer', marginBottom: 8, background: view === 'exams' ? '#2563EB' : 'transparent' }}>آزمون‌ها</div>
+            <div onClick={() => setView('classes')} style={{ padding: 12, borderRadius: 8, cursor: 'pointer', marginBottom: 8, background: view === 'classes' ? '#2563EB' : 'transparent' }}>کلاس‌ها</div>
+            <div onClick={onLogout} style={{ padding: 12, borderRadius: 8, cursor: 'pointer', color: '#F87171', marginTop: 20 }}>خروج</div>
+          </div>
 
-                exams.length === 0 ?
-                React.createElement(EmptyState, { text: 'هنوز آزمونی نساخته‌ای.' }) :
-                exams.map(ex => {
-                    const qCount = questions.filter(q => q.exam_id === ex.id).length;
-                    return React.createElement('div', { className: 'list-item', key: ex.id },
-                        React.createElement('div', null,
-                            React.createElement('div', { className: 'title' }, ex.title),
-                            React.createElement('div', { className: 'sub' },
-                                qCount + ' سوال',
-                                ex.duration_minutes ? ` · ${ex.duration_minutes} دقیقه` : '',
-                                ` · ${new Date(ex.created_at).toLocaleDateString('fa-IR')}`
-                            )
-                        ),
-                        React.createElement('div', { className: 'flex' },
-                            React.createElement(Button, {
-                                className: 'btn-sm',
-                                variant: 'ghost',
-                                onClick: () => onNavigate('questions', ex.id)
-                            }, 'سوالات'),
-                            React.createElement(Button, {
-                                className: 'btn-sm',
-                                variant: 'danger',
-                                onClick: () => removeExam(ex.id)
-                            }, '🗑️')
-                        )
+          <div style={{ flex: 1, padding: 30 }}>
+            <h1 style={{ marginBottom: 30, fontSize: 24 }}>داشبورد معلم</h1>
+            
+            {view === 'dashboard' && (
+              <div>
+                <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 30 }}>
+                  <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0', minWidth: 200 }}>
+                    <div style={{ fontSize: 14, color: '#64748B', marginBottom: 8 }}>آزمون‌ها</div>
+                    <div style={{ fontSize: 32, fontWeight: 800 }}>{myExams.length}</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0', minWidth: 200 }}>
+                    <div style={{ fontSize: 14, color: '#64748B', marginBottom: 8 }}>کلاس‌ها</div>
+                    <div style={{ fontSize: 32, fontWeight: 800 }}>{myClasses.length}</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0', minWidth: 200 }}>
+                    <div style={{ fontSize: 14, color: '#64748B', marginBottom: 8 }}>دانش‌آموزان</div>
+                    <div style={{ fontSize: 32, fontWeight: 800 }}>{myRoster.length}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {view === 'exams' && (
+              <div>
+                <Button onClick={() => {
+                  const title = prompt('عنوان آزمون:');
+                  if (!title) return;
+                  const id = uid();
+                  db.set(`exam:${id}`, { id, title, teacher_id: user.username, created: new Date().toISOString() });
+                  refresh();
+                }} style={{ marginBottom: 20 }}>+ ساخت آزمون جدید</Button>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                  {myExams.map(ex => (
+                    <div key={ex.id} style={{ background: '#fff', padding: 20, borderRadius: 12, border: '1px solid #E2E8F0' }}>
+                      <h3 style={{ marginBottom: 8 }}>{ex.title}</h3>
+                      <p style={{ fontSize: 12, color: '#64748B', marginBottom: 16 }}>{new Date(ex.created).toLocaleDateString('fa-IR')}</p>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <Button variant="ghost" onClick={() => setActiveExamId(ex.id)} style={{ fontSize: 13 }}>مدیریت سوالات</Button>
+                        <Button variant="danger" onClick={() => {
+                          if (confirm('آزمون حذف شود؟')) {
+                            db.delete(`exam:${ex.id}`);
+                            db.getAll('question:').filter(q => q.exam_id === ex.id).forEach(q => db.delete(`question:${q.id}`));
+                            refresh();
+                          }
+                        }} style={{ fontSize: 13 }}>حذف</Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {view === 'classes' && (
+              <div>
+                <Button onClick={() => {
+                  const name = prompt('نام کلاس:');
+                  if (!name) return;
+                  const id = uid();
+                  db.set(`class:${id}`, { id, name: name.trim(), teacher_id: user.username, created: new Date().toISOString() });
+                  refresh();
+                }} style={{ marginBottom: 20 }}>+ افزودن کلاس</Button>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                  {myClasses.map(c => {
+                    const count = myRoster.filter(r => r.class_id === c.id).length;
+                    return (
+                      <div key={c.id} style={{ background: '#fff', padding: 20, borderRadius: 12, border: '1px solid #E2E8F0' }}>
+                        <h3 style={{ marginBottom: 8 }}>{c.name}</h3>
+                        <p style={{ fontSize: 12, color: '#64748B', marginBottom: 16 }}>{count} دانش‌آموز</p>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <Button variant="ghost" onClick={() => setActiveClassId(c.id)} style={{ fontSize: 13 }}>مدیریت دانش‌آموزان</Button>
+                          <Button variant="danger" onClick={() => {
+                            if (confirm('کلاس و دانش‌آموزان آن حذف شوند؟')) {
+                              db.delete(`class:${c.id}`);
+                              myRoster.filter(r => r.class_id === c.id).forEach(r => db.delete(`roster:${r.id}`));
+                              refresh();
+                            }
+                          }} style={{ fontSize: 13 }}>حذف</Button>
+                        </div>
+                      </div>
                     );
-                }),
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
 
-                showModal && React.createElement(Modal, { title: 'ساخت آزمون جدید', onClose: () => setShowModal(
-                        false) },
-                    React.createElement(Field, { label: 'عنوان آزمون' },
-                        React.createElement(TextInput, { value: title, onChange: setTitle,
-                            placeholder: 'مثلاً: ریاضی فصل ۴' })
-                    ),
-                    React.createElement(Field, { label: 'مدت زمان (دقیقه)' },
-                        React.createElement(TextInput, { type: 'number', value: duration, onChange: setDuration,
-                            placeholder: 'اختیاری' })
-                    ),
-                    React.createElement(Field, { label: 'کد دسترسی' },
-                        React.createElement(TextInput, { value: code, onChange: setCode,
-                            placeholder: 'اختیاری' })
-                    ),
-                    React.createElement('div', { className: 'flex', style: { marginTop: 12,
-                            justifyContent: 'flex-end' } },
-                        React.createElement(Button, { variant: 'ghost', onClick: () => setShowModal(false) },
-                            'انصراف'),
-                        React.createElement(Button, { onClick: createExam, disabled: saving },
-                            saving ? 'در حال ساخت...' : 'ساخت'
-                        )
-                    )
-                )
-            );
+    // مدیریت سوالات آزمون
+    function ExamManager({ examId, user, onBack }) {
+      const exam = db.get(`exam:${examId}`);
+      const [questions, setQuestions] = useState(db.getAll('question:').filter(q => q.exam_id === examId));
+      const [qType, setQType] = useState('mc');
+      const [qText, setQText] = useState('');
+      const [options, setOptions] = useState(['', '', '', '']);
+      const [correct, setCorrect] = useState(0);
+      const [mark, setMark] = useState(1);
+      const [, forceUpdate] = useState(0);
+
+      const saveQuestion = () => {
+        if (!qText.trim()) { alert('متن سوال را وارد کنید'); return; }
+        if (qType === 'mc' && options.some(o => !o.trim())) { alert('همه گزینه‌ها را پر کنید'); return; }
+        const id = uid();
+        const question = { id, exam_id: examId, type: qType, question_text: qText.trim(), mark: Number(mark) || 1 };
+        if (qType === 'mc') {
+          question.option_a = options[0];
+          question.option_b = options[1];
+          question.option_c = options[2];
+          question.option_d = options[3];
+          question.correct_answer = ['A', 'B', 'C', 'D'][correct];
         }
+        db.set(`question:${id}`, question);
+        setQuestions([...questions, question]);
+        setQText('');
+        setOptions(['', '', '', '']);
+        setCorrect(0);
+        forceUpdate(n => n + 1);
+      };
 
-        // ============================================================
-        //  مدیریت سوالات (معلم)
-        // ============================================================
+      const removeQuestion = (id) => {
+        if (!confirm('سوال حذف شود؟')) return;
+        db.delete(`question:${id}`);
+        setQuestions(questions.filter(q => q.id !== id));
+      };
 
-        function QuestionsScreen({ exam, onBack, refresh }) {
-            const [text, setText] = React.useState('');
-            const [mark, setMark] = React.useState(1);
-            const [type, setType] = React.useState('mc');
-            const [optionA, setOptionA] = React.useState('گزینه اول');
-            const [optionB, setOptionB] = React.useState('گزینه دوم');
-            const [optionC, setOptionC] = React.useState('گزینه سوم');
-            const [optionD, setOptionD] = React.useState('گزینه چهارم');
-            const [correct, setCorrect] = React.useState('A');
-            const [saving, setSaving] = React.useState(false);
+      return (
+        <div style={{ padding: 30 }}>
+          <Button variant="ghost" onClick={onBack} style={{ marginBottom: 20 }}>← بازگشت</Button>
+          <h1 style={{ marginBottom: 30, fontSize: 24 }}>سوالات آزمون: {exam.title}</h1>
 
-            const questions = loadAll('question:').filter(q => q.exam_id === exam.id);
+          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+            <div style={{ flex: '1 1 400px', background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0' }}>
+              <h2 style={{ marginBottom: 20, fontSize: 18 }}>افزودن سوال</h2>
+              
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>نوع سوال</label>
+                <select value={qType} onChange={(e) => setQType(e.target.value)} style={{ width: '100%', padding: '12px', border: '1.5px solid #E2E8F0', borderRadius: 8 }}>
+                  <option value="mc">چهارگزینه‌ای</option>
+                </select>
+              </div>
 
-            const addQuestion = () => {
-                if (!text.trim()) return;
-                setSaving(true);
-                const id = uid();
-                setJSON(`question:${id}`, {
-                    id,
-                    exam_id: exam.id,
-                    question_text: text.trim(),
-                    mark: Number(mark) || 1,
-                    type: type,
-                    option_a: optionA,
-                    option_b: optionB,
-                    option_c: optionC,
-                    option_d: optionD,
-                    correct_answer: correct,
-                    created_at: new Date().toISOString()
-                });
-                setSaving(false);
-                setText('');
-                refresh();
-            };
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>متن سوال</label>
+                <textarea value={qText} onChange={(e) => setQText(e.target.value)} rows={3} style={{ width: '100%', padding: '12px', border: '1.5px solid #E2E8F0', borderRadius: 8, resize: 'vertical' }} />
+              </div>
 
-            const removeQuestion = (id) => {
-                if (!confirm('این سوال حذف شود؟')) return;
-                deleteKey(`question:${id}`);
-                refresh();
-            };
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>گزینه‌ها (روی دایره سبز کلیک کنید)</label>
+                {options.map((opt, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                    <div onClick={() => setCorrect(i)} style={{ width: 24, height: 24, borderRadius: '50%', border: '2px solid', borderColor: correct === i ? '#16A34A' : '#CBD5E1', background: correct === i ? '#16A34A' : '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14 }}>
+                      {correct === i ? '✓' : ''}
+                    </div>
+                    <span style={{ fontWeight: 700, width: 20 }}>{['A', 'B', 'C', 'D'][i]}</span>
+                    <input value={opt} onChange={(e) => { const arr = [...options]; arr[i] = e.target.value; setOptions(arr); }} placeholder={`گزینه ${['A', 'B', 'C', 'D'][i]}`} style={{ flex: 1, padding: '10px', border: '1.5px solid #E2E8F0', borderRadius: 8 }} />
+                  </div>
+                ))}
+              </div>
 
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '❓ ' + exam.title),
-                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
-                ),
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>نمره</label>
+                <input type="number" value={mark} onChange={(e) => setMark(e.target.value)} min="1" style={{ width: 100, padding: '10px', border: '1.5px solid #E2E8F0', borderRadius: 8 }} />
+              </div>
 
-                React.createElement('div', { style: { background: '#F8FAFC', padding: 16, borderRadius: 12,
-                        marginBottom: 16 } },
-                    React.createElement('div', { className: 'grid-2' },
-                        React.createElement(Field, { label: 'متن سوال' },
-                            React.createElement(TextInput, { value: text, onChange: setText,
-                                placeholder: 'متن سوال' })
-                        ),
-                        React.createElement(Field, { label: 'نمره' },
-                            React.createElement(TextInput, { type: 'number', value: mark, onChange: setMark,
-                                style: { maxWidth: 100 } })
-                        )
-                    ),
-                    React.createElement(Field, { label: 'نوع سوال' },
-                        React.createElement('select', { value: type, onChange: e => setType(e.target.value),
-                                style: { width: '100%', padding: '10px 14px', borderRadius: 10,
-                                    border: '1.5px solid #DCE3EA', fontSize: 14, fontFamily: 'inherit',
-                                    background: 'white' } },
-                            React.createElement('option', { value: 'mc' }, 'چهارگزینه‌ای'),
-                            React.createElement('option', { value: 'essay' }, 'تشریحی')
-                        )
-                    ),
-                    type === 'mc' ?
-                    React.createElement('div', { className: 'grid-2' },
-                        React.createElement(Field, { label: 'گزینه A' },
-                            React.createElement(TextInput, { value: optionA, onChange: setOptionA })
-                        ),
-                        React.createElement(Field, { label: 'گزینه B' },
-                            React.createElement(TextInput, { value: optionB, onChange: setOptionB })
-                        ),
-                        React.createElement(Field, { label: 'گزینه C' },
-                            React.createElement(TextInput, { value: optionC, onChange: setOptionC })
-                        ),
-                        React.createElement(Field, { label: 'گزینه D' },
-                            React.createElement(TextInput, { value: optionD, onChange: setOptionD })
-                        ),
-                        React.createElement(Field, { label: 'پاسخ صحیح' },
-                            React.createElement('select', { value: correct, onChange: e => setCorrect(e.target
-                                        .value), style: { width: '100%', padding: '10px 14px',
-                                        borderRadius: 10, border: '1.5px solid #DCE3EA', fontSize: 14,
-                                        fontFamily: 'inherit', background: 'white' } },
-                                React.createElement('option', { value: 'A' }, 'A'),
-                                React.createElement('option', { value: 'B' }, 'B'),
-                                React.createElement('option', { value: 'C' }, 'C'),
-                                React.createElement('option', { value: 'D' }, 'D')
-                            )
-                        )
-                    ) :
-                    React.createElement(Field, { label: 'پاسخ نمونه (اختیاری)' },
-                        React.createElement(TextInput, { value: '', onChange: () => {},
-                            placeholder: 'پاسخ نمونه برای راهنمایی' })
-                    ),
-                    React.createElement(Button, { onClick: addQuestion, disabled: saving, style: { marginTop: 8 } },
-                        saving ? 'در حال افزودن...' : '➕ افزودن سوال'
-                    )
-                ),
+              <Button onClick={saveQuestion} style={{ width: '100%' }}>+ افزودن سوال</Button>
+            </div>
 
-                questions.length === 0 ?
-                React.createElement(EmptyState, { text: 'هنوز سوالی اضافه نشده.' }) :
-                questions.map((q, i) =>
-                    React.createElement('div', { className: 'list-item', key: q.id },
-                        React.createElement('div', null,
-                            React.createElement('div', { className: 'title' }, `${i+1}. ${q.question_text}`),
-                            React.createElement('div', { className: 'sub' },
-                                'نمره: ' + q.mark,
-                                q.type === 'essay' ? ' · تشریحی' : ' · چهارگزینه‌ای'
-                            )
-                        ),
-                        React.createElement(Button, {
-                            className: 'btn-sm',
-                            variant: 'danger',
-                            onClick: () => removeQuestion(q.id)
-                        }, '🗑️')
-                    )
-                )
-            );
+            <div style={{ flex: '1 1 400px' }}>
+              <h2 style={{ marginBottom: 20, fontSize: 18 }}>سوالات ({questions.length})</h2>
+              {questions.length === 0 ? (
+                <div style={{ background: '#fff', padding: 40, borderRadius: 12, border: '1px solid #E2E8F0', textAlign: 'center', color: '#64748B' }}>هنوز سوالی اضافه نشده است</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {questions.map((q, idx) => (
+                    <div key={q.id} style={{ background: '#fff', padding: 16, borderRadius: 12, border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: 700, marginBottom: 4 }}>{idx + 1}. {q.question_text}</div>
+                        <div style={{ fontSize: 12, color: '#64748B' }}>پاسخ: {q.correct_answer} · نمره: {q.mark}</div>
+                      </div>
+                      <Button variant="danger" onClick={() => removeQuestion(q.id)} style={{ fontSize: 12 }}>حذف</Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // مدیریت کلاس و دانش‌آموزان
+    function ClassManager({ classId, user, onBack }) {
+      const cls = db.get(`class:${classId}`);
+      const [roster, setRoster] = useState(db.getAll('roster:').filter(r => r.class_id === classId));
+      const [name, setName] = useState('');
+      const [, forceUpdate] = useState(0);
+
+      const addStudent = () => {
+        if (!name.trim()) { alert('نام دانش‌آموز را وارد کنید'); return; }
+        const allCodes = roster.map(r => r.code);
+        const id = uid();
+        const code = generateCode(allCodes);
+        const student = { id, class_id: classId, teacher_id: user.username, fullname: name.trim(), code, created: new Date().toISOString() };
+        db.set(`roster:${id}`, student);
+        setRoster([...roster, student]);
+        setName('');
+        forceUpdate(n => n + 1);
+      };
+
+      const removeStudent = (id) => {
+        if (!confirm('دانش‌آموز حذف شود؟')) return;
+        db.delete(`roster:${id}`);
+        setRoster(roster.filter(r => r.id !== id));
+      };
+
+      return (
+        <div style={{ padding: 30 }}>
+          <Button variant="ghost" onClick={onBack} style={{ marginBottom: 20 }}>← بازگشت</Button>
+          <h1 style={{ marginBottom: 30, fontSize: 24 }}>دانش‌آموزان کلاس: {cls.name}</h1>
+
+          <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0', marginBottom: 20 }}>
+            <h2 style={{ marginBottom: 16, fontSize: 18 }}>افزودن دانش‌آموز</h2>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="نام دانش‌آموز" onKeyDown={(e) => e.key === 'Enter' && addStudent()} style={{ flex: 1, padding: '12px', border: '1.5px solid #E2E8F0', borderRadius: 8 }} />
+              <Button onClick={addStudent}>+ افزودن</Button>
+            </div>
+          </div>
+
+          <div style={{ background: '#fff', padding: 24, borderRadius: 12, border: '1px solid #E2E8F0' }}>
+            <h2 style={{ marginBottom: 16, fontSize: 18 }}>لیست دانش‌آموزان ({roster.length})</h2>
+            {roster.length === 0 ? (
+              <p style={{ color: '#64748B', textAlign: 'center', padding: 40 }}>هنوز دانش‌آموزی اضافه نشده است</p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #E2E8F0' }}>
+                    <th style={{ padding: 12, textAlign: 'right' }}>نام</th>
+                    <th style={{ padding: 12, textAlign: 'right' }}>کد ورود</th>
+                    <th style={{ padding: 12, textAlign: 'right' }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {roster.map(m => (
+                    <tr key={m.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: 12, fontWeight: 700 }}>{m.fullname}</td>
+                      <td style={{ padding: 12 }}>
+                        <span style={{ fontFamily: 'monospace', fontSize: 18, fontWeight: 800, color: '#2563EB', letterSpacing: 2 }}>{m.code}</span>
+                      </td>
+                      <td style={{ padding: 12 }}>
+                        <Button variant="danger" onClick={() => removeStudent(m.id)} style={{ fontSize: 12 }}>حذف</Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // اپلیکیشن اصلی
+    function App() {
+      const [user, setUser] = useState(() => db.get('currentUser'));
+      const [authView, setAuthView] = useState('login');
+
+      const handleLogin = (u) => {
+        db.set('currentUser', u);
+        setUser(u);
+      };
+
+      const handleLogout = () => {
+        db.delete('currentUser');
+        setUser(null);
+        setAuthView('login');
+      };
+
+      if (!user) {
+        if (authView === 'register') {
+          return <RegisterScreen onRegistered={handleLogin} onBack={() => setAuthView('login')} />;
         }
+        return <LoginScreen onLogin={handleLogin} onRegister={() => setAuthView('register')} />;
+      }
 
-        // ============================================================
-        //  مدیریت کلاس‌ها (معلم)
-        // ============================================================
+      if (user.role === 'admin') {
+        return <AdminDashboard user={user} onLogout={handleLogout} />;
+      }
 
-        function ClassesScreen({ teacher, onBack, onNavigate, refresh }) {
-            const [showModal, setShowModal] = React.useState(false);
-            const [name, setName] = React.useState('');
-            const [saving, setSaving] = React.useState(false);
+      return <TeacherDashboard user={user} onLogout={handleLogout} />;
+    }
 
-            const classes = loadAll('class:').filter(c => c.teacher_id === teacher.username);
-            const roster = loadAll('roster:');
-
-            const createClass = () => {
-                if (!name.trim()) return;
-                setSaving(true);
-                const id = uid();
-                setJSON(`class:${id}`, {
-                    id,
-                    name: name.trim(),
-                    teacher_id: teacher.username,
-                    created_at: new Date().toISOString()
-                });
-                setSaving(false);
-                setName('');
-                setShowModal(false);
-                refresh();
-            };
-
-            const removeClass = (id) => {
-                if (!confirm('این کلاس حذف شود؟')) return;
-                deleteKey(`class:${id}`);
-                loadAll('roster:').filter(r => r.class_id === id).forEach(r => deleteKey(`roster:${r.id}`));
-                refresh();
-            };
-
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '📚 کلاس‌ها'),
-                    React.createElement('div', { className: 'flex' },
-                        React.createElement(Button, { onClick: () => setShowModal(true) }, '➕ جدید'),
-                        React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙')
-                    )
-                ),
-
-                classes.length === 0 ?
-                React.createElement(EmptyState, { text: 'هنوز کلاسی نساخته‌ای.' }) :
-                classes.map(c => {
-                    const count = roster.filter(r => r.class_id === c.id).length;
-                    return React.createElement('div', { className: 'list-item', key: c.id },
-                        React.createElement('div', null,
-                            React.createElement('div', { className: 'title' }, c.name),
-                            React.createElement('div', { className: 'sub' }, count + ' دانش‌آموز')
-                        ),
-                        React.createElement('div', { className: 'flex' },
-                            React.createElement(Button, {
-                                className: 'btn-sm',
-                                variant: 'ghost',
-                                onClick: () => onNavigate('roster', c.id)
-                            }, 'دانش‌آموزان'),
-                            React.createElement(Button, {
-                                className: 'btn-sm',
-                                variant: 'danger',
-                                onClick: () => removeClass(c.id)
-                            }, '🗑️')
-                        )
-                    );
-                }),
-
-                showModal && React.createElement(Modal, { title: 'افزودن کلاس جدید', onClose: () => setShowModal(
-                        false) },
-                    React.createElement(Field, { label: 'نام کلاس' },
-                        React.createElement(TextInput, { value: name, onChange: setName,
-                            placeholder: 'مثلاً: هفتم الف' })
-                    ),
-                    React.createElement('div', { className: 'flex', style: { marginTop: 12,
-                            justifyContent: 'flex-end' } },
-                        React.createElement(Button, { variant: 'ghost', onClick: () => setShowModal(false) },
-                            'انصراف'),
-                        React.createElement(Button, { onClick: createClass, disabled: saving },
-                            saving ? 'در حال ساخت...' : 'ساخت'
-                        )
-                    )
-                )
-            );
-        }
-
-        // ============================================================
-        //  مدیریت دانش‌آموزان (معلم)
-        // ============================================================
-
-        function RosterScreen({ classroom, teacher, onBack, refresh }) {
-            const [name, setName] = React.useState('');
-            const [saving, setSaving] = React.useState(false);
-
-            const roster = loadAll('roster:').filter(r => r.class_id === classroom.id);
-            const allCodes = loadAll('roster:').filter(r => r.teacher_id === teacher.username).map(r => r.code);
-
-            const addStudent = () => {
-                if (!name.trim()) return;
-                setSaving(true);
-                const id = uid();
-                const code = generateCode(allCodes);
-                setJSON(`roster:${id}`, {
-                    id,
-                    class_id: classroom.id,
-                    teacher_id: teacher.username,
-                    fullname: name.trim(),
-                    code,
-                    created_at: new Date().toISOString()
-                });
-                allCodes.push(code);
-                setSaving(false);
-                setName('');
-                refresh();
-            };
-
-            const removeStudent = (id) => {
-                if (!confirm('این دانش‌آموز حذف شود؟')) return;
-                deleteKey(`roster:${id}`);
-                refresh();
-            };
-
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '👨‍🎓 ' + classroom.name),
-                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
-                ),
-
-                React.createElement('div', { style: { background: '#F8FAFC', padding: 12, borderRadius: 12,
-                        marginBottom: 16 } },
-                    React.createElement('div', { className: 'flex' },
-                        React.createElement(TextInput, {
-                            value: name,
-                            onChange: setName,
-                            placeholder: 'نام دانش‌آموز',
-                            style: { flex: 1 }
-                        }),
-                        React.createElement(Button, { onClick: addStudent, disabled: saving },
-                            saving ? '...' : '➕'
-                        )
-                    )
-                ),
-
-                roster.length === 0 ?
-                React.createElement(EmptyState, { text: 'هنوز دانش‌آموزی اضافه نشده.' }) :
-                roster.map(s =>
-                    React.createElement('div', { className: 'list-item', key: s.id },
-                        React.createElement('div', null,
-                            React.createElement('div', { className: 'title' }, s.fullname),
-                            React.createElement('div', { className: 'sub' },
-                                React.createElement('span', { className: 'code-display' }, s.code)
-                            )
-                        ),
-                        React.createElement(Button, {
-                            className: 'btn-sm',
-                            variant: 'danger',
-                            onClick: () => removeStudent(s.id)
-                        }, '🗑️')
-                    )
-                )
-            );
-        }
-
-        // ============================================================
-        //  مدیریت دانش‌آموزان (معلم) - لیست همه
-        // ============================================================
-
-        function StudentsScreen({ teacher, onBack, refresh }) {
-            const roster = loadAll('roster:').filter(r => r.teacher_id === teacher.username);
-            const classes = loadAll('class:').filter(c => c.teacher_id === teacher.username);
-
-            const getClassName = (id) => {
-                const c = classes.find(c => c.id === id);
-                return c ? c.name : '—';
-            };
-
-            return React.createElement('div', { className: 'card' },
-                React.createElement('div', { className: 'header' },
-                    React.createElement('h1', null, '👨‍🎓 همه دانش‌آموزان'),
-                    React.createElement(Button, { variant: 'ghost', onClick: onBack }, '🔙 بازگشت')
-                ),
-
-                roster.length === 0 ?
-                React.createElement(EmptyState, { text: 'هنوز دانش‌آموزی ثبت نشده.' }) :
-                roster.map(s =>
-                    React.createElement('div', { className: 'list-item', key: s.id },
-                        React.createElement('div', null,
-                            React.createElement('div', { className: 'title' }, s.fullname),
-                            React.createElement('div', { className: 'sub' },
-                                'کلاس: ' + getClassName(s.class_id),
-                                ' · کد: ' + React.createElement('span', { className: 'code-display' },
-                                    s.code)
-                            )
-                        ),
-                        React.createElement(Badge, { tone: 'blue' }, 'دانش‌آموز')
-                    )
-                )
-            );
-        }
-
-        // ============================================================
-        //  اپلیکیشن اصلی
-        // ============================================================
-
-        function App() {
-            const [teacher, setTeacher] = React.useState(null);
-            const [view, setView] = React.useState('login');
-            const [activeExamId, setActiveExamId] = React.useState(null);
-            const [activeClassId, setActiveClassId] = React.useState(null);
-
-            const refresh = () => {};
-
-            // چک کردن وجود مدیر
-            const adminExists = loadAll('teacher:').length > 0;
-
-            if (!teacher) {
-                if (view === 'register' || !adminExists) {
-                    return React.createElement(RegisterScreen, {
-                        onRegistered: t => { setTeacher(t);
-                            setView('dashboard'); },
-                        goLogin: () => setView('login')
-                    });
-                }
-                return React.createElement(LoginScreen, {
-                    onLogin: t => { setTeacher(t);
-                        setView('dashboard'); },
-                    onRegister: () => setView('register')
-                });
-            }
-
-            const navigate = (page, id) => {
-                if (page === 'dashboard') { setView('dashboard');
-                    setActiveExamId(null);
-                    setActiveClassId(null); }
-                if (page === 'exams') { setView('exams'); }
-                if (page === 'questions' && id) { setView('questions');
-                    setActiveExamId(id); }
-                if (page === 'classes') { setView('classes'); }
-                if (page === 'roster' && id) { setView('roster');
-                    setActiveClassId(id); }
-                if (page === 'students') { setView('students'); }
-                if (page === 'teachers') { setView('teachers'); }
-                if (page === 'all-exams') { setView('all-exams'); }
-            };
-
-            const exam = loadAll('exam:').find(e => e.id === activeExamId);
-            const classroom = loadAll('class:').find(c => c.id === activeClassId);
-
-            // ادمین
-            if (teacher.role === 'admin') {
-                if (view === 'teachers') {
-                    return React.createElement(TeachersScreen, { teacher, onBack: () => setView('dashboard'),
-                        refresh });
-                }
-                if (view === 'all-exams') {
-                    return React.createElement(AllExamsScreen, { onBack: () => setView('dashboard'), refresh });
-                }
-                return React.createElement(AdminDashboard, { teacher, onNavigate: navigate, refresh });
-            }
-
-            // معلم
-            if (view === 'exams') {
-                return React.createElement(ExamsScreen, { teacher, onBack: () => setView('dashboard'),
-                    onNavigate: navigate, refresh });
-            }
-            if (view === 'questions' && exam) {
-                return React.createElement(QuestionsScreen, { exam, onBack: () => setView('exams'), refresh });
-            }
-            if (view === 'classes') {
-                return React.createElement(ClassesScreen, { teacher, onBack: () => setView('dashboard'),
-                    onNavigate: navigate, refresh });
-            }
-            if (view === 'roster' && classroom) {
-                return React.createElement(RosterScreen, { classroom, teacher, onBack: () => setView('classes'),
-                    refresh });
-            }
-            if (view === 'students') {
-                return React.createElement(StudentsScreen, { teacher, onBack: () => setView('dashboard'), refresh });
-            }
-
-            return React.createElement(TeacherDashboard, { teacher, onNavigate: navigate, refresh });
-        }
-
-        // ============================================================
-        //  رندر
-        // ============================================================
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(React.createElement(App));
-        console.log('🏫 سامانه مدرسه با موفقیت اجرا شد!');
-    </script>
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
-  </html>
+    </html>
