@@ -2,6 +2,7 @@
 Shared utilities (KV helpers) + shared UI primitives
 --------------------------------------------------------- */
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
 async function getJSON(key) {
   try {
     const r = await fetch(`/api/kv?key=${encodeURIComponent(key)}`);
@@ -13,6 +14,7 @@ async function getJSON(key) {
     return null;
   }
 }
+
 async function setJSON(key, value) {
   try {
     const r = await fetch("/api/kv", {
@@ -25,6 +27,7 @@ async function setJSON(key, value) {
     return false;
   }
 }
+
 async function deleteKey(key) {
   try {
     await fetch(`/api/kv?key=${encodeURIComponent(key)}`, { method: "DELETE" });
@@ -32,6 +35,7 @@ async function deleteKey(key) {
     /* ignore */
   }
 }
+
 async function listPrefix(prefix) {
   try {
     const r = await fetch(`/api/list?prefix=${encodeURIComponent(prefix)}`);
@@ -42,14 +46,13 @@ async function listPrefix(prefix) {
     return [];
   }
 }
+
 async function loadAll(prefix) {
   const keys = await listPrefix(prefix);
   const items = await Promise.all(keys.map((k) => getJSON(k)));
   return items.filter(Boolean);
 }
 
-// Works for both multiple-choice answers (mark if correct) and essay answers
-// that have been manually graded (awarded_mark set by the teacher).
 function awardedMarkOf(a) {
   if (a.awarded_mark != null) return a.awarded_mark;
   return a.is_correct ? a.mark : 0;
@@ -242,67 +245,6 @@ function Sidebar({ active, onNavigate, onLogout, teacherName }) {
   );
 }
 
-/* ---------------------------------------------------------
-Admin Sidebar (for admin dashboard)
---------------------------------------------------------- */
-function AdminSidebar({ active, onNavigate, onLogout, teacherName }) {
-  const items = [
-    { key: "dashboard", label: "داشبورد مدیر", icon: LayoutDashboard },
-    { key: "teachers", label: "مدیریت معلمان", icon: Users },
-    { key: "all-exams", label: "همه آزمون‌ها", icon: FileText },
-    { key: "all-results", label: "همه نتایج", icon: BarChart3 },
-    { key: "settings", label: "تنظیمات", icon: Settings },
-  ];
-  return (
-    <div style={{
-      width: 230, background: "#0F172A", minHeight: "100%", display: "flex",
-      flexDirection: "column", flexShrink: 0,
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "22px 20px", borderBottom: "1px solid #1E293B" }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: "#F59E0B", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Award size={19} color="#fff" />
-        </div>
-        <div>
-          <div style={{ color: "#fff", fontWeight: 800, fontSize: 17 }}>پنل مدیر</div>
-          <div style={{ color: "#94A3B8", fontSize: 11, marginTop: 2 }}>سطح دسترسی کامل</div>
-        </div>
-      </div>
-      <div style={{ padding: "14px 12px", flex: 1 }}>
-        {items.map((it) => {
-          const isActive = active === it.key;
-          const IconCmp = it.icon;
-          return (
-            <div
-              key={it.key}
-              onClick={() => onNavigate(it.key)}
-              style={{
-                display: "flex", alignItems: "center", gap: 10, padding: "11px 14px",
-                borderRadius: 10, cursor: "pointer", marginBottom: 4,
-                background: isActive ? "#F59E0B" : "transparent",
-                color: isActive ? "#fff" : "#AAB8D1",
-                fontSize: 14, fontWeight: 600, transition: "background .15s",
-              }}
-            >
-              <IconCmp size={17} />
-              {it.label}
-            </div>
-          );
-        })}
-      </div>
-      <div style={{ padding: 12, borderTop: "1px solid #1E293B" }}>
-        <div style={{ fontSize: 12, color: "#7C8CAE", padding: "6px 14px 12px" }}>{teacherName} (مدیر)</div>
-        <div
-          onClick={onLogout}
-          style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", borderRadius: 10, cursor: "pointer", color: "#F87171", fontSize: 14, fontWeight: 600 }}
-        >
-          <LogOut size={17} />
-          خروج
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function TopBar({ title, teacherName }) {
   const today = new Date().toLocaleDateString("fa-IR");
   return (
@@ -318,9 +260,6 @@ function TopBar({ title, teacherName }) {
   );
 }
 
-/* ---------------------------------------------------------
-AUTH SCREENS
---------------------------------------------------------- */
 function EmptyState({ text, actionLabel, onAction }) {
   return (
     <div style={{ textAlign: "center", padding: "40px 20px" }}>
@@ -330,9 +269,6 @@ function EmptyState({ text, actionLabel, onAction }) {
   );
 }
 
-/* ---------------------------------------------------------
-EXAMS LIST + CREATE
---------------------------------------------------------- */
 function Modal({ title, children, onClose }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }} onClick={onClose}>
@@ -347,9 +283,6 @@ function Modal({ title, children, onClose }) {
   );
 }
 
-/* ---------------------------------------------------------
-QUESTION MANAGEMENT (add question w/ live preview)
---------------------------------------------------------- */
 function parseBulkQuestions(text) {
   const blocks = text.split(/\n\s*(?:---)?\s*\n/).map((b) => b.trim()).filter(Boolean);
   const parsed = [];
@@ -413,51 +346,10 @@ function LegendDot({ color, label }) {
   );
 }
 
-/* ---------------------------------------------------------
-RESULTS
---------------------------------------------------------- */
 function generateCode(existingCodes) {
   let code;
   do {
     code = String(Math.floor(100000 + Math.random() * 900000));
   } while (existingCodes.includes(code));
   return code;
-}(/^C\)/i, "").trim(),
-      option_d: optD.replace(/^D\)/i, "").trim(),
-      correct_answer: answers.length === 1 ? answers[0] : undefined,
-      correct_answers: answers.length > 1 ? answers : undefined,
-      mark: markLine ? Number(markLine.replace(/^MARK:/i, "").trim()) || 1 : 1,
-    });
-  });
-  return { parsed, errors };
-}
-
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function LegendDot({ color, label }) {
-  return (
-    <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-      <span style={{ width: 9, height: 9, borderRadius: 3, background: color, display: "inline-block" }} />
-      {label}
-    </span>
-  );
-}
-
-/* ---------------------------------------------------------
-   RESULTS
---------------------------------------------------------- */
-
-function generateCode(existingCodes) {
-  let code;
-  do {
-    code = String(Math.floor(100000 + Math.random() * 900000));
-  } while (existingCodes.includes(code));
-  return code;
-}
+                            }
