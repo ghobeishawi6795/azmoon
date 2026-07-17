@@ -3,72 +3,628 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>سامانه آزمون مدرسه</title>
+  <title>آزمون‌ساز معلم</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #F8FAFC;
       color: #1E293B;
       line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
-    #root {
-      min-height: 100vh;
-    }
-    /* Smooth scrolling */
-    html {
-      scroll-behavior: smooth;
-    }
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #F1F5F9;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #CBD5E1;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94A3B8;
-    }
-    /* Prevent text selection on buttons */
-    button {
-      user-select: none;
-    }
-    /* Focus outline for accessibility */
-    *:focus-visible {
-      outline: 2px solid #2563EB;
-      outline-offset: 2px;
-    }
+    #root { min-height: 100vh; }
   </style>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
-
-  <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-  <!-- App Scripts (order matters!) -->
-  <script src="icons.js"></script>
-  <script src="ui.js"></script>
-  <script src="auth-screens.js"></script>
-  <script src="screens-admin.js"></script>
-  <script src="screens-exams.js"></script>
-  <script src="screens-taking.js"></script>
-  <script src="screens-classes.js"></script>
-  <script src="app.js"></script>
+  <script type="text/babel">
+    /* آیکون‌ها */
+    const { useState, useEffect, useCallback, useRef } = React;
+
+    function Icon({ size = 24, color = "currentColor", style, children }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color}
+          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}>
+          {children}
+        </svg>
+      );
+    }
+
+    const GraduationCap = (p) => (<Icon {...p}><path d="M22 10 12 5 2 10l10 5 10-5Z" /><path d="M6 12.5V17c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5" /><path d="M22 10v6" /></Icon>);
+    const LayoutDashboard = (p) => (<Icon {...p}><rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" /></Icon>);
+    const FileText = (p) => (<Icon {...p}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" /><path d="M14 2v6h6" /><path d="M9 13h6M9 17h6M9 9h1" /></Icon>);
+    const Users = (p) => (<Icon {...p}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></Icon>);
+    const BarChart3 = (p) => (<Icon {...p}><path d="M3 3v18h18" /><rect x="7" y="12" width="3" height="6" /><rect x="12" y="8" width="3" height="10" /><rect x="17" y="5" width="3" height="13" /></Icon>);
+    const Settings = (p) => (<Icon {...p}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 19.4 9c.13.36.35.68.62.94.28.28.6.5.96.62.36.13.75.13 1.02.13H22a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" /></Icon>);
+    const LogOut = (p) => (<Icon {...p}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></Icon>);
+    const Eye = (p) => (<Icon {...p}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" /><circle cx="12" cy="12" r="3" /></Icon>);
+    const EyeOff = (p) => (<Icon {...p}><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a20.3 20.3 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a20.5 20.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24" /><path d="M1 1l22 22" /></Icon>);
+    const Plus = (p) => (<Icon {...p}><path d="M12 5v14M5 12h14" /></Icon>);
+    const Trash2 = (p) => (<Icon {...p}><path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M10 11v6M14 11v6" /></Icon>);
+    const Clock = (p) => (<Icon {...p}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></Icon>);
+    const ChevronLeft = (p) => (<Icon {...p}><path d="M15 18l-6-6 6-6" /></Icon>);
+    const ChevronRight = (p) => (<Icon {...p}><path d="M9 18l6-6-6-6" /></Icon>);
+    const CheckCircle2 = (p) => (<Icon {...p}><circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" /></Icon>);
+    const Circle = (p) => (<Icon {...p}><circle cx="12" cy="12" r="10" /></Icon>);
+    const Download = (p) => (<Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></Icon>);
+    const Upload = (p) => (<Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M17 8l-5-5-5 5" /><path d="M12 3v12" /></Icon>);
+    const ArrowRight = (p) => (<Icon {...p}><path d="M5 12h14M13 6l6 6-6 6" /></Icon>);
+    const Award = (p) => (<Icon {...p}><circle cx="12" cy="8" r="6" /><path d="M8.7 13.9 7 22l5-3 5 3-1.7-8.1" /></Icon>);
+    const TrendingUp = (p) => (<Icon {...p}><path d="M23 6l-9.5 9.5-5-5L1 18" /><path d="M17 6h6v6" /></Icon>);
+    const ListChecks = (p) => (<Icon {...p}><path d="M3.5 5.5 5 7l2.5-2.5" /><path d="M3.5 12.5 5 14l2.5-2.5" /><path d="M3.5 19.5 5 21l2.5-2.5" /><path d="M11 6h10M11 12h10M11 18h10" /></Icon>);
+    const Percent = (p) => (<Icon {...p}><path d="M19 5 5 19" /><circle cx="6.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" /></Icon>);
+    const X = (p) => (<Icon {...p}><path d="M18 6 6 18M6 6l12 12" /></Icon>);
+    const Check = (p) => (<Icon {...p}><path d="M20 6 9 17l-5-5" /></Icon>);
+    const Edit2 = (p) => (<Icon {...p}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></Icon>);
+    const AlertTriangle = (p) => (<Icon {...p}><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" /><path d="M12 9v4M12 17h.01" /></Icon>);
+    const MessageSquare = (p) => (<Icon {...p}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></Icon>);
+    const Library = (p) => (<Icon {...p}><path d="M3 4h4v17H3z" /><path d="M9 4h4v17H9z" /><path d="m16 4 3.5 1-2 16.5-3.5-1z" /></Icon>);
+
+    /* توابع کمکی */
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+    async function getJSON(key) {
+      try {
+        const r = await fetch(`/api/kv?key=${encodeURIComponent(key)}`);
+        if (r.status === 404) return null;
+        if (!r.ok) return null;
+        const data = await r.json();
+        return data.v;
+      } catch { return null; }
+    }
+
+    async function setJSON(key, value) {
+      try {
+        const r = await fetch("/api/kv", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ k: key, v: value }),
+        });
+        return r.ok;
+      } catch { return false; }
+    }
+
+    async function deleteKey(key) {
+      try { await fetch(`/api/kv?key=${encodeURIComponent(key)}`, { method: "DELETE" }); } catch {}
+    }
+
+    async function listPrefix(prefix) {
+      try {
+        const r = await fetch(`/api/list?prefix=${encodeURIComponent(prefix)}`);
+        if (!r.ok) return [];
+        const data = await r.json();
+        return data.keys || [];
+      } catch { return []; }
+    }
+
+    async function loadAll(prefix) {
+      const keys = await listPrefix(prefix);
+      const items = await Promise.all(keys.map((k) => getJSON(k)));
+      return items.filter(Boolean);
+    }
+
+    function awardedMarkOf(a) {
+      if (a.awarded_mark != null) return a.awarded_mark;
+      return a.is_correct ? a.mark : 0;
+    }
+
+    function downloadTextFile(filename, content, mime) {
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function Field({ label, children }) {
+      return (
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#3A4A63", marginBottom: 6 }}>{label}</label>
+          {children}
+        </div>
+      );
+    }
+
+    const inputStyle = {
+      width: "100%", boxSizing: "border-box", padding: "11px 14px", borderRadius: 10,
+      border: "1.5px solid #E2E8F0", fontSize: 14, outline: "none", fontFamily: "inherit",
+      background: "#fff", color: "#1E293B", transition: "border-color .15s",
+    };
+
+    function TextInput(props) {
+      const [focus, setFocus] = useState(false);
+      return (
+        <input {...props}
+          onFocus={(e) => { setFocus(true); props.onFocus?.(e); }}
+          onBlur={(e) => { setFocus(false); props.onBlur?.(e); }}
+          style={{ ...inputStyle, borderColor: focus ? "#2563EB" : "#E2E8F0", ...(props.style || {}) }}
+        />
+      );
+    }
+
+    function Button({ children, variant = "primary", style, ...rest }) {
+      const variants = {
+        primary: { background: "#2563EB", color: "#fff", border: "none" },
+        ghost: { background: "#fff", color: "#334155", border: "1.5px solid #E2E8F0" },
+        danger: { background: "#FEF2F2", color: "#DC2626", border: "1.5px solid #FECACA" },
+        success: { background: "#16A34A", color: "#fff", border: "none" },
+      };
+      return (
+        <button {...rest} style={{
+          ...variants[variant], padding: "10px 18px", borderRadius: 10, fontSize: 14,
+          fontWeight: 700, cursor: "pointer", fontFamily: "inherit", display: "inline-flex",
+          alignItems: "center", gap: 6, transition: "filter .15s, transform .1s", ...style,
+        }}
+          onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.98)")}
+          onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        >{children}</button>
+      );
+    }
+
+    function StatCard({ icon: IconCmp, label, value, delta, color }) {
+      return (
+        <div style={{ background: "#fff", borderRadius: 16, padding: "20px 22px", flex: 1, border: "1px solid #EEF1F6", minWidth: 180 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div style={{ fontSize: 13, color: "#64748B", fontWeight: 600, marginBottom: 10 }}>{label}</div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: "#1E293B" }}>{value}</div>
+            </div>
+            <div style={{ width: 42, height: 42, borderRadius: 12, background: color + "1A", display: "flex", alignItems: "center", justifyContent: "center", color }}>
+              <IconCmp size={20} />
+            </div>
+          </div>
+          {delta && <div style={{ fontSize: 12, color: "#16A34A", marginTop: 10, fontWeight: 600 }}>{delta}</div>}
+        </div>
+      );
+    }
+
+    function Badge({ children, tone = "blue" }) {
+      const tones = {
+        blue: { bg: "#EFF6FF", fg: "#2563EB" },
+        green: { bg: "#F0FDF4", fg: "#16A34A" },
+        orange: { bg: "#FFFBEB", fg: "#D97706" },
+        red: { bg: "#FEF2F2", fg: "#DC2626" },
+        gray: { bg: "#F1F5F9", fg: "#475569" },
+      };
+      const t = tones[tone];
+      return (
+        <span style={{ background: t.bg, color: t.fg, fontSize: 12, fontWeight: 700, padding: "4px 10px", borderRadius: 999, display: "inline-block" }}>{children}</span>
+      );
+    }
+
+    function Sidebar({ active, onNavigate, onLogout, teacherName }) {
+      const items = [
+        { key: "dashboard", label: "داشبورد", icon: LayoutDashboard },
+        { key: "exams", label: "آزمون‌ها", icon: FileText },
+        { key: "questionbank", label: "بانک سوال", icon: Library },
+        { key: "classes", label: "کلاس‌ها", icon: Users },
+        { key: "students", label: "دانش‌آموزان", icon: Users },
+        { key: "messages", label: "پیام‌ها", icon: MessageSquare },
+        { key: "results", label: "نتایج", icon: BarChart3 },
+        { key: "settings", label: "تنظیمات", icon: Settings },
+      ];
+      return (
+        <div style={{ width: 230, background: "#132A52", minHeight: "100%", display: "flex", flexDirection: "column", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "22px 20px", borderBottom: "1px solid #22385F" }}>
+            <div style={{ width: 34, height: 34, borderRadius: 9, background: "#2563EB", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <GraduationCap size={19} color="#fff" />
+            </div>
+            <span style={{ color: "#fff", fontWeight: 800, fontSize: 17 }}>آزمون‌ساز</span>
+          </div>
+          <div style={{ padding: "14px 12px", flex: 1 }}>
+            {items.map((it) => {
+              const isActive = active === it.key;
+              const IconCmp = it.icon;
+              return (
+                <div key={it.key} onClick={() => onNavigate(it.key)} style={{
+                  display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", borderRadius: 10,
+                  cursor: "pointer", marginBottom: 4, background: isActive ? "#2563EB" : "transparent",
+                  color: isActive ? "#fff" : "#AAB8D1", fontSize: 14, fontWeight: 600, transition: "background .15s",
+                }}>
+                  <IconCmp size={17} />{it.label}
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ padding: 12, borderTop: "1px solid #22385F" }}>
+            <div style={{ fontSize: 12, color: "#7C8CAE", padding: "6px 14px 12px" }}>{teacherName}</div>
+            <div onClick={onLogout} style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", borderRadius: 10, cursor: "pointer", color: "#F87171", fontSize: 14, fontWeight: 600 }}>
+              <LogOut size={17} />خروج
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function TopBar({ title, teacherName }) {
+      const today = new Date().toLocaleDateString("fa-IR");
+      return (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 26 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1E293B", margin: 0 }}>{title}</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <span style={{ fontSize: 13, color: "#64748B" }}>{today}</span>
+            <div style={{ width: 38, height: 38, borderRadius: "50%", background: "#2563EB", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 14 }}>
+              {teacherName?.[0] || "م"}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function EmptyState({ text, actionLabel, onAction }) {
+      return (
+        <div style={{ textAlign: "center", padding: "40px 20px" }}>
+          <div style={{ fontSize: 14, color: "#64748B", marginBottom: 16 }}>{text}</div>
+          {actionLabel && <Button onClick={onAction}><Plus size={16} />{actionLabel}</Button>}
+        </div>
+      );
+    }
+
+    function Modal({ title, children, onClose }) {
+      return (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }} onClick={onClose}>
+          <div style={{ background: "#fff", borderRadius: 18, padding: 26, width: "100%", maxWidth: 420, maxHeight: "88vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+              <div style={{ fontSize: 17, fontWeight: 800, color: "#1E293B" }}>{title}</div>
+              <X size={18} style={{ cursor: "pointer", color: "#94A3B8" }} onClick={onClose} />
+            </div>
+            {children}
+          </div>
+        </div>
+      );
+    }
+
+    function shuffleArray(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function LegendDot({ color, label }) {
+      return (
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <span style={{ width: 9, height: 9, borderRadius: 3, background: color, display: "inline-block" }} />
+          {label}
+        </span>
+      );
+    }
+
+    function generateCode(existingCodes) {
+      let code;
+      do { code = String(Math.floor(100000 + Math.random() * 900000)); } while (existingCodes.includes(code));
+      return code;
+    }
+
+    /* صفحات احراز هویت */
+    function StudentPortalScreen({ roster, students, answers, exams, questions, classes, messages }) {
+      const [codeInput, setCodeInput] = useState("");
+      const [activeRoster, setActiveRoster] = useState(null);
+      const [notFound, setNotFound] = useState(false);
+
+      const lookup = () => {
+        const code = codeInput.trim();
+        if (!code) return;
+        const found = roster.find((r) => r.code === code);
+        if (found) { setActiveRoster(found); setNotFound(false); }
+        else { setActiveRoster(null); setNotFound(true); }
+      };
+
+      if (!activeRoster) {
+        return (
+          <div style={{ padding: "20px 10px" }}>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B", marginBottom: 6 }}>پرتال دانش‌آموزی</div>
+            <div style={{ fontSize: 13, color: "#64748B", marginBottom: 20 }}>کدی که معلمت به تو داده را وارد کن.</div>
+            <Field label="کد دانش‌آموزی">
+              <TextInput value={codeInput} onChange={(e) => setCodeInput(e.target.value.replace(/\D/g, ""))}
+                onKeyDown={(e) => e.key === "Enter" && lookup()} placeholder="کد خود را وارد کن"
+                style={{ fontSize: 18, letterSpacing: 3, textAlign: "center", fontWeight: 700 }} maxLength={6} />
+            </Field>
+            {notFound && <div style={{ color: "#DC2626", fontSize: 13, marginBottom: 14 }}>کد پیدا نشد. از معلم خود بپرس.</div>}
+            <Button type="button" onClick={lookup} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }}>ورود</Button>
+          </div>
+        );
+      }
+
+      const className = classes.find((c) => c.id === activeRoster.class_id)?.name || "—";
+      const myStudentIds = students.filter((s) => s.teacher_id === activeRoster.teacher_id && s.fullname.trim() === activeRoster.fullname.trim()).map((s) => s.id);
+      const myAnswers = answers.filter((a) => myStudentIds.includes(a.student_id));
+      const byExam = {};
+      myAnswers.forEach((a) => { byExam[a.exam_id] = byExam[a.exam_id] || []; byExam[a.exam_id].push(a); });
+
+      const results = Object.entries(byExam).map(([examId, list]) => {
+        const exam = exams.find((e) => e.id === examId);
+        const totalMarks = list.reduce((s, a) => s + (a.mark || 1), 0);
+        const gotMarks = list.reduce((s, a) => s + awardedMarkOf(a), 0);
+        const pendingCount = list.filter((a) => a.is_correct === null && a.awarded_mark == null).length;
+        const pct = totalMarks ? Math.round((gotMarks / totalMarks) * 1000) / 10 : 0;
+        const date = list[0]?.answered_at ? new Date(list[0].answered_at).toLocaleDateString("fa-IR") : "—";
+        return { examId, title: exam?.title || "—", pct, pendingCount, date };
+      }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      const myMessages = messages.filter((m) =>
+        m.teacher_id === activeRoster.teacher_id &&
+        (m.target_type === "all" || (m.target_type === "class" && m.target_id === activeRoster.class_id) || (m.target_type === "student" && m.target_id === activeRoster.id))
+      ).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      return (
+        <div style={{ padding: "20px 10px", maxHeight: "70vh", overflowY: "auto" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B" }}>{activeRoster.fullname}</div>
+              <div style={{ fontSize: 13, color: "#64748B" }}>کلاس: {className}</div>
+            </div>
+            <span onClick={() => { setActiveRoster(null); setCodeInput(""); }} style={{ fontSize: 12, color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>خروج</span>
+          </div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: "#1E293B", marginBottom: 10 }}>نمرات آزمون‌ها</div>
+          {results.length === 0 ? (
+            <div style={{ fontSize: 13, color: "#94A3B8", marginBottom: 20 }}>هنوز در آزمونی شرکت نکرده‌ای.</div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+              {results.map((r) => (
+                <div key={r.examId} style={{ border: "1px solid #EEF1F6", borderRadius: 10, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B" }}>{r.title}</div>
+                    <div style={{ fontSize: 11, color: "#94A3B8" }}>{r.date}</div>
+                  </div>
+                  <div style={{ textAlign: "left" }}>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: r.pct >= 50 ? "#16A34A" : "#DC2626" }}>{r.pct}%</div>
+                    {r.pendingCount > 0 && <div style={{ fontSize: 10, color: "#D97706" }}>در انتظار تصحیح</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{ fontSize: 15, fontWeight: 800, color: "#1E293B", marginBottom: 10 }}>پیام‌های معلم</div>
+          {myMessages.length === 0 ? (
+            <div style={{ fontSize: 13, color: "#94A3B8" }}>پیامی برای تو ثبت نشده.</div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {myMessages.map((m) => (
+                <div key={m.id} style={{ background: "#F8FAFC", borderRadius: 10, padding: "10px 14px" }}>
+                  <div style={{ fontSize: 13, color: "#334155", whiteSpace: "pre-wrap", marginBottom: 4 }}>{m.text}</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8" }}>{new Date(m.created_at).toLocaleString("fa-IR")}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function LoginScreen({ onLogin, goRegister, allowRegister, goForgot, portalMode, setPortalMode, portalData }) {
+      const [username, setUsername] = useState("");
+      const [password, setPassword] = useState("");
+      const [showPw, setShowPw] = useState(false);
+      const [error, setError] = useState("");
+      const [loading, setLoading] = useState(false);
+
+      const submit = async () => {
+        setError("");
+        if (!username || !password) { setError("نام کاربری و رمز عبور را وارد کنید."); return; }
+        setLoading(true);
+        const teacher = await getJSON(`teacher:${username}`);
+        setLoading(false);
+        if (!teacher || teacher.password !== password) { setError("نام کاربری یا رمز عبور اشتباه است."); return; }
+        onLogin(teacher);
+      };
+
+      const handleKeyDown = (e) => { if (e.key === "Enter") submit(); };
+
+      return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#132A52,#1D3E73)", padding: 20 }}>
+          <div style={{ display: "flex", width: "100%", maxWidth: 860, background: "#fff", borderRadius: 22, overflow: "hidden", boxShadow: "0 20px 60px rgba(19,42,82,.35)" }}>
+            <div style={{ flex: 1, background: "linear-gradient(160deg,#1D3E73,#2563EB)", padding: 40, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", color: "#fff", minWidth: 260 }}>
+              <div style={{ width: 70, height: 70, borderRadius: 18, background: "rgba(255,255,255,.15)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 22 }}>
+                <GraduationCap size={36} />
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 10 }}>آزمون‌ساز معلم</div>
+              <div style={{ fontSize: 13, color: "#C9D6EE", textAlign: "center", lineHeight: 1.9 }}>
+                بساز، برگزار کن، نتیجه بگیر.<br />سامانه‌ی آزمون آنلاین برای معلمان.
+              </div>
+            </div>
+            <div style={{ flex: 1.15, padding: "44px 40px", display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+                <div onClick={() => setPortalMode && setPortalMode("teacher")} style={{
+                  flex: 1, textAlign: "center", padding: "10px 4px", borderRadius: 10, cursor: "pointer", fontSize: 13, fontWeight: 700,
+                  background: portalMode !== "student" ? "#2563EB" : "#F1F5F9", color: portalMode !== "student" ? "#fff" : "#475569",
+                }}>ورود معلم</div>
+                <div onClick={() => setPortalMode && setPortalMode("student")} style={{
+                  flex: 1, textAlign: "center", padding: "10px 4px", borderRadius: 10, cursor: "pointer", fontSize: 13, fontWeight: 700,
+                  background: portalMode === "student" ? "#2563EB" : "#F1F5F9", color: portalMode === "student" ? "#fff" : "#475569",
+                }}>پرتال دانش‌آموزی</div>
+              </div>
+              {portalMode === "student" ? (
+                <StudentPortalScreen {...portalData} />
+              ) : (
+                <>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: "#1E293B", marginBottom: 6 }}>خوش برگشتی!</div>
+                  <div style={{ fontSize: 13, color: "#64748B", marginBottom: 26 }}>برای ورود، اطلاعات حساب معلم را وارد کن.</div>
+                  <div>
+                    <Field label="نام کاربری">
+                      <TextInput value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={handleKeyDown} placeholder="مثلاً: ali_teacher" />
+                    </Field>
+                    <Field label="رمز عبور">
+                      <div style={{ position: "relative" }}>
+                        <TextInput type={showPw ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyDown} placeholder="رمز عبور را وارد کنید" style={{ paddingLeft: 40 }} />
+                        <span onClick={() => setShowPw((s) => !s)} style={{ position: "absolute", left: 12, top: 12, cursor: "pointer", color: "#94A3B8" }}>
+                          {showPw ? <EyeOff size={17} /> : <Eye size={17} />}
+                        </span>
+                      </div>
+                    </Field>
+                    <div style={{ textAlign: "left", marginBottom: 14, marginTop: -6 }}>
+                      <span onClick={goForgot} style={{ color: "#2563EB", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>رمز عبور را فراموش کرده‌اید؟</span>
+                    </div>
+                    {error && <div style={{ color: "#DC2626", fontSize: 13, marginBottom: 14 }}>{error}</div>}
+                    <Button type="button" onClick={submit} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }} disabled={loading}>
+                      {loading ? "در حال ورود..." : "ورود"}
+                    </Button>
+                  </div>
+                  {allowRegister && (
+                    <div style={{ textAlign: "center", marginTop: 20, fontSize: 13, color: "#64748B" }}>
+                      حساب نداری؟{" "}
+                      <span onClick={goRegister} style={{ color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>ثبت‌نام</span>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function RegisterScreen({ onRegistered, goLogin }) {
+      const [fullname, setFullname] = useState("");
+      const [username, setUsername] = useState("");
+      const [password, setPassword] = useState("");
+      const [email, setEmail] = useState("");
+      const [error, setError] = useState("");
+      const [loading, setLoading] = useState(false);
+
+      const submit = async () => {
+        setError("");
+        if (!fullname || !username || !password || !email) { setError("همه فیلدها را پر کنید."); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("ایمیل معتبر نیست."); return; }
+        if (password.length < 4) { setError("رمز عبور باید حداقل ۴ کاراکتر باشد."); return; }
+        setLoading(true);
+        const existing = await getJSON(`teacher:${username}`);
+        if (existing) { setLoading(false); setError("این نام کاربری قبلاً ثبت شده است."); return; }
+        const teacher = { username, password, fullname, email, created_at: new Date().toISOString() };
+        await setJSON(`teacher:${username}`, teacher);
+        setLoading(false);
+        onRegistered(teacher);
+      };
+
+      const handleKeyDown = (e) => { if (e.key === "Enter") submit(); };
+
+      return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#132A52,#1D3E73)", padding: 20 }}>
+          <div style={{ width: "100%", maxWidth: 420, background: "#fff", borderRadius: 22, padding: "40px 36px", boxShadow: "0 20px 60px rgba(19,42,82,.35)" }}>
+            <div style={{ fontSize: 22, fontWeight: 800, color: "#1E293B", marginBottom: 6 }}>ساخت حساب معلم (فقط یک‌بار)</div>
+            <div style={{ fontSize: 13, color: "#64748B", marginBottom: 26 }}>این حساب، حساب مالک سامانه است.</div>
+            <div>
+              <Field label="نام و نام‌خانوادگی">
+                <TextInput value={fullname} onChange={(e) => setFullname(e.target.value)} onKeyDown={handleKeyDown} placeholder="مثلاً: زهرا احمدی" />
+              </Field>
+              <Field label="نام کاربری">
+                <TextInput value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={handleKeyDown} placeholder="یک نام کاربری یکتا" />
+              </Field>
+              <Field label="رمز عبور">
+                <TextInput type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyDown} placeholder="رمز عبور" />
+              </Field>
+              <Field label="ایمیل">
+                <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown} placeholder="برای بازیابی رمز عبور" />
+              </Field>
+              {error && <div style={{ color: "#DC2626", fontSize: 13, marginBottom: 14 }}>{error}</div>}
+              <Button type="button" onClick={submit} style={{ width: "100%", justifyContent: "center", padding: "12px 0", fontSize: 15 }} disabled={loading}>
+                {loading ? "در حال ثبت..." : "ثبت‌نام"}
+              </Button>
+            </div>
+            <div style={{ textAlign: "center", marginTop: 20, fontSize: 13, color: "#64748B" }}>
+              قبلاً ثبت‌نام کردی؟{" "}
+              <span onClick={goLogin} style={{ color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>ورود</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* اپلیکیشن اصلی */
+    function EduExamApp() {
+      const [authView, setAuthView] = useState("login");
+      const [portalMode, setPortalMode] = useState("teacher");
+      const [teacher, setTeacher] = useState(null);
+      const [view, setView] = useState("dashboard");
+      const [activeExamId, setActiveExamId] = useState(null);
+      const [activeClassId, setActiveClassId] = useState(null);
+      const [studentExamId, setStudentExamId] = useState(() => new URLSearchParams(window.location.search).get("exam"));
+      const [teacherExists, setTeacherExists] = useState(false);
+      const [exams, setExams] = useState([]);
+      const [questions, setQuestions] = useState([]);
+      const [students, setStudents] = useState([]);
+      const [answers, setAnswers] = useState([]);
+      const [classes, setClasses] = useState([]);
+      const [roster, setRoster] = useState([]);
+      const [messages, setMessages] = useState([]);
+      const [ready, setReady] = useState(false);
+
+      const refresh = useCallback(async () => {
+        const [ex, qs, st, an, cl, ro, msg, teacherKeys] = await Promise.all([
+          loadAll("exam:"), loadAll("question:"), loadAll("student:"), loadAll("answer:"),
+          loadAll("class:"), loadAll("roster:"), loadAll("message:"), listPrefix("teacher:"),
+        ]);
+        setExams(ex); setQuestions(qs); setStudents(st); setAnswers(an); setClasses(cl); setRoster(ro); setMessages(msg);
+        setTeacherExists(teacherKeys.length > 0);
+      }, []);
+
+      useEffect(() => {
+        (async () => { await refresh(); setReady(true); })();
+      }, [refresh]);
+
+      if (!ready) {
+        return (
+          <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F8FAFC", fontFamily: "inherit", color: "#64748B" }}>
+            در حال بارگذاری...
+          </div>
+        );
+      }
+
+      if (studentExamId) {
+        const exam = exams.find((e) => e.id === studentExamId);
+        if (!exam) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>آزمون یافت نشد.</div>;
+        return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>صفحه آزمون (در حال توسعه)</div>;
+      }
+
+      if (!teacher) {
+        const showRegister = authView === "register" && !teacherExists;
+        return showRegister ? (
+          <RegisterScreen onRegistered={(t) => { setTeacher(t); setTeacherExists(true); }} goLogin={() => setAuthView("login")} />
+        ) : (
+          <LoginScreen onLogin={setTeacher} goRegister={() => setAuthView("register")} goForgot={() => setAuthView("forgot")}
+            allowRegister={!teacherExists} portalMode={portalMode} setPortalMode={setPortalMode}
+            portalData={{ roster, students, answers, exams, questions, classes, messages }} />
+        );
+      }
+
+      return (
+        <div style={{ display: "flex", flexDirection: "row-reverse", minHeight: "100vh" }}>
+          <Sidebar active={view} onNavigate={(v) => { setView(v); setActiveExamId(null); setActiveClassId(null); }}
+            onLogout={() => { setTeacher(null); setView("dashboard"); }} teacherName={teacher.fullname} />
+          <div style={{ flex: 1, background: "#F8FAFC", minHeight: "100vh", padding: "30px 34px" }}>
+            <TopBar title="داشبورد" teacherName={teacher.fullname} />
+            <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #EEF1F6", padding: 22 }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#1E293B", marginBottom: 16 }}>به سامانه آزمون‌ساز خوش آمدید!</div>
+              <div style={{ fontSize: 14, color: "#64748B", lineHeight: 1.8 }}>
+                از منوی سمت راست می‌توانید به بخش‌های مختلف دسترسی داشته باشید:
+                <ul style={{ marginTop: 12, paddingRight: 20 }}>
+                  <li><b>آزمون‌ها</b>: ساخت و مدیریت آزمون‌ها</li>
+                  <li><b>کلاس‌ها</b>: مدیریت کلاس‌ها و دانش‌آموزان</li>
+                  <li><b>نتایج</b>: مشاهده نتایج آزمون‌ها</li>
+                  <li><b>تنظیمات</b>: تنظیمات حساب کاربری</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<EduExamApp />);
+  </script>
 </body>
-</html>
+  </html>
